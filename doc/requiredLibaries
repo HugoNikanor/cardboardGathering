@@ -1,0 +1,26 @@
+Graphics: 
+	Slick 2d
+		An easier implementation of OpenGL, built soely for 2d games.
+		http://slick.ninjacave.com/
+
+		BSD license
+	LWJGL
+		Direct implementation of OpenGL.
+		Requires learning OpenGL from the ground up. 
+
+		BSD license
+
+Web-Crawler:
+	Crawler4j
+		All around. Allows for easy dowloading of images.
+		https://github.com/yasserg/crawler4j
+
+		Apache License, Version 2.0
+
+Database:
+	MySQL
+		
+		Licensing is hard...
+
+		Tutorial:
+			http://zetcode.com/db/mysqljava/
