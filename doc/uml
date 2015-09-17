@@ -27,12 +27,12 @@ Class list ( Subject to a lot of change )
    | -ability: String                |              
    | -flavour: String                |              
    |                                 |              
-   | -manaRed:   int                 |              
-   | -manaBlue:  int                 |              
-   | -manaWhite: int                 |              
-   | -manaBlack: int                 |              
-   | -manaGreen: int                 |              
-   | -convertedMana: int             |              
+   | -manaCostRed:   int             |              
+   | -manaCostBlue:  int             |              
+   | -manaCostWhite: int             |              
+   | -manaCostBlack: int             |              
+   | -manaCostGreen: int             |              
+   | -convertedManaCost: int         |              
    |                                 |              
    | //Should card have              |       
    | //these values?                 |       
@@ -44,16 +44,20 @@ Class list ( Subject to a lot of change )
    | +getHandCards():      Card      |       
    | +getTableCards():     Card      |       
    | +getGraveyardCards(): Card      |       
+
+     +getTableXPos(): int
    +---------------------------------+       
                                              
-                                             
-   +----------------------------+            
-   | playingField               |            
-   +----------------------------+            
- ? | -GameLogic: GameLogic      |            
-   +----------------------------+            
-   |                            |
-   +----------------------------+
+                                            
+   +------------------------------+         
+   | playingField                 |         
+   | // Should this be integrated |
+   | // with 'GameLogic'?         |
+   +------------------------------+         
+ ? | -gameLogic: GameLogic        |         
+   +------------------------------+         
+   |                              |
+   +------------------------------+
 
    
 
@@ -64,9 +68,18 @@ Class list ( Subject to a lot of change )
  -networkInterface: Network
 
 
-
-
-
+  +---------------------------------+
+  | NetworkInterface                |
+  | // This is the only class that  |
+  | // should talk over the intenet |
+  +---------------------------------+
+  | -boardListen: Thread
+  | -otherListen: Thread
+  +---------------------------------+
+  | -sendBoardInfo()                |
+  | +requestOtherDeck(): Card[]     |
+  | +requestOtherGraveyard: Card[]  |
+  +---------------------------------+
 
 
  +-------------------------------+
@@ -82,7 +95,7 @@ Class list ( Subject to a lot of change )
  | -cardsOnHand: int             |
  | -cardsInGraveyard: int        |
  +-------------------------------+
- | +GetHandCards():      Card[]  |
- | +GetTableCards():     Card[]  |
- | +GetGraveyardCards(): Card[]  |
+ | +getHandCards():      Card[]  |
+ | +getTableCards():     Card[]  |
+ | +getGraveyardCards(): Card[]  |
  +-------------------------------+
