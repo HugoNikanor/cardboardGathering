@@ -1,0 +1,88 @@
+Class list ( Subject to a lot of change )
+- Main
+- Gui
+- NetworkConnection
+- GameLogic
+- PlayingField
+- Player
+- Card
+	-Land
+	-Creature
+	-Enchantment
+	-Sorcery
+	-Instant
+	-Planeswalker
+	-Artrifact (That isn't also something else)
+	-Token
+
+   +---------------------------------+
+   | Card                            |
+   +---------------------------------+              
+   | -image: Img                     |              
+   | -power: int                     |              
+   | -defense: int                   |              
+   | -name: String                   |              
+   | -type: String                   |              
+   | -species: String                |              
+   | -ability: String                |              
+   | -flavour: String                |              
+   |                                 |              
+   | -manaRed:   int                 |              
+   | -manaBlue:  int                 |              
+   | -manaWhite: int                 |              
+   | -manaBlack: int                 |              
+   | -manaGreen: int                 |              
+   | -convertedMana: int             |              
+   |                                 |              
+   | //Should card have              |       
+   | //these values?                 |       
+   | -tablePosX: int                 |       
+   | -tablePosY: int                 |       
+   +---------------------------------+       
+   | -calcConvMana()                 |       
+   |                                 |       
+   | +getHandCards():      Card      |       
+   | +getTableCards():     Card      |       
+   | +getGraveyardCards(): Card      |       
+   +---------------------------------+       
+                                             
+                                             
+   +----------------------------+            
+   | playingField               |            
+   +----------------------------+            
+ ? | -GameLogic: GameLogic      |            
+   +----------------------------+            
+   |                            |
+   +----------------------------+
+
+   
+
+ +---------------------------+  
+ | GameLogic                 |  
+ +---------------------------+  
+ -players[2]: Player
+ -networkInterface: Network
+
+
+
+
+
+
+
+ +-------------------------------+
+ | Player                        |
+ + ------------------------------+
+ | -deckCards[]: Card            |
+ | -handCards[]: Card            |
+ | -tableCards[]: Card           |
+ | -graveyardCards[]: Card       |
+ |                               |
+ | -health: int                  |
+ | -cardsInDeck: int             |
+ | -cardsOnHand: int             |
+ | -cardsInGraveyard: int        |
+ +-------------------------------+
+ | +GetHandCards():      Card[]  |
+ | +GetTableCards():     Card[]  |
+ | +GetGraveyardCards(): Card[]  |
+ +-------------------------------+
