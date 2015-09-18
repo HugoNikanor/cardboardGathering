@@ -1,0 +1,16 @@
+I know that I probably shouldn't call them "interface"
+
+player
+	Player
+	Card
+	CardCollection
+game
+	Main	?
+	GameLogic
+	PlayingField
+	Gui
+externalInterface
+	NetworkInterface
+	DatabaseInterface
+	WebCrawler
+

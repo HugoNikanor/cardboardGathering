@@ -5,6 +5,7 @@ Class list ( Subject to a lot of change )
 - GameLogic
 - PlayingField
 - Player
+- LifeCounter?
 - Card
 	-Land
 	-Creature
@@ -17,6 +18,8 @@ Class list ( Subject to a lot of change )
 
    +---------------------------------+
    | Card                            |
+   | // maybe this should be a       |
+   | // factory...                   |
    +---------------------------------+              
    | -image: Img                     |              
    | -power: int                     |              
@@ -44,10 +47,23 @@ Class list ( Subject to a lot of change )
    | +getHandCards():      Card      |       
    | +getTableCards():     Card      |       
    | +getGraveyardCards(): Card      |       
-
-     +getTableXPos(): int
+   |                                 |
+   | +getTableXPos(): int            |
+   | +getTableYPos(): int            |
    +---------------------------------+       
                                              
++-----------------------------+
+| Deck                        |
++-----------------------------+
+| -cards[60]: Card            |
+| -cardsLeft: int             |
+|                             |
++-----------------------------+
+| -shuffleDeck()
+| +drawCard(): Card           |
+| +getCardsLeft(): int        |
+|                             |
++-----------------------------+
                                             
    +------------------------------+         
    | playingField                 |         
@@ -61,12 +77,43 @@ Class list ( Subject to a lot of change )
 
    
 
- +---------------------------+  
- | GameLogic                 |  
- +---------------------------+  
- -players[2]: Player
- -networkInterface: Network
+ +--------------------------------------------------+
+ | GameLogic                                        |
+ +--------------------------------------------------+
+ | -players[2]: Player                              |
+ | -networkInterface: Network                       |
+ | -gui: Gui                                        |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |                                                  |
+ |    +-----------------+                           |
+ |    | InputListener   |                           |
+ |    +-----------------+                           |
+ |    +-----------------+                           |
+ |    | +cardMoved()    |                           |
+ |    |                 |                           |
+ |    |                 |                           |
+ |    +-----------------+                           |
+ |                                                  |
+ |                                                  |
+ +--------------------------------------------------+
 
+ //Gui should use GameLogic as its inputListener
+
+  +-------------------------+
+  | Gui                     |
+  +-------------------------+
+  |                         |
+  +-------------------------+
+  | +Gui(InputListener)     |
+  +-------------------------+
 
   +---------------------------------+
   | NetworkInterface                |
@@ -84,13 +131,14 @@ Class list ( Subject to a lot of change )
 
  +-------------------------------+
  | Player                        |
- + ------------------------------+
+ +-------------------------------+
  | -deckCards[]: Card            |
  | -handCards[]: Card            |
  | -tableCards[]: Card           |
  | -graveyardCards[]: Card       |
  |                               |
  | -health: int                  |
+ | -poison: int                  |
  | -cardsInDeck: int             |
  | -cardsOnHand: int             |
  | -cardsInGraveyard: int        |
@@ -99,3 +147,7 @@ Class list ( Subject to a lot of change )
  | +getTableCards():     Card[]  |
  | +getGraveyardCards(): Card[]  |
  +-------------------------------+
+
+
+
+ 
