@@ -23,14 +23,14 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
 
 
 // This text will be stored with each diagram;  use it for notes.</help_text>
-  <zoom_level>3</zoom_level>
+  <zoom_level>7</zoom_level>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>726</x>
-      <y>750</y>
-      <w>69</w>
-      <h>198</h>
+      <x>763</x>
+      <y>1526</y>
+      <w>161</w>
+      <h>504</h>
     </coordinates>
     <panel_attributes>*Card*
 --
@@ -67,14 +67,16 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
  
 +getId(): String
  
-+getTableXPos(): int         
-+getTableYPos(): int         
++getTableXPos(): int
++getTableYPos(): int
 +getFaceUp(): boolean
 +getRotation(): double
  
-+setXPos(int)
-+setYPos(int)
-+setRotation(int)
++setXPos(xPos: int)
++setYPos(yPos: int)
++modifyXPos(changeX: int)
++modifyYPos(changeY: int)
++setRotation(rotation: int)
 //This should maybe just be "flip()"...
 +setFlipStatus()
 </panel_attributes>
@@ -83,10 +85,10 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>723</x>
-      <y>594</y>
-      <w>63</w>
-      <h>84</h>
+      <x>756</x>
+      <y>1162</y>
+      <w>147</w>
+      <h>196</h>
     </coordinates>
     <panel_attributes>*CardCollection*
 --
@@ -120,21 +122,21 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>750</x>
-      <y>669</y>
-      <w>14</w>
-      <h>86</h>
+      <x>819</x>
+      <y>1337</y>
+      <w>34</w>
+      <h>202</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;81;9;9</additional_attributes>
+    <additional_attributes>21;189;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>726</x>
-      <y>201</y>
-      <w>159</w>
-      <h>120</h>
+      <x>763</x>
+      <y>245</y>
+      <w>371</w>
+      <h>280</h>
     </coordinates>
     <panel_attributes>*GameLogic*
 --
@@ -157,10 +159,10 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>897</x>
-      <y>231</y>
-      <w>66</w>
-      <h>39</h>
+      <x>1162</x>
+      <y>315</y>
+      <w>154</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>*Gui*
 --
@@ -175,21 +177,21 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>876</x>
-      <y>216</y>
-      <w>59</w>
-      <h>20</h>
+      <x>1113</x>
+      <y>280</y>
+      <w>139</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>54;15;54;9;9;9</additional_attributes>
+    <additional_attributes>126;35;126;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>546</x>
-      <y>252</y>
-      <w>78</w>
-      <h>45</h>
+      <x>343</x>
+      <y>364</y>
+      <w>182</w>
+      <h>105</h>
     </coordinates>
     <panel_attributes>*NetworkInterface*
 // This is the only class that
@@ -202,10 +204,10 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>714</x>
-      <y>432</y>
-      <w>87</w>
-      <h>153</h>
+      <x>735</x>
+      <y>784</y>
+      <w>203</w>
+      <h>357</h>
     </coordinates>
     <panel_attributes>*Player*
 --
@@ -247,21 +249,21 @@ fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>582</x>
-      <y>216</y>
-      <w>149</w>
-      <h>41</h>
+      <x>427</x>
+      <y>280</y>
+      <w>349</w>
+      <h>97</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;36;9;9;144;9</additional_attributes>
+    <additional_attributes>21;84;21;21;336;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>582</x>
-      <y>177</y>
-      <w>54</w>
-      <h>27</h>
+      <x>427</x>
+      <y>189</y>
+      <w>126</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>Each player has
 a complete set
@@ -274,10 +276,10 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>468</x>
-      <y>165</y>
-      <w>102</w>
-      <h>60</h>
+      <x>161</x>
+      <y>161</y>
+      <w>238</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>Both players create their Battlefield
 localy.
@@ -295,10 +297,10 @@ bg=red</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>750</x>
-      <y>153</y>
-      <w>60</w>
-      <h>27</h>
+      <x>819</x>
+      <y>133</y>
+      <w>140</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>*Main*
 //Main should just create a GameLogic 
@@ -312,21 +314,21 @@ gameLogic: GameLogic
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>771</x>
-      <y>171</y>
-      <w>14</w>
-      <h>35</h>
+      <x>868</x>
+      <y>175</y>
+      <w>34</w>
+      <h>83</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;30;9;9</additional_attributes>
+    <additional_attributes>21;70;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>576</x>
-      <y>606</y>
-      <w>57</w>
-      <h>45</h>
+      <x>413</x>
+      <y>1190</y>
+      <w>133</w>
+      <h>105</h>
     </coordinates>
     <panel_attributes>*WebCravler*
 --
@@ -340,10 +342,10 @@ gameLogic: GameLogic
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>492</x>
-      <y>261</y>
-      <w>30</w>
-      <h>18</h>
+      <x>217</x>
+      <y>385</y>
+      <w>70</w>
+      <h>42</h>
     </coordinates>
     <panel_attributes>*Server*
 
@@ -354,32 +356,32 @@ application</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>513</x>
-      <y>258</y>
-      <w>38</w>
-      <h>14</h>
+      <x>266</x>
+      <y>378</y>
+      <w>90</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>9;9;33;9</additional_attributes>
+    <additional_attributes>21;21;77;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>513</x>
-      <y>264</y>
-      <w>38</w>
-      <h>14</h>
+      <x>266</x>
+      <y>392</y>
+      <w>90</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>33;9;9;9</additional_attributes>
+    <additional_attributes>77;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>399</x>
-      <y>261</y>
-      <w>48</w>
-      <h>21</h>
+      <x>0</x>
+      <y>385</y>
+      <w>112</w>
+      <h>49</h>
     </coordinates>
     <panel_attributes>*Other Player*
 
@@ -390,32 +392,32 @@ the same program.</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>438</x>
-      <y>258</y>
-      <w>59</w>
-      <h>14</h>
+      <x>91</x>
+      <y>378</y>
+      <w>139</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>9;9;54;9</additional_attributes>
+    <additional_attributes>21;21;126;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>438</x>
-      <y>264</y>
-      <w>59</w>
-      <h>14</h>
+      <x>91</x>
+      <y>392</y>
+      <w>139</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>54;9;9;9</additional_attributes>
+    <additional_attributes>126;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Actor</type>
     <coordinates>
-      <x>408</x>
-      <y>240</y>
-      <w>30</w>
-      <h>36</h>
+      <x>21</x>
+      <y>336</y>
+      <w>70</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>
 </panel_attributes>
@@ -424,10 +426,10 @@ the same program.</panel_attributes>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>447</x>
-      <y>96</y>
-      <w>81</w>
-      <h>51</h>
+      <x>112</x>
+      <y>0</y>
+      <w>189</w>
+      <h>119</h>
     </coordinates>
     <panel_attributes>Becouse I haven't used
 all the arrows as originally
@@ -442,32 +444,32 @@ bg=green</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>519</x>
-      <y>111</y>
-      <w>35</w>
-      <h>14</h>
+      <x>280</x>
+      <y>35</y>
+      <w>84</w>
+      <h>35</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>30;9;9;9</additional_attributes>
+    <additional_attributes>70;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>519</x>
-      <y>120</y>
-      <w>35</w>
-      <h>14</h>
+      <x>280</x>
+      <y>56</y>
+      <w>77</w>
+      <h>28</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>30;9;9;9</additional_attributes>
+    <additional_attributes>70;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>549</x>
-      <y>117</y>
-      <w>15</w>
-      <h>15</h>
+      <x>350</x>
+      <y>49</y>
+      <w>35</w>
+      <h>35</h>
     </coordinates>
     <panel_attributes>
 bg=green</panel_attributes>
@@ -476,32 +478,32 @@ bg=green</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>567</x>
-      <y>195</y>
-      <w>29</w>
-      <h>62</h>
+      <x>392</x>
+      <y>231</y>
+      <w>69</w>
+      <h>146</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>9;57;24;9</additional_attributes>
+    <additional_attributes>21;133;56;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>504</x>
-      <y>216</y>
-      <w>56</w>
-      <h>41</h>
+      <x>245</x>
+      <y>280</y>
+      <w>132</w>
+      <h>97</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>51;36;9;9</additional_attributes>
+    <additional_attributes>119;84;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>594</x>
-      <y>702</y>
-      <w>57</w>
-      <h>27</h>
+      <x>455</x>
+      <y>1414</y>
+      <w>133</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>*DatabaseInterface*
 --
@@ -514,10 +516,10 @@ bg=green</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>531</x>
-      <y>708</y>
-      <w>36</w>
-      <h>18</h>
+      <x>308</x>
+      <y>1428</y>
+      <w>84</w>
+      <h>42</h>
     </coordinates>
     <panel_attributes>*Database*
 MySQL
@@ -527,65 +529,65 @@ Standalone</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>558</x>
-      <y>711</y>
-      <w>41</w>
-      <h>14</h>
+      <x>371</x>
+      <y>1435</y>
+      <w>97</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>9;9;36;9</additional_attributes>
+    <additional_attributes>21;21;84;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>558</x>
-      <y>702</y>
-      <w>41</w>
-      <h>14</h>
+      <x>371</x>
+      <y>1414</y>
+      <w>97</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>36;9;9;9</additional_attributes>
+    <additional_attributes>84;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>633</x>
-      <y>720</y>
-      <w>107</w>
-      <h>35</h>
+      <x>546</x>
+      <y>1456</y>
+      <w>251</w>
+      <h>83</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>102;30;102;18;9;18;9;9</additional_attributes>
+    <additional_attributes>238;70;238;42;21;42;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>633</x>
-      <y>669</y>
-      <w>107</w>
-      <h>38</h>
+      <x>546</x>
+      <y>1337</y>
+      <w>251</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;33;9;21;102;21;102;9</additional_attributes>
+    <additional_attributes>21;77;21;49;238;49;238;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>600</x>
-      <y>645</y>
-      <w>14</w>
-      <h>62</h>
+      <x>469</x>
+      <y>1281</y>
+      <w>34</w>
+      <h>146</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;57;9;9</additional_attributes>
+    <additional_attributes>21;133;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>819</x>
-      <y>282</y>
-      <w>60</w>
-      <h>54</h>
+      <x>987</x>
+      <y>385</y>
+      <w>140</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>*InputListener*
 --
@@ -600,38 +602,39 @@ Standalone</panel_attributes>
  
 //used to tell the other player that
 //you are going to play an instant
+//Basicly a big red beeping button
 +sendInteruptSignal()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>864</x>
-      <y>261</y>
-      <w>71</w>
-      <h>26</h>
+      <x>1085</x>
+      <y>350</y>
+      <w>167</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;21;9;12;66;12;66;9</additional_attributes>
+    <additional_attributes>28;35;21;28;154;28;154;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>747</x>
-      <y>576</y>
-      <w>14</w>
-      <h>23</h>
+      <x>812</x>
+      <y>1120</y>
+      <w>34</w>
+      <h>55</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;18;9;9</additional_attributes>
+    <additional_attributes>21;42;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>855</x>
-      <y>153</y>
-      <w>93</w>
-      <h>39</h>
+      <x>1064</x>
+      <y>133</y>
+      <w>217</w>
+      <h>91</h>
     </coordinates>
     <panel_attributes>Ett spel har 2 spelare som båda har sina
 kort framför sig.
@@ -647,10 +650,10 @@ bg=green</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>714</x>
-      <y>333</y>
-      <w>90</w>
-      <h>78</h>
+      <x>735</x>
+      <y>553</y>
+      <w>210</w>
+      <h>182</h>
     </coordinates>
     <panel_attributes>*Battlefield*
 --
@@ -668,43 +671,43 @@ bg=green</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>747</x>
-      <y>402</y>
-      <w>14</w>
-      <h>35</h>
+      <x>812</x>
+      <y>714</y>
+      <w>34</w>
+      <h>83</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;30;9;9</additional_attributes>
+    <additional_attributes>21;70;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>747</x>
-      <y>312</y>
-      <w>14</w>
-      <h>26</h>
+      <x>812</x>
+      <y>504</y>
+      <w>34</w>
+      <h>62</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>9;21;9;9</additional_attributes>
+    <additional_attributes>21;49;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>576</x>
-      <y>576</y>
-      <w>14</w>
-      <h>35</h>
+      <x>413</x>
+      <y>1120</y>
+      <w>34</w>
+      <h>83</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>9;30;9;9</additional_attributes>
+    <additional_attributes>21;70;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>558</x>
-      <y>567</y>
-      <w>54</w>
-      <h>18</h>
+      <x>371</x>
+      <y>1099</y>
+      <w>126</w>
+      <h>42</h>
     </coordinates>
     <panel_attributes>*CardList*
 external text file
@@ -714,10 +717,10 @@ Made to be easy to edit</panel_attributes>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>966</x>
-      <y>189</y>
-      <w>42</w>
-      <h>21</h>
+      <x>1323</x>
+      <y>217</y>
+      <w>98</w>
+      <h>49</h>
     </coordinates>
     <panel_attributes>otherBattlefield 
 should be drawn
@@ -728,21 +731,21 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>954</x>
-      <y>201</y>
-      <w>26</w>
-      <h>53</h>
+      <x>1295</x>
+      <y>245</y>
+      <w>62</w>
+      <h>125</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>9;48;21;9</additional_attributes>
+    <additional_attributes>21;112;49;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>636</x>
-      <y>249</y>
-      <w>81</w>
-      <h>54</h>
+      <x>553</x>
+      <y>357</y>
+      <w>189</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>"NetworkListeningThread" should
 ask the "NetworkInterface"
@@ -759,43 +762,43 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>615</x>
-      <y>264</y>
-      <w>26</w>
-      <h>14</h>
+      <x>504</x>
+      <y>392</y>
+      <w>62</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>9;9;21;9</additional_attributes>
+    <additional_attributes>21;21;49;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>708</x>
-      <y>264</y>
-      <w>23</w>
-      <h>14</h>
+      <x>721</x>
+      <y>392</y>
+      <w>55</w>
+      <h>34</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>18;9;9;9</additional_attributes>
+    <additional_attributes>42;21;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>615</x>
-      <y>306</y>
-      <w>116</w>
-      <h>92</h>
+      <x>504</x>
+      <y>490</y>
+      <w>272</w>
+      <h>216</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>9;87;9;9;111;9</additional_attributes>
+    <additional_attributes>21;203;21;21;259;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>579</x>
-      <y>393</y>
-      <w>60</w>
-      <h>39</h>
+      <x>420</x>
+      <y>693</y>
+      <w>140</w>
+      <h>91</h>
     </coordinates>
     <panel_attributes>"GameLogic" should be
 able to download extra
@@ -807,32 +810,32 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>618</x>
-      <y>423</y>
-      <w>14</w>
-      <h>188</h>
+      <x>511</x>
+      <y>763</y>
+      <w>34</w>
+      <h>440</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;.</panel_attributes>
-    <additional_attributes>9;183;9;9</additional_attributes>
+    <additional_attributes>21;427;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>927</x>
-      <y>183</y>
-      <w>23</w>
-      <h>53</h>
+      <x>1232</x>
+      <y>203</y>
+      <w>55</w>
+      <h>125</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>18;48;9;9</additional_attributes>
+    <additional_attributes>42;112;21;21</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>720</x>
-      <y>366</y>
-      <w>78</w>
-      <h>39</h>
+      <x>749</x>
+      <y>630</y>
+      <w>182</w>
+      <h>91</h>
     </coordinates>
     <panel_attributes>Battlefield should keep track of
 which order the cards are moved
@@ -846,10 +849,10 @@ bg=red</panel_attributes>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>660</x>
-      <y>702</y>
-      <w>87</w>
-      <h>27</h>
+      <x>609</x>
+      <y>1414</y>
+      <w>203</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>All cards should get an unique id when
 they are created.
@@ -861,10 +864,10 @@ bg=blue</panel_attributes>
   <element>
     <type>com.umlet.element.Note</type>
     <coordinates>
-      <x>819</x>
-      <y>684</y>
-      <w>51</w>
-      <h>54</h>
+      <x>980</x>
+      <y>1372</y>
+      <w>119</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>Things like +1/+1
 counters should be
@@ -881,12 +884,12 @@ bg=green</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>786</x>
-      <y>729</y>
-      <w>47</w>
-      <h>59</h>
+      <x>903</x>
+      <y>1477</y>
+      <w>111</w>
+      <h>139</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>9;54;42;9</additional_attributes>
+    <additional_attributes>21;126;98;21</additional_attributes>
   </element>
 </diagram>
