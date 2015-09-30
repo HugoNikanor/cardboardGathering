@@ -154,6 +154,9 @@ public class Card {
 	public void setHeight(int height) {
 		this.height = height;
 	}
+	public void changeHeight(int heightChange) {
+		this.height += heightChange;
+	}
 
 	
 	/*
