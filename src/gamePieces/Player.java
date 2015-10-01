@@ -11,6 +11,20 @@ public class Player {
 	private int health;
 	private int poisonCounters;
 
+	public Player(String cardList) {
+		deckCards        = new CardCollection(cardList);
+		handCards        = new CardCollection();
+		battlefieldCards = new CardCollection();
+		graveyardCards   = new CardCollection();
+
+		health = 20;
+		poisonCounters = 0;
+
+		//Draws the starting hand
+		for( int i = 0; i < 7; i++ ) {
+			this.drawCard();
+		}
+	}
 
 	/**
 	 * Moves a card from the deck to the hand

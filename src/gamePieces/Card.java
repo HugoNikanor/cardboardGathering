@@ -62,7 +62,9 @@ public class Card {
 	}
 
 	/**
+	 * TODO
 	 * This is here temprarly
+	 * And only so that I can create cards without having data
 	 */
 	public Card() {
 	}

@@ -11,7 +11,6 @@ import exceptions.CardNotFoundException;
 public class CardCollection extends ArrayList<Card> {
 	private static final long serialVersionUID = 1L;
 
-
 	/*
 	 * Create a new card collection without any card in it.
 	 * Used for everything but the deck
@@ -27,10 +26,8 @@ public class CardCollection extends ArrayList<Card> {
 	public CardCollection(String cardList) {
 		this.addAll(Arrays.asList(this.fetchCards(cardList)));
 
-
 		//Should this be called upon constuction? TODO
 		this.shuffleCards();
-
 	}
 
 
