@@ -1,4 +1,4 @@
-package game;
+package gamePieces;
 
 public class Card {
 	private String id;

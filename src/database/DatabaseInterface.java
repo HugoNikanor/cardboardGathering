@@ -1,6 +1,6 @@
 package database;
 
-import game.Card;
+import gamePieces.Card;
 
 public class DatabaseInterface {
 	
