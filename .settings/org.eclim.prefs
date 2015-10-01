@@ -1,2 +1,3 @@
 eclipse.preferences.version=1
+org.eclim.java.checkstyle.onvalidate=true
 org.eclim.java.run.mainclass=central.Main

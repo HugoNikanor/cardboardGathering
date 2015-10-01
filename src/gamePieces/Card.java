@@ -59,14 +59,25 @@ public class Card {
         this.manaCostGreen = manaCostGreen;
 		this.manaCostBlank = manaCostBlank;
 		calcConvMana();
-	}
 
-	/**
-	 * TODO
-	 * This is here temprarly
-	 * And only so that I can create cards without having data
-	 */
-	public Card() {
+		//TODO this is debug stuff
+		System.out.println(
+			cardName      + "\n" +
+			type          + "\n" +
+			subtype       + "\n" +
+			ability       + "\n" +
+			flavour       + "\n" +
+			power         + "\n" +
+			toughness     + "\n" +
+			loyalty       + "\n" +
+			manaCostRed   + "\n" +
+			manaCostBlue  + "\n" +
+			manaCostWhite + "\n" +
+			manaCostBlack + "\n" +
+			manaCostGreen + "\n" +
+			manaCostBlank + "\n"
+		);
+
 	}
 
 	/**
