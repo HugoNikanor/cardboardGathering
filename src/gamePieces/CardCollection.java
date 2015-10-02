@@ -28,7 +28,8 @@ public class CardCollection extends ArrayList<Card> {
 		this.addAll(Arrays.asList(this.fetchCards(cardList)));
 
 		//Should this be called upon constuction? TODO
-		//this.shuffleCards();
+		this.shuffleCards();
+
 		//System.out.println("Debug: end of cardCollection");
 	}
 
@@ -38,20 +39,27 @@ public class CardCollection extends ArrayList<Card> {
 
 	}
 
+	/**
+	 * Shuffles the cards
+	 * Currently, this doesnt seem to actually generate different random nubmers
+	 * for each use, resulting in the same shuffle all the time.
+	 *
+	 * TODO remove print statements
+	 */
 	public void shuffleCards() {
-		try {
-			Random rand = new Random();
-			Card tempCard;
-			int cardIndex;
-			for(int i = 0; i < this.size(); i++) {
-				cardIndex = rand.nextInt(this.size() - 1);
-				tempCard = this.get(cardIndex);
-				this.add(cardIndex, this.get(i));
-				this.add(i, tempCard);
-			}
-		} catch( Exception e ) {
-			e.printStackTrace();
+		Random rand = new Random();
+		Card tempCard;
+		int cardIndex;
+		int cardCount = this.size();
+		for(int i = 0; i < cardCount; i++) {
+			cardIndex = rand.nextInt(this.size() - 1);
+			tempCard = this.get(cardIndex);
+			this.set(cardIndex, this.get(i));
+			this.set(i, tempCard);
+			System.out.println("i: " + i);
+			System.out.println("c: " + cardIndex);
 		}
+		System.out.println("size: " + this.size());
 	}
 
 	/**

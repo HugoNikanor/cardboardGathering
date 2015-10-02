@@ -22,16 +22,28 @@ public class Player {
 		poisonCounters = 0;
 
 		try {
-			this.drawCard();
-			this.playCard(handCards.getNextCard());
+			//Draws the starting hand
+			for( int i = 0; i < 7; i++ ) {
+				this.drawCard();
+			}
+		} catch (CardNotFoundException e) {
+			System.out.println(
+				"==\n" +
+				"Player (" +
+				this.hashCode() + 
+				"): trying to draw card with no cards left in deck\n" +
+				"=="
+			);
+			//e.printStackTrace();
+		}
+		try {
+			this.playCard(handCards.getCard(0));
+			this.playCard(handCards.getCard(0));
+			System.out.println("card played");
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Draws the starting hand
-		//for( int i = 0; i < 7; i++ ) {
-		//	this.drawCard();
-		//}
 		//System.out.println("Debug: end of Player");
 	}
 

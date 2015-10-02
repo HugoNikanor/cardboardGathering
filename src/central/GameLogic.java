@@ -22,8 +22,11 @@ public class GameLogic {
 
 		ownBattlefield = new Battlefield("cardList");
 
+		// These lines are debug
 		try {
+			System.out.println("cards on field: " + ownBattlefield.getCards().size());
 			System.out.println(ownBattlefield.getCards().getCard(0).toString());
+			System.out.println(ownBattlefield.getCards().getCard(1).toString());
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
