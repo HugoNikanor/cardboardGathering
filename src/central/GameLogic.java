@@ -1,5 +1,6 @@
 package central;
 
+import exceptions.CardNotFoundException;
 import gamePieces.Battlefield;
 
 public class GameLogic {
@@ -17,15 +18,25 @@ public class GameLogic {
 	 */
 	public GameLogic() {
 
+		//System.out.println("Debug: start of GameLogic");
 
 		ownBattlefield = new Battlefield("cardList");
 
-		networkThread = new NetworkThread();
+		try {
+			System.out.println(ownBattlefield.getCards().getCard(0).toString());
+		} catch (CardNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//networkThread = new NetworkThread();
 
 
 		//gui = new Gui();
 		//gui.addListeners(listeners);
 		
+		//System.out.println("Debug: end of GameLogic");
+
 	}
 
 	private class NetworkThread implements Runnable {

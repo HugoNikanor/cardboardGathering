@@ -24,10 +24,12 @@ public class CardCollection extends ArrayList<Card> {
 	 * card fectcher, which gets them from the database
 	 */
 	public CardCollection(String cardList) {
+		//System.out.println("Debug: start of cardCollection");
 		this.addAll(Arrays.asList(this.fetchCards(cardList)));
 
 		//Should this be called upon constuction? TODO
-		this.shuffleCards();
+		//this.shuffleCards();
+		//System.out.println("Debug: end of cardCollection");
 	}
 
 
@@ -37,14 +39,18 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 	public void shuffleCards() {
-		Random rand = new Random();
-		Card tempCard;
-		int cardIndex;
-		for(int i = 0; i < this.size(); i++) {
-			cardIndex = rand.nextInt(this.size() - 1);
-			tempCard = this.get(cardIndex);
-			this.add(cardIndex, this.get(i));
-			this.add(i, tempCard);
+		try {
+			Random rand = new Random();
+			Card tempCard;
+			int cardIndex;
+			for(int i = 0; i < this.size(); i++) {
+				cardIndex = rand.nextInt(this.size() - 1);
+				tempCard = this.get(cardIndex);
+				this.add(cardIndex, this.get(i));
+				this.add(i, tempCard);
+			}
+		} catch( Exception e ) {
+			e.printStackTrace();
 		}
 	}
 
@@ -56,8 +62,8 @@ public class CardCollection extends ArrayList<Card> {
 		if(this.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
 		}
-		Card returnCard = this.get(this.size());
-		this.remove(this.size());
+		Card returnCard = this.get(this.size() - 1);
+		this.remove(this.size() - 1);
 		return returnCard;
 	}
 
@@ -86,6 +92,13 @@ public class CardCollection extends ArrayList<Card> {
 	/**
 	 * Look at card from collection without removing it.
 	 */
+	public Card getNextCard() throws CardNotFoundException {
+		if(this.size() == 0) {
+			throw new CardNotFoundException("No cards in collection");
+		}
+		Card returnCard = this.get(this.size() - 1);
+		return returnCard;
+	}
 	public Card getCard(int indexOfCard) throws CardNotFoundException {
 		if( indexOfCard < 0 || indexOfCard >= this.size() ) {
 			throw new CardNotFoundException("Index out of bounds");

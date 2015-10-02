@@ -12,6 +12,7 @@ public class Player {
 	private int poisonCounters;
 
 	public Player(String cardList) {
+		//System.out.println("Debug: start of Player");
 		deckCards        = new CardCollection(cardList);
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
@@ -20,21 +21,26 @@ public class Player {
 		health = 20;
 		poisonCounters = 0;
 
-		//Draws the starting hand
-		for( int i = 0; i < 7; i++ ) {
+		try {
 			this.drawCard();
+			this.playCard(handCards.getNextCard());
+		} catch (CardNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		//Draws the starting hand
+		//for( int i = 0; i < 7; i++ ) {
+		//	this.drawCard();
+		//}
+		//System.out.println("Debug: end of Player");
 	}
 
 	/**
 	 * Moves a card from the deck to the hand
+	 * @throws CardNotFoundException
 	 */
-	public void drawCard() {
-		try {
-			handCards.add(deckCards.takeNextCard());
-		} catch (CardNotFoundException e) {
-			e.printStackTrace();
-		}
+	public void drawCard() throws CardNotFoundException {
+		handCards.add(deckCards.takeNextCard());
 	}
 
 	/**

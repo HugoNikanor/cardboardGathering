@@ -42,6 +42,7 @@ public class Card {
 			int manaCostGreen,
 			int manaCostBlank
 			) {
+		//System.out.println("debug: start of Card");
 
 		this.cardName  = cardName;
 		this.type      = type;
@@ -60,24 +61,7 @@ public class Card {
 		this.manaCostBlank = manaCostBlank;
 		calcConvMana();
 
-		//TODO this is debug stuff
-		System.out.println(
-			cardName      + "\n" +
-			type          + "\n" +
-			subtype       + "\n" +
-			ability       + "\n" +
-			flavour       + "\n" +
-			power         + "\n" +
-			toughness     + "\n" +
-			loyalty       + "\n" +
-			manaCostRed   + "\n" +
-			manaCostBlue  + "\n" +
-			manaCostWhite + "\n" +
-			manaCostBlack + "\n" +
-			manaCostGreen + "\n" +
-			manaCostBlank + "\n"
-		);
-
+		//System.out.println("debug: end of Card");
 	}
 
 	/**
@@ -171,6 +155,25 @@ public class Card {
 		this.height += heightChange;
 	}
 
+	@Override
+	public String toString() {
+		String returnString = 
+			"cardName     : " + cardName      + "\n" +
+			"type         : " + type          + "\n" +
+			"subtype      : " + subtype       + "\n" +
+			"ability      : " + ability       + "\n" +
+			"flavour      : " + flavour       + "\n" +
+			"power        : " + power         + "\n" +
+			"toughness    : " + toughness     + "\n" +
+			"loyalty      : " + loyalty       + "\n" +
+			"manaCostRed  : " + manaCostRed   + "\n" +
+			"manaCostBlue : " + manaCostBlue  + "\n" +
+			"manaCostWhite: " + manaCostWhite + "\n" +
+			"manaCostBlack: " + manaCostBlack + "\n" +
+			"manaCostGreen: " + manaCostGreen + "\n" +
+			"manaCostBlank: " + manaCostBlank + "\n";
+		return returnString;
+	}
 	
 	/*
 	 *************************************
