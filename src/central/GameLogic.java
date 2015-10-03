@@ -1,7 +1,13 @@
 package central;
 
 import exceptions.CardNotFoundException;
+
 import gamePieces.Battlefield;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+
+import gui.Gui;
 
 public class GameLogic {
 
@@ -11,7 +17,9 @@ public class GameLogic {
 	//private Network network;
 	private NetworkThread networkThread;
 
-	//private Gui gui;
+	private Gui gui;
+
+	private ActionEventHandler actionEventHandler;
 
 	/**
 	 * TODO everything
@@ -20,7 +28,7 @@ public class GameLogic {
 
 		//System.out.println("Debug: start of GameLogic");
 
-		ownBattlefield = new Battlefield("cardList");
+		//ownBattlefield = new Battlefield("cardList");
 
 		// These lines are debug
 		/*
@@ -28,19 +36,28 @@ public class GameLogic {
 			System.out.println(ownBattlefield.getCards().getCard(0).toString());
 			System.out.println(ownBattlefield.getCards().getCard(1).toString());
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		*/
 
 		//networkThread = new NetworkThread();
 
+		actionEventHandler = new ActionEventHandler();
+		gui = new Gui();
+		gui.addActionEventHandler(actionEventHandler);
 
-		//gui = new Gui();
+		Gui.launch(Gui.class);
 		//gui.addListeners(listeners);
 		
 		//System.out.println("Debug: end of GameLogic");
 
+	}
+
+	public class ActionEventHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent event) {
+			System.out.println("Hello World");
+		}
 	}
 
 	private class NetworkThread implements Runnable {
