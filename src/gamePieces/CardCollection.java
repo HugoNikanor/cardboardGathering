@@ -42,9 +42,10 @@ public class CardCollection extends ArrayList<Card> {
 	/**
 	 * Shuffles the cards
 	 * Currently, this doesnt seem to actually generate different random nubmers
-	 * for each use, resulting in the same shuffle all the time.
+	 * for each use, resulting in the same shuffle all the time
 	 *
-	 * TODO remove print statements
+	 * TODO Possibly have a special clause that if cardIndex == i then just
+	 * skip the iteration, due to nothing changing in that case
 	 */
 	public void shuffleCards() {
 		Random rand = new Random();
@@ -52,19 +53,20 @@ public class CardCollection extends ArrayList<Card> {
 		int cardIndex;
 		int cardCount = this.size();
 		for(int i = 0; i < cardCount; i++) {
-			cardIndex = rand.nextInt(this.size() - 1);
+			cardIndex = rand.nextInt(this.size());
 			tempCard = this.get(cardIndex);
 			this.set(cardIndex, this.get(i));
 			this.set(i, tempCard);
-			System.out.println("i: " + i);
-			System.out.println("c: " + cardIndex);
 		}
-		System.out.println("size: " + this.size());
 	}
 
 	/**
 	 * These following methods fetches the card you want from the list
 	 * and then delets it from the list, 
+	 */
+	/**
+	 * Returns the last card in a collection,
+	 * The last one is choosen since that wont mess up the other indexes.
 	 */
 	public Card takeNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
@@ -98,7 +100,12 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 	/**
-	 * Look at card from collection without removing it.
+	 * The following functions are for looking at card in a collection without 
+	 * removing it.
+	 */
+	/**
+	 * Returns the last card in a collection,
+	 * The last one is choosen since that wont mess up the other indexes.
 	 */
 	public Card getNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
@@ -107,6 +114,7 @@ public class CardCollection extends ArrayList<Card> {
 		Card returnCard = this.get(this.size() - 1);
 		return returnCard;
 	}
+
 	public Card getCard(int indexOfCard) throws CardNotFoundException {
 		if( indexOfCard < 0 || indexOfCard >= this.size() ) {
 			throw new CardNotFoundException("Index out of bounds");

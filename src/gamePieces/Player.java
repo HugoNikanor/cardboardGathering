@@ -37,9 +37,8 @@ public class Player {
 			//e.printStackTrace();
 		}
 		try {
-			this.playCard(handCards.getCard(0));
-			this.playCard(handCards.getCard(0));
-			System.out.println("card played");
+			this.playCard(handCards.getNextCard());
+			this.playCard(handCards.getNextCard());
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
