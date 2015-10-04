@@ -18,7 +18,7 @@ public class GameLogic {
 	private Battlefield otherBattlefield;
 
 	//private Network network;
-	private NetworkThread networkThread;
+	//private NetworkThread networkThread;
 
 	//private Gui gui;
 
@@ -27,9 +27,6 @@ public class GameLogic {
 
 	private Stage stage;
 
-	/**
-	 * TODO everything
-	 */
 	public GameLogic() {
 
 		//System.out.println("Debug: start of GameLogic");
@@ -50,8 +47,6 @@ public class GameLogic {
 
 		actionEventHandler = new ActionEventHandler();
 		keyEventHandler    = new KeyEventHandler();
-		//gui = new Gui();
-		//gui.addActionEventHandler(actionEventHandler);
 
 		Gui.addActionEventHandler(actionEventHandler);
 		Gui.addKeyEventHandler(keyEventHandler);
@@ -89,6 +84,6 @@ public class GameLogic {
 			 * and if it has, tell 'GameLogic'
 			 */
 		}
-	} //private class NetworkThread
+	} 
 
 }
