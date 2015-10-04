@@ -9,18 +9,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-/**
- * This class will probably use JavaFX
- */
 public class Gui extends Application {
 
 	private static EventHandler<ActionEvent> actionEventHandler;
 	private static EventHandler<KeyEvent>    keyEventHandler;
 
 	private static Stage primaryStage;
-	
-	//private static GameLogic.ActionEventHandler actionEventHandler;
-	//private static GameLogic.KeyEventHandler keyEventHandler;
 
 	public static void addActionEventHandler(EventHandler<ActionEvent> actionEventHandler) {
 		Gui.actionEventHandler = actionEventHandler;
@@ -47,6 +41,7 @@ public class Gui extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+
 	public static void close() {
 		primaryStage.close();
 	}

@@ -20,7 +20,7 @@ public class GameLogic {
 	//private Network network;
 	private NetworkThread networkThread;
 
-	private Gui gui;
+	//private Gui gui;
 
 	private ActionEventHandler actionEventHandler;
 	private KeyEventHandler keyEventHandler;
@@ -50,17 +50,13 @@ public class GameLogic {
 
 		actionEventHandler = new ActionEventHandler();
 		keyEventHandler    = new KeyEventHandler();
-		gui = new Gui();
+		//gui = new Gui();
 		//gui.addActionEventHandler(actionEventHandler);
-
-		//stage = new Stage();
-
 
 		Gui.addActionEventHandler(actionEventHandler);
 		Gui.addKeyEventHandler(keyEventHandler);
-		//Gui.launch(Gui.class);
+
 		Gui.launch(Gui.class);
-		//gui.addListeners(listeners);
 		
 		//System.out.println("Debug: end of GameLogic");
 
@@ -75,6 +71,7 @@ public class GameLogic {
 	public class KeyEventHandler implements EventHandler<KeyEvent> {
 		@Override
 		public void handle(KeyEvent event) {
+			// C-m to close the window
 			if(event.getCode() == KeyCode.M &&
 			   event.isControlDown()) {
 				Gui.close();
