@@ -6,6 +6,9 @@ import gamePieces.Battlefield;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
 import gui.Gui;
 
@@ -20,6 +23,9 @@ public class GameLogic {
 	private Gui gui;
 
 	private ActionEventHandler actionEventHandler;
+	private KeyEventHandler keyEventHandler;
+
+	private Stage stage;
 
 	/**
 	 * TODO everything
@@ -43,9 +49,16 @@ public class GameLogic {
 		//networkThread = new NetworkThread();
 
 		actionEventHandler = new ActionEventHandler();
+		keyEventHandler    = new KeyEventHandler();
 		gui = new Gui();
-		gui.addActionEventHandler(actionEventHandler);
+		//gui.addActionEventHandler(actionEventHandler);
 
+		//stage = new Stage();
+
+
+		Gui.addActionEventHandler(actionEventHandler);
+		Gui.addKeyEventHandler(keyEventHandler);
+		//Gui.launch(Gui.class);
 		Gui.launch(Gui.class);
 		//gui.addListeners(listeners);
 		
@@ -59,6 +72,16 @@ public class GameLogic {
 			System.out.println("Hello World");
 		}
 	}
+	public class KeyEventHandler implements EventHandler<KeyEvent> {
+		@Override
+		public void handle(KeyEvent event) {
+			if(event.getCode() == KeyCode.M &&
+			   event.isControlDown()) {
+				Gui.close();
+			   }
+
+		}
+	}
 
 	private class NetworkThread implements Runnable {
 		@Override
@@ -70,10 +93,5 @@ public class GameLogic {
 			 */
 		}
 	} //private class NetworkThread
-
-	/**
-	 * TODO
-	 * There should be input listeners for the GUI here
-	 */
 
 }
