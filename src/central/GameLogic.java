@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class GameLogic extends Application {
@@ -16,7 +16,7 @@ public class GameLogic extends Application {
 	//private Battlefield otherBattlefield;
 
 	//private Network network;
-	//private NetworkThread networkThread;
+	private NetworkThread networkThread;
 
 
 	private ActionEventHandler actionEventHandler;
@@ -40,7 +40,8 @@ public class GameLogic extends Application {
 		}
 		*/
 
-		//networkThread = new NetworkThread();
+		networkThread = new NetworkThread();
+		new Thread(networkThread).start();
 
 		actionEventHandler = new ActionEventHandler();
 		keyEventHandler    = new KeyEventHandler();
@@ -53,16 +54,22 @@ public class GameLogic extends Application {
 	public void start(Stage inStage) throws Exception {
 		primaryStage = inStage;
 
+		// btn
 		Button btn = new Button();
 		btn.setText("Say 'Hello World'");
 		btn.setOnAction(actionEventHandler);
 
-		StackPane root = new StackPane();
+		// Stack pane
+		Pane root = new Pane();
 		root.getChildren().add(btn);
 
+		// Scene
+		// Only one at a time, can change
 		Scene scene = new Scene(root, 300, 250);
 		scene.setOnKeyPressed(keyEventHandler);
 
+		// Stage
+		// This never changes
 		primaryStage.setTitle("Hello World");
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -86,7 +93,6 @@ public class GameLogic extends Application {
 		}
 	}
 
-	/*
 	private class NetworkThread implements Runnable {
 		@Override
 		public void run() {
@@ -94,9 +100,9 @@ public class GameLogic extends Application {
 			 * TODO
 			 * Ask the network class if anything has happenend,
 			 * and if it has, tell 'GameLogic'
-			 * /
+			 */
+			System.out.println("Network thread, reporting for duty.");
 		}
 	}
-	*/
 
 }

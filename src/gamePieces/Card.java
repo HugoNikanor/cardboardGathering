@@ -1,6 +1,9 @@
 package gamePieces;
 
-public class Card {
+import javafx.scene.layout.Pane;
+
+// TODO The Pane extension should be another type of pane
+public class Card extends Pane {
 	private String id;
 	private String cardName;
 	private String type;
@@ -24,7 +27,7 @@ public class Card {
 	private int tablePosY;
 	private boolean isFaceUp;
 	private double rotation;
-	private int height;
+	private int tablePosZ;
 
 	public Card(
 			String cardName,
@@ -141,18 +144,18 @@ public class Card {
 		this.rotation += rotation;
 	}
 
-	public int getHeight() {
-		return height;
+	public int gettablePosZ() {
+		return tablePosZ;
 	}
 
 	/**
-	 * @param height the height to set
+	 * @param tablePosZ the tablePosZ to set
 	 */
-	public void setHeight(int height) {
-		this.height = height;
+	public void settablePosZ(int tablePosZ) {
+		this.tablePosZ = tablePosZ;
 	}
-	public void changeHeight(int heightChange) {
-		this.height += heightChange;
+	public void changetablePosZ(int tablePosZChange) {
+		this.tablePosZ += tablePosZChange;
 	}
 
 	@Override

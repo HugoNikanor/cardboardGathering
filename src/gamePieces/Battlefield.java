@@ -1,9 +1,10 @@
 package gamePieces;
 
-public class Battlefield {
+import javafx.scene.layout.Pane;
+
+public class Battlefield extends Pane {
 	private Player player;
 	private CardCollection cards;
-
 
 	public Battlefield(String cardList) {
 		//System.out.println("Debug: start of Battlefield");
