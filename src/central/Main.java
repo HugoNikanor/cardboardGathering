@@ -10,7 +10,8 @@ public class Main {
 			"PROGRAM STARTED\n" + 
 			"==============="  
 		);
-		new GameLogic();
+		GameLogic.launch(GameLogic.class);
+
 		//System.out.println("Debug: End of main");
 	}
 }

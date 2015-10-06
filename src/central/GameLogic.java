@@ -1,31 +1,28 @@
 package central;
 
-import exceptions.CardNotFoundException;
-
-import gamePieces.Battlefield;
-
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import gui.Gui;
+public class GameLogic extends Application {
 
-public class GameLogic {
-
-	private Battlefield ownBattlefield;
-	private Battlefield otherBattlefield;
+	//private Battlefield ownBattlefield;
+	//private Battlefield otherBattlefield;
 
 	//private Network network;
 	//private NetworkThread networkThread;
 
-	//private Gui gui;
 
 	private ActionEventHandler actionEventHandler;
 	private KeyEventHandler keyEventHandler;
 
-	private Stage stage;
+	private Stage primaryStage;
 
 	public GameLogic() {
 
@@ -47,13 +44,28 @@ public class GameLogic {
 
 		actionEventHandler = new ActionEventHandler();
 		keyEventHandler    = new KeyEventHandler();
-
-		Gui.addActionEventHandler(actionEventHandler);
-		Gui.addKeyEventHandler(keyEventHandler);
-
-		Gui.launch(Gui.class);
 		
 		//System.out.println("Debug: end of GameLogic");
+
+	}
+
+	@Override
+	public void start(Stage inStage) throws Exception {
+		primaryStage = inStage;
+
+		Button btn = new Button();
+		btn.setText("Say 'Hello World'");
+		btn.setOnAction(actionEventHandler);
+
+		StackPane root = new StackPane();
+		root.getChildren().add(btn);
+
+		Scene scene = new Scene(root, 300, 250);
+		scene.setOnKeyPressed(keyEventHandler);
+
+		primaryStage.setTitle("Hello World");
+		primaryStage.setScene(scene);
+		primaryStage.show();
 
 	}
 
@@ -69,12 +81,12 @@ public class GameLogic {
 			// C-m to close the window
 			if(event.getCode() == KeyCode.M &&
 			   event.isControlDown()) {
-				Gui.close();
-			   }
-
+				primaryStage.close();
+			}
 		}
 	}
 
+	/*
 	private class NetworkThread implements Runnable {
 		@Override
 		public void run() {
@@ -82,8 +94,9 @@ public class GameLogic {
 			 * TODO
 			 * Ask the network class if anything has happenend,
 			 * and if it has, tell 'GameLogic'
-			 */
+			 * /
 		}
-	} 
+	}
+	*/
 
 }
