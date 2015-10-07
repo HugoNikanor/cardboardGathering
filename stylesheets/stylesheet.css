@@ -1,3 +1,16 @@
-.border {
+/* Debug identifiers */
+#test-id {
+}
+.test-class {
+}
+/* Actual identifiers */
+.battlefield {
 	-fx-border-color: black;
- }
+}
+.cards-in-hand-pane {
+
+}
+.card {
+	-fx-border-color: black;
+	-fx-border-width: 5px;
+}

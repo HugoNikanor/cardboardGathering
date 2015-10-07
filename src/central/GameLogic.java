@@ -1,7 +1,6 @@
 package central;
 
 import java.io.File;
-import java.net.URL;
 
 import gamePieces.Battlefield;
 
@@ -9,11 +8,11 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class GameLogic extends Application {
@@ -21,6 +20,10 @@ public class GameLogic extends Application {
 	private Battlefield ownBattlefield;
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
+
+	private HBox cardsInHandPane;
+
+	private String styleFilePath;
 
 	//private Network network;
 	private NetworkThread networkThread;
@@ -30,27 +33,30 @@ public class GameLogic extends Application {
 
 	private Stage primaryStage;
 
-	private Button ownBtn;
-	private Button otherBtn;
-
 	public GameLogic() {
+		// Loads the stylesheet, in a not to pretty way
+		File styleFile = new File("stylesheets/stylesheet.css");
+		styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
 
-		//System.out.println("Debug: start of GameLogic");
+		// Initiates the eventHandlers
+		keyEventHandler    = new KeyEventHandler();
+		actionEventHandler = new ActionEventHandler();
 
-		ownBattlefield   = new Battlefield("cardList");
-		otherBattlefield = new Battlefield("cardlist");
+		ownBattlefield   = new Battlefield("cardList", actionEventHandler);
+		otherBattlefield = new Battlefield("cardlist", actionEventHandler);
+		otherBattlefield.setRotate(180d);
 
+		// Pane for the cards in your hand
+		// TODO This should possibly get its own class 
+		cardsInHandPane = new HBox();
+		cardsInHandPane.setPrefSize(400, 100);
+		cardsInHandPane.getStyleClass().add("cards-in-hand-pane");
+
+		// TODO testline
 		ownBattlefield.setId("test-id");
-		otherBattlefield.getStyleClass().add("test-class");
 
 		networkThread = new NetworkThread();
 		new Thread(networkThread).start();
-
-		actionEventHandler = new ActionEventHandler();
-		keyEventHandler    = new KeyEventHandler();
-		
-		//System.out.println("Debug: end of GameLogic");
-
 	}
 
 	@Override
@@ -61,70 +67,41 @@ public class GameLogic extends Application {
 		 */
 		primaryStage = inStage;
 
-		// =================================== //
-		// Pane Declarations                   //
-		// =================================== //
-
+		// contain the ownBattlefield & and otherBattlefield
 		GridPane battlefieldContainer = new GridPane();
-		GridPane cardsOnHandPane = new GridPane();
-
-		cardsOnHandPane.setPrefSize(400, 100);
-
-		BorderPane rootGamePane = new BorderPane();
-
-		rootGamePane.setCenter(battlefieldContainer);
-		rootGamePane.setBottom(cardsOnHandPane);
-
-		//ownBattlefield.setBorder(
-
-		otherBattlefield.setRotate(180d);
-
-		//battlefieldContainer.getChildren().add(ownBattlefield);
 		battlefieldContainer.add(otherBattlefield, 0, 0);
 		battlefieldContainer.add(ownBattlefield,   0, 1);
 
 
-		// btn
-		ownBtn = new Button();
-		ownBtn.setText("'Own Battlefield'");
-		ownBtn.setOnAction(actionEventHandler);
-
-		otherBtn = new Button();
-		otherBtn.setText("'Other Battlefield'");
-		otherBtn.setOnAction(actionEventHandler);
-
-		ownBattlefield.getChildren().add(ownBtn);
-		otherBattlefield.getChildren().add(otherBtn);
+		// The pane everything ingame should be placed in
+		// Change this for "out of game" menus & simmilar
+		BorderPane rootGamePane = new BorderPane();
+		rootGamePane.setCenter(battlefieldContainer);
+		rootGamePane.setBottom(cardsInHandPane);
 
 		// Scene
 		// Only one at a time, can change
 		Scene gameScene = new Scene(rootGamePane);
 		gameScene.setOnKeyPressed(keyEventHandler);
 
-
-		// Loads the stylesheet, in a not to pretty way
-		File f = new File("stylesheet.css");
-		gameScene.getStylesheets().clear();
-		gameScene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+		// Applies the stylesheet
+		gameScene.getStylesheets().add(styleFilePath);
 
 		// Stage
 		// This never changes
-		primaryStage.setTitle("Hello World");
+		primaryStage.setTitle("cardboardGathering");
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
-
-		System.out.println("launched();");
-
 	}
 
 	public class ActionEventHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent event) {
-			if(event.getSource() == ownBtn) {
-				System.out.println("Hello World");
+			if(event.getSource() == ownBattlefield.getTestBtn()) {
+				System.out.println("ownBattlefield");
 			}
-			if(event.getSource() == otherBtn) {
-				System.out.println("Goodbye!");
+			if(event.getSource() == otherBattlefield.getTestBtn()) {
+				System.out.println("otherBattlefield");
 			}
 		}
 	}

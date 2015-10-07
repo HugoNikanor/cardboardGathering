@@ -1,6 +1,7 @@
 package gamePieces;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 // TODO The Pane extension should be another type of pane
 public class Card extends Pane {
@@ -22,11 +23,11 @@ public class Card extends Pane {
 	private int manaCostBlank;
 	private int convertedManaCost;
 
-	private int tablePosX;
-	private int tablePosY;
+	private double tablePosX;
+	private double tablePosY;
+	private double tablePosZ;
 	private boolean isFaceUp;
 	private double rotation;
-	private int tablePosZ;
 
 	public Card(
 			String cardName,
@@ -63,6 +64,15 @@ public class Card extends Pane {
 		this.manaCostBlank = manaCostBlank;
 		calcConvMana();
 
+		//===============================//
+		//         JavaFX below          //
+		//===============================//
+		
+		this.getStyleClass().add("card");
+		this.setPrefSize(70, 100);
+		Text testText = new Text(cardName);
+		this.getChildren().add(testText);
+
 		//System.out.println("debug: end of Card");
 	}
 
@@ -90,24 +100,28 @@ public class Card extends Pane {
 	/**
 	 * @param tablePosX the tablePosX to set
 	 */
-	public void setTablePosX(int tablePosX) {
+	public void setTablePosX(double tablePosX) {
 		this.tablePosX = tablePosX;
+		this.setTranslateX(this.tablePosX);
 	}
 
 
-	public void modifyTablePosX(int changeX) {
+	public void modifyTablePosX(double changeX) {
 		this.tablePosX += changeX;
+		this.setTranslateX(this.tablePosX);
 	}
 
 	/**
 	 * @param tablePosY the tablePosY to set
 	 */
-	public void setTablePosY(int tablePosY) {
+	public void setTablePosY(double tablePosY) {
 		this.tablePosY = tablePosY;
+		this.setTranslateY(this.tablePosY);
 	}
 
-	public void modifyTablePosY(int changeY) {
+	public void modifyTablePosY(double changeY) {
 		this.tablePosY += changeY;
+		this.setTranslateY(this.tablePosY);
 	}
 
 	public boolean isFaceUp() {
@@ -143,17 +157,17 @@ public class Card extends Pane {
 		this.rotation += rotation;
 	}
 
-	public int gettablePosZ() {
+	public double getTablePosZ() {
 		return tablePosZ;
 	}
 
 	/**
 	 * @param tablePosZ the tablePosZ to set
 	 */
-	public void settablePosZ(int tablePosZ) {
+	public void setTablePosZ(double tablePosZ) {
 		this.tablePosZ = tablePosZ;
 	}
-	public void changetablePosZ(int tablePosZChange) {
+	public void changeTablePosZ(double tablePosZChange) {
 		this.tablePosZ += tablePosZChange;
 	}
 
@@ -244,11 +258,11 @@ public class Card extends Pane {
 		return convertedManaCost;
 	}
 
-	public int getTablePosX() {
+	public double getTablePosX() {
 		return tablePosX;
 	}
 
-	public int getTablePosY() {
+	public double getTablePosY() {
 		return tablePosY;
 	}
 
