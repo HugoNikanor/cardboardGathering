@@ -4,7 +4,6 @@ import javafx.scene.layout.Pane;
 
 // TODO The Pane extension should be another type of pane
 public class Card extends Pane {
-	private String id;
 	private String cardName;
 	private String type;
 	private String subtype;
@@ -184,10 +183,6 @@ public class Card extends Pane {
 	 * here but the vilest of getters ahead.
 	 ************************************
 	 */
-
-	public String getId() {
-		return id;
-	}
 
 	public String getCardName() {
 		return cardName;

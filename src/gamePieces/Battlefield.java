@@ -3,6 +3,7 @@ package gamePieces;
 import javafx.scene.layout.Pane;
 
 public class Battlefield extends Pane {
+
 	private Player player;
 	private CardCollection cards;
 
@@ -10,6 +11,10 @@ public class Battlefield extends Pane {
 		//System.out.println("Debug: start of Battlefield");
 		player = new Player(cardList);
 		cards = player.getBattlefieldCards();
+
+		//TODO it should be much larger later
+		this.setPrefSize(400, 200);
+
 		//System.out.println("Debug: end of Battlefield");
 	}
 
