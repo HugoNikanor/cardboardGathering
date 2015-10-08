@@ -1,5 +1,7 @@
 package gamePieces;
 
+import javafx.scene.input.MouseEvent;
+import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -71,7 +73,12 @@ public class Card extends Pane {
 		this.getStyleClass().add("card");
 		this.setPrefSize(70, 100);
 		Text testText = new Text(cardName);
+		testText.setWrappingWidth(60);
+		testText.setTranslateY(15);
+		testText.setTranslateX(5);
 		this.getChildren().add(testText);
+
+		this.setOnMouseClicked(new MouseEventHandler());
 
 		//System.out.println("debug: end of Card");
 	}
@@ -88,6 +95,18 @@ public class Card extends Pane {
 			manaCostWhite + 
 			manaCostBlack + 
 			manaCostBlank;
+	}
+
+	private class MouseEventHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			// A click changes between 'taped' & 'un-taped'
+			if(rotation == 0) {
+				setRotation(90d);
+			} else {
+				setRotation(0d);
+			}
+		}
 	}
 
 	/**
@@ -152,9 +171,11 @@ public class Card extends Pane {
 	 */
 	public void setRotation(double rotation) {
 		this.rotation = rotation;
+		this.setRotate(this.rotation);
 	}
 	public void rotate(double rotation) {
 		this.rotation += rotation;
+		this.setRotate(this.rotation);
 	}
 
 	public double getTablePosZ() {
