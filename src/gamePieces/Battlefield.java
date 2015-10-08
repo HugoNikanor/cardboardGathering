@@ -33,8 +33,8 @@ public class Battlefield extends Pane {
 
 		try {
 			this.getChildren().add(player.getBattlefieldCards().getCard(0));
-			player.getBattlefieldCards().getCard(0).setTablePosX(new Random().nextInt(331));
-			player.getBattlefieldCards().getCard(0).setTablePosY(new Random().nextInt(101));
+			player.getBattlefieldCards().getCard(0).setTranslateX(new Random().nextInt(331));
+			player.getBattlefieldCards().getCard(0).setTranslateY(new Random().nextInt(101));
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

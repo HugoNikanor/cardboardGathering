@@ -1,6 +1,8 @@
 package gamePieces;
 
+import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -25,11 +27,10 @@ public class Card extends Pane {
 	private int manaCostBlank;
 	private int convertedManaCost;
 
-	private double tablePosX;
-	private double tablePosY;
-	private double tablePosZ;
 	private boolean isFaceUp;
-	private double rotation;
+
+	private double cardGrepPointX;
+	private double cardGrepPointY;
 
 	public Card(
 			String cardName,
@@ -78,8 +79,16 @@ public class Card extends Pane {
 		testText.setTranslateX(5);
 		this.getChildren().add(testText);
 
-		this.setOnMouseClicked(new MouseEventHandler());
+		MouseEventHandler mouseEventHandler = new MouseEventHandler();
 
+		this.setOnMouseClicked ( mouseEventHandler );
+		this.setOnMouseDragged ( mouseEventHandler );
+		this.setOnMousePressed ( mouseEventHandler );
+		this.setOnMouseReleased( mouseEventHandler );
+		
+		this.setOnScroll(new ScrollEventHandler());
+
+		this.setCursor(Cursor.HAND);
 		//System.out.println("debug: end of Card");
 	}
 
@@ -100,49 +109,56 @@ public class Card extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			// A click changes between 'taped' & 'un-taped'
-			if(rotation == 0) {
-				setRotation(90d);
-			} else {
-				setRotation(0d);
+			System.out.println(event.getEventType());
+
+			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+				cardGrepPointX = event.getX();
+				cardGrepPointY = event.getY();
+				setCursor(Cursor.MOVE);
+			}
+			if( event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+				setCursor(Cursor.HAND);
+			}
+			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
+				System.out.println(cardGrepPointX);
+				setTranslateX(getTranslateX() + event.getX() - cardGrepPointX);
+				setTranslateY(getTranslateY() + event.getY() - cardGrepPointY);
+			}
+			if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+				// A click changes between 'taped' & 'un-taped'
+				/*
+				if(getRotate() == 0) {
+					setRotate(90d);
+				} else {
+					setRotate(0d);
+				}
+				*/
 			}
 		}
 	}
 
-	/**
-	 *************************************
+	private class ScrollEventHandler implements EventHandler<ScrollEvent> {
+		@Override
+		public void handle(ScrollEvent event) {
+			/**
+			 * Scales card by a factor 2 when scrolling over it,
+			 * please be avare that if you make the card to small then it 
+			 * dissapears.
+			 */
+			if( event.getDeltaY() > 0 ) {
+				setScaleX(getScaleX() * (event.getDeltaY() / 20));
+				setScaleY(getScaleY() * (event.getDeltaY() / 20));
+			} else {
+				setScaleX(getScaleX() * (1 / (-1 * event.getDeltaY() / 20)));
+				setScaleY(getScaleY() * (1 / (-1 * event.getDeltaY() / 20)));
+			}
+		}
+	}
+
+	/*************************************
 	 * Functions for manipulating the physical 
 	 * represontation of the card
-	 ************************************
-	 */
-
-	/**
-	 * @param tablePosX the tablePosX to set
-	 */
-	public void setTablePosX(double tablePosX) {
-		this.tablePosX = tablePosX;
-		this.setTranslateX(this.tablePosX);
-	}
-
-
-	public void modifyTablePosX(double changeX) {
-		this.tablePosX += changeX;
-		this.setTranslateX(this.tablePosX);
-	}
-
-	/**
-	 * @param tablePosY the tablePosY to set
-	 */
-	public void setTablePosY(double tablePosY) {
-		this.tablePosY = tablePosY;
-		this.setTranslateY(this.tablePosY);
-	}
-
-	public void modifyTablePosY(double changeY) {
-		this.tablePosY += changeY;
-		this.setTranslateY(this.tablePosY);
-	}
-
+	 ************************************/
 	public boolean isFaceUp() {
 		return isFaceUp;
 	}
@@ -159,37 +175,6 @@ public class Card extends Pane {
 		} else {
 			isFaceUp = true;
 		}
-
-	}
-
-	public double getRotation() {
-		return rotation;
-	}
-
-	/**
-	 * @param rotation the rotation to set
-	 */
-	public void setRotation(double rotation) {
-		this.rotation = rotation;
-		this.setRotate(this.rotation);
-	}
-	public void rotate(double rotation) {
-		this.rotation += rotation;
-		this.setRotate(this.rotation);
-	}
-
-	public double getTablePosZ() {
-		return tablePosZ;
-	}
-
-	/**
-	 * @param tablePosZ the tablePosZ to set
-	 */
-	public void setTablePosZ(double tablePosZ) {
-		this.tablePosZ = tablePosZ;
-	}
-	public void changeTablePosZ(double tablePosZChange) {
-		this.tablePosZ += tablePosZChange;
 	}
 
 	@Override
@@ -277,14 +262,6 @@ public class Card extends Pane {
 
 	public int getConvertedManaCost() {
 		return convertedManaCost;
-	}
-
-	public double getTablePosX() {
-		return tablePosX;
-	}
-
-	public double getTablePosY() {
-		return tablePosY;
 	}
 
 }
