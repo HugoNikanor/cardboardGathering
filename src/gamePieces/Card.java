@@ -73,11 +73,13 @@ public class Card extends Pane {
 		
 		this.getStyleClass().add("card");
 		this.setPrefSize(70, 100);
-		Text testText = new Text(cardName);
-		testText.setWrappingWidth(60);
-		testText.setTranslateY(15);
-		testText.setTranslateX(5);
-		this.getChildren().add(testText);
+		Text cardNameText = new Text(cardName);
+		cardNameText.setWrappingWidth(60);
+		cardNameText.setTranslateY(15);
+		cardNameText.setTranslateX(5);
+		this.getChildren().add(cardNameText);
+
+		this.setCursor(Cursor.HAND);
 
 		MouseEventHandler mouseEventHandler = new MouseEventHandler();
 
@@ -88,7 +90,7 @@ public class Card extends Pane {
 		
 		this.setOnScroll(new ScrollEventHandler());
 
-		this.setCursor(Cursor.HAND);
+
 		//System.out.println("debug: end of Card");
 	}
 
@@ -109,8 +111,6 @@ public class Card extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			System.out.println(event.getEventType());
-
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 				cardGrepPointX = event.getX();
 				cardGrepPointY = event.getY();
@@ -120,7 +120,6 @@ public class Card extends Pane {
 				setCursor(Cursor.HAND);
 			}
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
-				System.out.println(cardGrepPointX);
 				setTranslateX(getTranslateX() + event.getX() - cardGrepPointX);
 				setTranslateY(getTranslateY() + event.getY() - cardGrepPointY);
 			}
@@ -159,10 +158,20 @@ public class Card extends Pane {
 	 * Functions for manipulating the physical 
 	 * represontation of the card
 	 ************************************/
+	public void modifyTranslateX(double change) {
+		this.setTranslateX(this.getTranslateX() + change);
+	}
+	public void modifyTranslateY(double change) {
+		this.setTranslateY(this.getTranslateY() + change);
+	}
+
+	public void modifyRotate(double change) {
+		this.setRotate(this.getRotate() + change);
+	}
+
 	public boolean isFaceUp() {
 		return isFaceUp;
 	}
-
 	/**
 	 * @param isFaceUp the isFaceUp to set
 	 */

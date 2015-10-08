@@ -83,7 +83,7 @@ public class Player {
 	 */
 	public void moveCardX(Card whatCard, int xChange) {
 		try {
-			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyTablePosX(xChange);
+			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyTranslateX(xChange);
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,7 +91,7 @@ public class Player {
 	}
 	public void moveCardY(Card whatCard, int yChange) {
 		try {
-			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyTablePosY(yChange);
+			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyTranslateY(yChange);
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,7 +99,7 @@ public class Player {
 	}
 	public void placeCardX(Card whatCard, int xPos) {
 		try {
-			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setTablePosX(xPos);
+			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setTranslateX(xPos);
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -107,7 +107,7 @@ public class Player {
 	}
 	public void placeCardY(Card whatCard, int yPos) {
 		try {
-			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setTablePosY(yPos);
+			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setTranslateY(yPos);
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,7 +116,7 @@ public class Player {
 
 	public void rotateCard(Card whatCard, int rotation) {
 		try {
-			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).rotate(rotation);
+			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyRotate(rotation);
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,7 +126,7 @@ public class Player {
 
 	public void setCardRotation(Card whatCard, int rotation) {
 		try {
-			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setRotation(rotation);
+			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setRotate(rotation);
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
