@@ -26,7 +26,7 @@ public class Battlefield extends Pane {
 		testBtn = new Button();
 		testBtn.setText(this.toString());
 		testBtn.setOnAction(aHandler);
-		this.getChildren().add(testBtn);
+		//this.getChildren().add(testBtn);
 
 		this.getStyleClass().add("battlefield");
 		this.setPrefSize(400, 200);

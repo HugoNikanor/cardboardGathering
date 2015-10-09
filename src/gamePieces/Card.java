@@ -1,9 +1,12 @@
 package gamePieces;
 
 import javafx.scene.Cursor;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -29,8 +32,7 @@ public class Card extends Pane {
 
 	private boolean isFaceUp;
 
-	private double cardGrepPointX;
-	private double cardGrepPointY;
+	public Card() {}
 
 	public Card(
 			String cardName,
@@ -83,16 +85,19 @@ public class Card extends Pane {
 
 		MouseEventHandler mouseEventHandler = new MouseEventHandler();
 
-		this.setOnMouseClicked ( mouseEventHandler );
+		//this.setOnMouseClicked ( mouseEventHandler );
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
-		
+
 		this.setOnScroll(new ScrollEventHandler());
 
+		this.requestFocus();
+		this.setFocused(true);
 
 		//System.out.println("debug: end of Card");
 	}
+
 
 	/**
 	 * Adds up all the mana costs
@@ -109,30 +114,47 @@ public class Card extends Pane {
 	}
 
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
+		private double cardGrepPointX;
+		private double cardGrepPointY;
+		private EventType<? extends MouseEvent> lastEvent;
+
 		@Override
 		public void handle(MouseEvent event) {
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				cardGrepPointX = event.getX();
-				cardGrepPointY = event.getY();
-				setCursor(Cursor.MOVE);
+				this.cardGrepPointX = event.getX();
+				this.cardGrepPointY = event.getY();
+				Card.this.setCursor(Cursor.MOVE);
 			}
+
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED) {
-				setCursor(Cursor.HAND);
-			}
-			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
-				setTranslateX(getTranslateX() + event.getX() - cardGrepPointX);
-				setTranslateY(getTranslateY() + event.getY() - cardGrepPointY);
-			}
-			if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-				// A click changes between 'taped' & 'un-taped'
-				/*
-				if(getRotate() == 0) {
-					setRotate(90d);
-				} else {
-					setRotate(0d);
+				Card.this.setCursor(Cursor.HAND);
+				if( this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
+					if(Card.this.getRotate() == 0) {
+						Card.this.setRotate(180d);
+					} else {
+						Card.this.setRotate(0d);
+					}
 				}
-				*/
 			}
+
+			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
+				//if(Card.this.getRotate() == 0) {
+				if(true) {
+					Card.this.setTranslateX( Card.this.getTranslateX() + event.getX() - cardGrepPointX );
+					Card.this.setTranslateY( Card.this.getTranslateY() + event.getY() - cardGrepPointY );
+					System.out.print(" trX: " + Card.this.getTranslateX());
+					System.out.print(" evX: " + event.getX());
+					System.out.println(" evY: " + event.getY());
+				} else {
+					Card.this.setTranslateX(Card.this.getTranslateX() + event.getX() /* - cardGrepPointX */);
+					Card.this.setTranslateY(Card.this.getTranslateY() + event.getY() /* - cardGrepPointY */);
+					System.out.print(" trX: " + Card.this.getTranslateX());
+					System.out.print(" evX: " + event.getX());
+					System.out.println(" evY: " + event.getY());
+				}
+			}
+
+			this.lastEvent = event.getEventType();
 		}
 	}
 

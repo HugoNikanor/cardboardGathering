@@ -2,7 +2,9 @@ package central;
 
 import java.io.File;
 
+import exceptions.CardNotFoundException;
 import gamePieces.Battlefield;
+import gamePieces.Card;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -113,6 +115,34 @@ public class GameLogic extends Application {
 			if(event.isControlDown() &&
 			   event.getCode() == KeyCode.M) {
 				primaryStage.close();
+			}
+			Card tempCard;
+			try {
+				tempCard = ownBattlefield.getPlayer().getBattlefieldCards().getCard(0);
+			} catch (CardNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				tempCard = new Card();
+			}
+
+			if( event.getCode() == KeyCode.DOWN) {
+			    tempCard.setTranslateY( tempCard.getTranslateY() + 12 );
+			}
+			if( event.getCode() == KeyCode.UP) {
+			    tempCard.setTranslateY( tempCard.getTranslateY() - 12 );
+			}
+			if( event.getCode() == KeyCode.RIGHT) {
+			    tempCard.setTranslateX( tempCard.getTranslateX() + 12 );
+			}
+			if( event.getCode() == KeyCode.LEFT) {
+				tempCard.setTranslateX( tempCard.getTranslateX() - 12 );
+			}
+			if( event.getCode() == KeyCode.SPACE ) {
+				if(tempCard.getRotate() == 0) {
+					tempCard.setRotate(90d);
+				} else {
+					tempCard.setRotate(0d);
+				}
 			}
 		}
 	}
