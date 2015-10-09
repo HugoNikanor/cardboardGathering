@@ -1,8 +1,6 @@
 package gamePieces;
 
 import javafx.scene.Cursor;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.event.EventHandler;
@@ -31,9 +29,6 @@ public class Card extends Pane {
 	private int convertedManaCost;
 
 	private boolean isFaceUp;
-
-	private double x = 0;
-	private double y = 0;
 
 	public Card() {}
 
@@ -114,17 +109,15 @@ public class Card extends Pane {
 	}
 
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
-		private double cardGrepPointX;
-		private double cardGrepPointY;
+		private double mouseInSceneX;
+		private double mouseInSceneY;
 		private EventType<? extends MouseEvent> lastEvent;
 
 		@Override
 		public void handle(MouseEvent event) {
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				this.cardGrepPointX = event.getSceneX();
-				this.cardGrepPointY = event.getSceneY();
-				x = getLayoutX();
-				y = getLayoutY();
+				this.mouseInSceneX = event.getSceneX();
+				this.mouseInSceneY = event.getSceneY();
 
 				Card.this.setCursor(Cursor.MOVE);
 			}
@@ -143,35 +136,22 @@ public class Card extends Pane {
 			}
 
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
-				//if(Card.this.getRotate() == 0) {
-				if(true) {
-					double offsetX = event.getSceneX() - cardGrepPointX;
-					double offsetY = event.getSceneY() - cardGrepPointY;
-					x += offsetX;
-					y += offsetY;
+				double xChange = event.getSceneX() - this.mouseInSceneX;
+				double yChange = event.getSceneY() - this.mouseInSceneY;
 
-					double scaledX = x;
-					double scaledY = y;
+				Card.this.setTranslateX(getTranslateX() + xChange);
+				Card.this.setTranslateY(getTranslateY() + yChange);
 
-					setLayoutX(scaledX);
-					setLayoutY(scaledY);
+				this.mouseInSceneX = event.getSceneX();
+				this.mouseInSceneY = event.getSceneY();
 
-					cardGrepPointX = event.getSceneX();
-					cardGrepPointY = event.getSceneY();
-
-					event.consume();
-					//Card.this.setTranslateX( Card.this.getTranslateX() + event.getX() - cardGrepPointX );
-					//Card.this.setTranslateY( Card.this.getTranslateY() + event.getY() - cardGrepPointY );
-					//System.out.print(" trX: " + Card.this.getTranslateX());
-					//System.out.print(" evX: " + event.getX());
-					//System.out.println(" evY: " + event.getY());
-				} else {
-					Card.this.setTranslateX( event.getX() /* - cardGrepPointX */);
-					Card.this.setTranslateY( event.getY() /* - cardGrepPointY */);
-					System.out.print(" trX: " + Card.this.getTranslateX());
-					System.out.print(" evX: " + event.getX());
-					System.out.println(" evY: " + event.getY());
-				}
+				/*
+				System.out.print(" trX: " + Card.this.getTranslateX());
+				System.out.print(" trY: " + Card.this.getTranslateY());
+				System.out.print(" cgpX: " + mouseInSceneX);
+				System.out.print(" cgpY: " + mouseInSceneY);
+				System.out.println();
+				*/
 			}
 
 			this.lastEvent = event.getEventType();
