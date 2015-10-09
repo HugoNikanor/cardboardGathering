@@ -32,6 +32,9 @@ public class Card extends Pane {
 
 	private boolean isFaceUp;
 
+	private double x = 0;
+	private double y = 0;
+
 	public Card() {}
 
 	public Card(
@@ -118,8 +121,11 @@ public class Card extends Pane {
 		@Override
 		public void handle(MouseEvent event) {
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				this.cardGrepPointX = event.getX();
-				this.cardGrepPointY = event.getY();
+				this.cardGrepPointX = event.getSceneX();
+				this.cardGrepPointY = event.getSceneY();
+				x = getLayoutX();
+				y = getLayoutY();
+
 				Card.this.setCursor(Cursor.MOVE);
 			}
 
@@ -128,7 +134,7 @@ public class Card extends Pane {
 				if( this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
 					if(Card.this.getRotate() == 0) {
 						System.out.println("tilted");
-						Card.this.setRotate(45d);
+						Card.this.setRotate(90d);
 					} else {
 						System.out.println("normal");
 						Card.this.setRotate(0d);
@@ -139,11 +145,26 @@ public class Card extends Pane {
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
 				//if(Card.this.getRotate() == 0) {
 				if(true) {
-					Card.this.setTranslateX( Card.this.getTranslateX() + event.getX() - cardGrepPointX );
-					Card.this.setTranslateY( Card.this.getTranslateY() + event.getY() - cardGrepPointY );
-					System.out.print(" trX: " + Card.this.getTranslateX());
-					System.out.print(" evX: " + event.getX());
-					System.out.println(" evY: " + event.getY());
+					double offsetX = event.getSceneX() - cardGrepPointX;
+					double offsetY = event.getSceneY() - cardGrepPointY;
+					x += offsetX;
+					y += offsetY;
+
+					double scaledX = x;
+					double scaledY = y;
+
+					setLayoutX(scaledX);
+					setLayoutY(scaledY);
+
+					cardGrepPointX = event.getSceneX();
+					cardGrepPointY = event.getSceneY();
+
+					event.consume();
+					//Card.this.setTranslateX( Card.this.getTranslateX() + event.getX() - cardGrepPointX );
+					//Card.this.setTranslateY( Card.this.getTranslateY() + event.getY() - cardGrepPointY );
+					//System.out.print(" trX: " + Card.this.getTranslateX());
+					//System.out.print(" evX: " + event.getX());
+					//System.out.println(" evY: " + event.getY());
 				} else {
 					Card.this.setTranslateX( event.getX() /* - cardGrepPointX */);
 					Card.this.setTranslateY( event.getY() /* - cardGrepPointY */);
