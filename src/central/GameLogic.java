@@ -138,11 +138,7 @@ public class GameLogic extends Application {
 				tempCard.setTranslateX( tempCard.getTranslateX() - 12 );
 			}
 			if( event.getCode() == KeyCode.SPACE ) {
-				if(tempCard.getRotate() == 0) {
-					tempCard.setRotate(90d);
-				} else {
-					tempCard.setRotate(0d);
-				}
+				tempCard.smoothRotate(90d);
 			}
 		}
 	}

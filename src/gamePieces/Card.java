@@ -3,10 +3,12 @@ package gamePieces;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.animation.RotateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 // TODO The Pane extension should be another type of pane
 public class Card extends Pane {
@@ -33,21 +35,21 @@ public class Card extends Pane {
 	public Card() {}
 
 	public Card(
-			String cardName,
-			String type,
-			String subtype,
-			String ability,
-			String flavour,
-			int power,
-			int toughness,
-			int loyalty,
-			int manaCostRed,
-			int manaCostBlue,
-			int manaCostWhite,
-			int manaCostBlack,
-			int manaCostGreen,
-			int manaCostBlank
-			) {
+		String cardName,
+		String type,
+		String subtype,
+		String ability,
+		String flavour,
+		int power,
+		int toughness,
+		int loyalty,
+		int manaCostRed,
+		int manaCostBlue,
+		int manaCostWhite,
+		int manaCostBlack,
+		int manaCostGreen,
+		int manaCostBlank
+	) {
 		//System.out.println("debug: start of Card");
 
 		this.cardName  = cardName;
@@ -122,17 +124,16 @@ public class Card extends Pane {
 				Card.this.setCursor(Cursor.MOVE);
 			}
 
-			if( event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+			/*
+			 * Rotates the card if it's clicked and not draged
+			 */
+			if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
+				this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
+			}
+
+			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 				Card.this.setCursor(Cursor.HAND);
-				if( this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
-					if(Card.this.getRotate() == 0) {
-						System.out.println("tilted");
-						Card.this.setRotate(90d);
-					} else {
-						System.out.println("normal");
-						Card.this.setRotate(0d);
-					}
-				}
+				Card.this.smoothRotate(90d);
 			}
 
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
@@ -180,6 +181,27 @@ public class Card extends Pane {
 	 * Functions for manipulating the physical 
 	 * represontation of the card
 	 ************************************/
+
+	/**
+	 * Rotates the card to 'rotation' if the rotation is 0
+	 * if the rotation isn't 0 the change it to zero
+	 */
+	public void smoothRotate( double rotation ) {
+		RotateTransition rt;
+		if( Card.this.getRotate() == 0 ) {
+			// Rotates the card by 90 degrees
+			// Always rotates clockwise
+			rt = new RotateTransition(Duration.millis(300), Card.this);
+			rt.setByAngle(rotation);
+			rt.play();
+		} else {
+			// if the rotation isn't 90 degrees then return to 0 degrees
+			// always rotates counter clockwise
+			rt = new RotateTransition(Duration.millis(300), Card.this);
+			rt.setByAngle( -1 * Card.this.getRotate() );
+			rt.play();
+		}
+	}
 	public void modifyTranslateX(double change) {
 		this.setTranslateX(this.getTranslateX() + change);
 	}
