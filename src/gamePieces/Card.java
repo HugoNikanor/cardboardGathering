@@ -129,11 +129,11 @@ public class Card extends Pane {
 			 */
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
 				this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
+				Card.this.smoothRotate(90d);
 			}
 
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 				Card.this.setCursor(Cursor.HAND);
-				Card.this.smoothRotate(90d);
 			}
 
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
@@ -202,6 +202,7 @@ public class Card extends Pane {
 			rt.play();
 		}
 	}
+
 	public void modifyTranslateX(double change) {
 		this.setTranslateX(this.getTranslateX() + change);
 	}
