@@ -90,10 +90,7 @@ public class Card extends Pane {
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
 
-		this.setOnScroll(new ScrollEventHandler());
-
-		this.requestFocus();
-		this.setFocused(true);
+		this.setOnScroll( new ScrollEventHandler() );
 
 		//System.out.println("debug: end of Card");
 	}
@@ -130,8 +127,10 @@ public class Card extends Pane {
 				Card.this.setCursor(Cursor.HAND);
 				if( this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
 					if(Card.this.getRotate() == 0) {
-						Card.this.setRotate(180d);
+						System.out.println("tilted");
+						Card.this.setRotate(45d);
 					} else {
+						System.out.println("normal");
 						Card.this.setRotate(0d);
 					}
 				}
@@ -146,8 +145,8 @@ public class Card extends Pane {
 					System.out.print(" evX: " + event.getX());
 					System.out.println(" evY: " + event.getY());
 				} else {
-					Card.this.setTranslateX(Card.this.getTranslateX() + event.getX() /* - cardGrepPointX */);
-					Card.this.setTranslateY(Card.this.getTranslateY() + event.getY() /* - cardGrepPointY */);
+					Card.this.setTranslateX( event.getX() /* - cardGrepPointX */);
+					Card.this.setTranslateY( event.getY() /* - cardGrepPointY */);
 					System.out.print(" trX: " + Card.this.getTranslateX());
 					System.out.print(" evX: " + event.getX());
 					System.out.println(" evY: " + event.getY());
