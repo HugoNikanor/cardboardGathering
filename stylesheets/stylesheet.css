@@ -14,3 +14,21 @@
 	-fx-border-color: black;
 	-fx-border-width: 5px;
 }
+.black {
+	-fx-background-color: #202020;
+}
+.blue {
+	-fx-background-color: DarkCyan;
+}
+.green {
+	-fx-background-color: ForestGreen;
+}
+.red {
+	-fx-background-color: FireBrick;
+}
+.white {
+	-fx-background-color: DarkKhaki;
+}
+.color-less {
+	-fx-background-color: #C0C0C0;
+}

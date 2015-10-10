@@ -38,11 +38,11 @@ public class DatabaseInterface {
 			Integer.parseInt(pr.getProperty("card1Power")),
 			Integer.parseInt(pr.getProperty("card1Toughness")),
 			Integer.parseInt(pr.getProperty("card1Loyalty")),
-			Integer.parseInt(pr.getProperty("card1ManaCostRed")),
-			Integer.parseInt(pr.getProperty("card1ManaCostBlue")),
-			Integer.parseInt(pr.getProperty("card1ManaCostWhite")),
 			Integer.parseInt(pr.getProperty("card1ManaCostBlack")),
+			Integer.parseInt(pr.getProperty("card1ManaCostBlue")),
 			Integer.parseInt(pr.getProperty("card1ManaCostGreen")),
+			Integer.parseInt(pr.getProperty("card1ManaCostRed")),
+			Integer.parseInt(pr.getProperty("card1ManaCostWhite")),
 			Integer.parseInt(pr.getProperty("card1ManaCostBlank"))
 		);
 
@@ -55,11 +55,11 @@ public class DatabaseInterface {
 			Integer.parseInt(pr.getProperty("card2Power")),
 			Integer.parseInt(pr.getProperty("card2Toughness")),
 			Integer.parseInt(pr.getProperty("card2Loyalty")),
-			Integer.parseInt(pr.getProperty("card2ManaCostRed")),
-			Integer.parseInt(pr.getProperty("card2ManaCostBlue")),
-			Integer.parseInt(pr.getProperty("card2ManaCostWhite")),
 			Integer.parseInt(pr.getProperty("card2ManaCostBlack")),
+			Integer.parseInt(pr.getProperty("card2ManaCostBlue")),
 			Integer.parseInt(pr.getProperty("card2ManaCostGreen")),
+			Integer.parseInt(pr.getProperty("card2ManaCostRed")),
+			Integer.parseInt(pr.getProperty("card2ManaCostWhite")),
 			Integer.parseInt(pr.getProperty("card2ManaCostBlank"))
 		); 
 	}

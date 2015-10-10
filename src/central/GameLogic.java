@@ -246,27 +246,48 @@ public class GameLogic extends Application {
 					if( pressedKeys.contains(KeyCode.DOWN) ||
 					    pressedKeys.contains(KeyCode.J) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
-						tt.setByY( 12f );
+
+						if( tempCard.getTranslateY() + 12 > ownBattlefield.getHeight() - tempCard.getHeight() ) {
+							tt.setByY( ownBattlefield.getHeight() - tempCard.getHeight() - tempCard.getTranslateY() );
+						} else {
+							tt.setByY( 12f );
+						}
 						tt.play();
 					}
 					if( pressedKeys.contains(KeyCode.UP) ||
 					    pressedKeys.contains(KeyCode.K) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
-						tt.setByY( -12f );
+
+						if( tempCard.getTranslateY() - 12 < 0 ) {
+							tt.setByY( -1*tempCard.getTranslateY() );
+						} else {
+							tt.setByY( -12f );
+						}
 						tt.play();
 					}
 					if( pressedKeys.contains(KeyCode.RIGHT) ||
 					    pressedKeys.contains(KeyCode.L) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
-						tt.setByX( 12f );
+
+						if( tempCard.getTranslateX() + 12 > ownBattlefield.getWidth() - tempCard.getWidth() ) {
+							tt.setByX( ownBattlefield.getWidth() - tempCard.getWidth() - tempCard.getTranslateX() );
+						} else {
+							tt.setByX( 12f );
+						}
 						tt.play();
 					}
 					if( pressedKeys.contains(KeyCode.LEFT) ||
 					    pressedKeys.contains(KeyCode.H) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
-						tt.setByX( -12f );
+
+						if( tempCard.getTranslateX() - 12 < 0 ) {
+							tt.setByX( -1*tempCard.getTranslateX() );
+						} else {
+							tt.setByX( -12f );
+						}
 						tt.play();
 					}
+
 					// Rotate the card when space is released
 					if( !pressedKeys.contains(KeyCode.SPACE) &&
 						spacePressedBefore ) {

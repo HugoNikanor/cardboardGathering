@@ -3,6 +3,9 @@ package gamePieces;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+
+import java.util.ArrayList;
+
 import javafx.animation.RotateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -22,18 +25,28 @@ public class Card extends Pane {
 	private int toughness;
 	private int loyalty;
 
-	private int manaCostRed;
-	private int manaCostBlue;
-	private int manaCostWhite;
-	private int manaCostBlack;
-	private int manaCostGreen;
+	enum Field {
+		manaCostBlank,
+		manaCostBlack,
+		manaCostBlue,
+		manaCostGreen,
+		manaCostRed,
+		manaCostWhite,
+	}
 	private int manaCostBlank;
+
+	private int manaCostBlack;
+	private int manaCostBlue;
+	private int manaCostGreen;
+	private int manaCostRed;
+	private int manaCostWhite;
+
 	private int convertedManaCost;
 
 	private boolean isFaceUp;
 
-	private double width;
-	private double height;
+	private double containerSizeX;
+	private double containerSizeY;
 
 	// Clean up X & Y
 	private double scaleFactorX;
@@ -50,11 +63,11 @@ public class Card extends Pane {
 		int power,
 		int toughness,
 		int loyalty,
-		int manaCostRed,
-		int manaCostBlue,
-		int manaCostWhite,
 		int manaCostBlack,
+		int manaCostBlue,
 		int manaCostGreen,
+		int manaCostRed,
+		int manaCostWhite,
 		int manaCostBlank
 	) {
 		//System.out.println("debug: start of Card");
@@ -68,13 +81,14 @@ public class Card extends Pane {
 		this.toughness = toughness;
 		this.loyalty   = loyalty;
 
-		this.manaCostRed   = manaCostRed;
-        this.manaCostBlue  = manaCostBlue;
-        this.manaCostWhite = manaCostWhite;
         this.manaCostBlack = manaCostBlack;
+        this.manaCostBlue  = manaCostBlue;
         this.manaCostGreen = manaCostGreen;
+		this.manaCostRed   = manaCostRed;
+        this.manaCostWhite = manaCostWhite;
 		this.manaCostBlank = manaCostBlank;
-		calcConvMana();
+
+		this.calcConvMana();
 
 		//===============================//
 		//         JavaFX below          //
@@ -84,15 +98,18 @@ public class Card extends Pane {
 
 		//width = 70;
 		//height = 100;
-		height = 150;
-		width = 0.7 * 150;
-		this.setPrefSize(width, height);
+		this.setHeight(150);
+		this.setWidth(0.7 * 150);
+		this.setPrefSize(this.getWidth(), this.getHeight());
 
 		Text cardNameText = new Text(cardName);
 		cardNameText.setWrappingWidth(60);
 		cardNameText.setTranslateY(15);
 		cardNameText.setTranslateX(5);
+
+		//Label nameLabel = new Label(cardName);
 		this.getChildren().add(cardNameText);
+
 
 		this.setCursor(Cursor.HAND);
 
@@ -108,6 +125,9 @@ public class Card extends Pane {
 		scaleFactorX = 1;
 		scaleFactorY = 1;
 
+		containerSizeX = 1600 - this.getWidth();
+		containerSizeY = 395 - this.getHeight();
+
 		//System.out.println("debug: end of Card");
 	}
 
@@ -118,12 +138,62 @@ public class Card extends Pane {
 	 */
 	private void calcConvMana() {
 		convertedManaCost = 
-			manaCostRed   + 
+			manaCostBlack + 
 			manaCostBlue  + 
 			manaCostGreen + 
+			manaCostRed   + 
 			manaCostWhite + 
-			manaCostBlack + 
 			manaCostBlank;
+
+		Field largestField = Field.manaCostBlank;
+		int largestValue = 0;
+		if( manaCostBlack > largestValue ) {
+			largestField = Field.manaCostBlack;
+			largestValue = manaCostBlack;
+		}
+		if( manaCostBlue > largestValue ) {
+			largestField = Field.manaCostBlue;
+			largestValue = manaCostBlue;
+		}
+		if( manaCostGreen > largestValue ) {
+			largestField = Field.manaCostGreen;
+			largestValue = manaCostGreen;
+		}
+		if( manaCostRed > largestValue ) {
+			largestField = Field.manaCostRed;
+			largestValue = manaCostRed;
+		}
+		if( manaCostWhite > largestValue ) {
+			largestField = Field.manaCostWhite;
+			largestValue = manaCostWhite;
+		}
+		switch( largestField ) {
+			case manaCostBlank:
+				System.out.println("blank");
+				this.getStyleClass().add("color-less");
+			break;
+			case manaCostBlack:
+				System.out.println("black");
+				this.getStyleClass().add("black");
+			break;
+			case manaCostBlue:
+				System.out.println("blue");
+				this.getStyleClass().add("blue");
+			break;
+			case manaCostGreen:
+				System.out.println("green");
+				this.getStyleClass().add("green");
+			break;
+			case manaCostRed:
+				System.out.println("red");
+				this.getStyleClass().add("red");
+			break;
+			case manaCostWhite:
+				System.out.println("white");
+				this.getStyleClass().add("white");
+			break;
+
+		}
 	}
 
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
@@ -162,6 +232,19 @@ public class Card extends Pane {
 
 				Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
 				Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
+
+				if( getTranslateX() < 0 ) {
+					setTranslateX(0);
+				}
+				if( getTranslateY() < 0 ) {
+					setTranslateY(0);
+				}
+				if( getTranslateX() > containerSizeX ) {
+					setTranslateX(containerSizeX);
+				}
+				if( getTranslateY() > containerSizeY ) {
+					setTranslateY(containerSizeY);
+				}
 
 				this.mouseInSceneX = event.getSceneX();
 				this.mouseInSceneY = event.getSceneY();
@@ -242,6 +325,20 @@ public class Card extends Pane {
 	 */
 	public void setFaceUp(boolean isFaceUp) {
 		this.isFaceUp = isFaceUp;
+	}
+
+	/**
+	 * @param containerSizeX the containerSizeX to set
+	 */
+	public void setContainerSizeX(double containerSizeX) {
+		this.containerSizeX = containerSizeX;
+	}
+
+	/**
+	 * @param containerSizeY the containerSizeY to set
+	 */
+	public void setContainerSizeY(double containerSizeY) {
+		this.containerSizeY = containerSizeY;
 	}
 
 	/**

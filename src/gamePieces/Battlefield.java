@@ -10,9 +10,6 @@ public class Battlefield extends Pane {
 
 	private Player player;
 	private CardCollection cards;
-
-	private double width;
-	private double height;
 	
 	public Battlefield(String cardList) {
 		//System.out.println("Debug: start of Battlefield");
@@ -20,10 +17,10 @@ public class Battlefield extends Pane {
 		cards = player.getBattlefieldCards();
 
 		this.getStyleClass().add("battlefield");
-		width = 1600;
-		height = 395;
-		this.setPrefSize(width, height);
-		this.setMinSize(width, height);
+		this.setWidth(1600);
+		this.setHeight(395);
+		this.setPrefSize(this.getWidth(), this.getHeight());
+		this.setMinSize(this.getWidth(), this.getHeight());
 
 		try {
 			this.getChildren().add(getCards().getCard(0));
