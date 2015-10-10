@@ -11,7 +11,6 @@ import gamePieces.Card;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -20,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 public class GameLogic extends Application {
@@ -36,12 +36,15 @@ public class GameLogic extends Application {
 	private NetworkThread networkThread;
 	private KeyHandleThread keyHandleThread;
 
-	private ActionEventHandler actionEventHandler;
 	private KeyEventHandler keyEventHandler;
 
 	private ArrayList<KeyCode> pressedKeys;
 
+	// used by the keylistener to know which card to move
+	private int currentCard;
+
 	private Stage primaryStage;
+
 
 	public GameLogic() {
 		// Loads the stylesheet, in a not to pretty way
@@ -50,13 +53,12 @@ public class GameLogic extends Application {
 
 		// Initiates the eventHandlers
 		keyEventHandler    = new KeyEventHandler();
-		actionEventHandler = new ActionEventHandler();
 
 		pressedKeys = new ArrayList<KeyCode>();
 
 
-		ownBattlefield   = new Battlefield("cardList", actionEventHandler);
-		otherBattlefield = new Battlefield("cardlist", actionEventHandler);
+		ownBattlefield   = new Battlefield("cardList");
+		otherBattlefield = new Battlefield("cardlist");
 		otherBattlefield.setRotate(180d);
 
 		// Pane for the cards in your hand
@@ -89,6 +91,14 @@ public class GameLogic extends Application {
 		 */
 		primaryStage = inStage;
 
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle( WindowEvent event ) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
+
 		// contain the ownBattlefield & and otherBattlefield
 		GridPane battlefieldContainer = new GridPane();
 		battlefieldContainer.add(otherBattlefield, 0, 0);
@@ -117,20 +127,6 @@ public class GameLogic extends Application {
 		primaryStage.show();
 	}
 
-	public class ActionEventHandler implements EventHandler<ActionEvent> {
-		@Override
-		public void handle(ActionEvent event) {
-			synchronized( keyEventHandler ) {
-				if(event.getSource() == ownBattlefield.getTestBtn()) {
-					System.out.println("ownBattlefield");
-				}
-				if(event.getSource() == otherBattlefield.getTestBtn()) {
-					System.out.println("otherBattlefield");
-				}
-			}
-		}
-	}
-
 	public class KeyEventHandler implements EventHandler<KeyEvent> {
 		@Override
 		public void handle(KeyEvent event) {
@@ -148,6 +144,9 @@ public class GameLogic extends Application {
 	}
 
 	private class KeyHandleThread implements Runnable {
+		boolean spacePressedBefore;
+		Card tempCard;
+
 		@Override
 		public void run() {
 			synchronized( this ) {
@@ -156,11 +155,11 @@ public class GameLogic extends Application {
 					// C-m to close the window
 					if(pressedKeys.contains(KeyCode.CONTROL) &&
 					   pressedKeys.contains(KeyCode.M) ) {
-						primaryStage.close();
+						Platform.exit();
+						System.exit(0);
 					}
-					Card tempCard;
 					try {
-						tempCard = ownBattlefield.getPlayer().getBattlefieldCards().getCard(0);
+						tempCard = ownBattlefield.getCards().getCard(currentCard);
 					} catch (CardNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -168,30 +167,51 @@ public class GameLogic extends Application {
 					}
 
 					TranslateTransition tt;
-					if( pressedKeys.contains(KeyCode.DOWN) ) {
+					if( pressedKeys.contains(KeyCode.DOWN) ||
+					    pressedKeys.contains(KeyCode.J) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 						tt.setByY( 12f );
 						tt.play();
 					}
-					if( pressedKeys.contains(KeyCode.UP) ) {
+					if( pressedKeys.contains(KeyCode.UP) ||
+					    pressedKeys.contains(KeyCode.K) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 						tt.setByY( -12f );
 						tt.play();
 					}
-					if( pressedKeys.contains(KeyCode.RIGHT) ) {
+					if( pressedKeys.contains(KeyCode.RIGHT) ||
+					    pressedKeys.contains(KeyCode.L) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 						tt.setByX( 12f );
 						tt.play();
 					}
-					if( pressedKeys.contains(KeyCode.LEFT) ) {
+					if( pressedKeys.contains(KeyCode.LEFT) ||
+					    pressedKeys.contains(KeyCode.H) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 						tt.setByX( -12f );
 						tt.play();
 					}
-					if( pressedKeys.contains(KeyCode.SPACE) ) {
+					// Rotate the card when space is released
+					if( !pressedKeys.contains(KeyCode.SPACE) &&
+						spacePressedBefore ) {
 						System.out.println("space is down");
 						tempCard.smoothRotate(90d);
 					}
+					spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
+
+					if( pressedKeys.contains(KeyCode.TAB) ) {
+						if( pressedKeys.contains(KeyCode.SHIFT) ) {
+							currentCard--;
+							if( currentCard < 0 ) {
+								currentCard = ownBattlefield.getCards().size();
+							}
+						}
+						currentCard++;
+						if( currentCard >= ownBattlefield.getCards().size() ) {
+							currentCard = 0;
+						}
+					}
+
 					try {
 						this.wait(50);
 					} catch (InterruptedException e) {
