@@ -125,4 +125,15 @@ public class CardCollection extends ArrayList<Card> {
 
 	}
 
+	public void updateScaleFactorX(double newScaleFactorX) {
+		for( Card temp : this ) {
+			temp.setScaleFactorX(newScaleFactorX);
+		}
+	}
+	public void updateScaleFactorY(double newScaleFactorY) {
+		for( Card temp : this ) {
+			temp.setScaleFactorX(newScaleFactorY);
+		}
+	}
+
 }

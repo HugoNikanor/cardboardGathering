@@ -22,6 +22,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -48,6 +49,17 @@ public class GameLogic extends Application {
 	private int currentCard;
 
 	private Stage primaryStage;
+	private Scene gameScene;
+
+	private BorderPane rootGamePane;
+
+	private double defaultSceneWidth;
+	private double defaultSceneHeight;
+
+	private Scale scale;
+
+	private double scaleFactorX;
+	private double scaleFactorY;
 
 	public GameLogic() {
 		// Loads the stylesheet, in a not to pretty way
@@ -66,13 +78,19 @@ public class GameLogic extends Application {
 		// Pane for the cards in your hand
 		// TODO This should possibly get its own class 
 		cardsInHandPane = new HBox();
-		cardsInHandPane.setPrefSize(400, 100);
+		cardsInHandPane.setPrefSize(1600, 110);
+		cardsInHandPane.setMinSize(1600, 110);
 		cardsInHandPane.getStyleClass().add("cards-in-hand-pane");
+
 
 		// TODO testline
 		ownBattlefield.setId("test-id");
 
 		//Platform.setImplicitExit(false);
+		
+		scale = new Scale();
+		scale.setPivotX(0);
+		scale.setPivotY(0);
 
 		try {
 			keyHandleThread = new KeyHandleThread();
@@ -109,15 +127,16 @@ public class GameLogic extends Application {
 
 		// The pane everything ingame should be placed in
 		// Change this for "out of game" menus & simmilar
-		BorderPane rootGamePane = new BorderPane();
+		rootGamePane = new BorderPane();
 		rootGamePane.setCenter(battlefieldContainer);
 		rootGamePane.setBottom(cardsInHandPane);
-
+		
 		// Scene
 		// Only one at a time, can change
-		Scene gameScene = new Scene(rootGamePane);
+		gameScene = new Scene(rootGamePane);
 		gameScene.setOnKeyPressed(keyEventHandler);
 		gameScene.setOnKeyReleased(keyEventHandler);
+
 
 		// Applies the stylesheet
 		gameScene.getStylesheets().add(styleFilePath);
@@ -134,10 +153,21 @@ public class GameLogic extends Application {
 		);
 		*/
 		WindowSizeListener windowSizeListener = new WindowSizeListener();
+
+		//gameScene.widthProperty().addListener(windowSizeListener);
+		//gameScene.heightProperty().addListener(windowSizeListener);
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
+
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
+
+		defaultSceneWidth = gameScene.getWidth();
+		defaultSceneHeight = gameScene.getHeight();
+
+		rootGamePane.getTransforms().add(scale);
+
+		//System.out.println(gameScene.getWidth() + primaryStage.getWidth());
 	}
 
 	private class WindowSizeListener implements ChangeListener<Number> {
@@ -150,11 +180,22 @@ public class GameLogic extends Application {
 			if( task != null ) {
 				task.cancel();
 			}
-
 			task = new TimerTask() {
+
 				@Override
 				public void run() {
-					System.out.println("resize to: " + primaryStage.getWidth() + " " + primaryStage.getHeight());
+					scaleFactorX = (gameScene.getWidth() / defaultSceneWidth);
+					scaleFactorY = (gameScene.getHeight() / defaultSceneHeight);
+
+
+					//rootGamePane.setScaleX(scaleX);
+					//rootGamePane.setScaleY(scaleX);
+					//System.out.println(scaleX);
+
+					scale.setX(scaleFactorY);
+					scale.setY(scaleFactorY);
+					//primaryStage.sizeToScene();
+					
 				}
 			};
 			timer.schedule(task, delayTime);

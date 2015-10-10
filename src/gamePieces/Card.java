@@ -35,6 +35,10 @@ public class Card extends Pane {
 	private double width;
 	private double height;
 
+	//These variables currently doesn't work
+	private double scaleFactorX;
+	private double scaleFactorY;
+
 	public Card() {}
 
 	public Card(
@@ -78,8 +82,10 @@ public class Card extends Pane {
 		
 		this.getStyleClass().add("card");
 
-		width = 70;
-		height = 100;
+		//width = 70;
+		//height = 100;
+		height = 150;
+		width = 0.7 * 150;
 		this.setPrefSize(width, height);
 
 		Text cardNameText = new Text(cardName);
@@ -98,6 +104,9 @@ public class Card extends Pane {
 		this.setOnMouseReleased( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
+
+		scaleFactorX = 1;
+		scaleFactorY = 1;
 
 		//System.out.println("debug: end of Card");
 	}
@@ -147,8 +156,11 @@ public class Card extends Pane {
 				double xChange = event.getSceneX() - this.mouseInSceneX;
 				double yChange = event.getSceneY() - this.mouseInSceneY;
 
-				Card.this.setTranslateX(getTranslateX() + xChange);
-				Card.this.setTranslateY(getTranslateY() + yChange);
+				System.out.println(scaleFactorX);
+				System.out.println(scaleFactorY);
+
+				Card.this.setTranslateX(getTranslateX() + xChange * scaleFactorX);
+				Card.this.setTranslateY(getTranslateY() + yChange * scaleFactorY);
 
 				this.mouseInSceneX = event.getSceneX();
 				this.mouseInSceneY = event.getSceneY();
@@ -230,6 +242,21 @@ public class Card extends Pane {
 	public void setFaceUp(boolean isFaceUp) {
 		this.isFaceUp = isFaceUp;
 	}
+
+	/**
+	 * @param scaleFactorX the scaleFactorX to set
+	 */
+	public void setScaleFactorX(double scaleFactorX) {
+		this.scaleFactorX = scaleFactorX;
+	}
+
+	/**
+	 * @param scaleFactorY the scaleFactorY to set
+	 */
+	public void setScaleFactorY(double scaleFactorY) {
+		this.scaleFactorY = scaleFactorY;
+	}
+
 	public void flip() {
 		if(isFaceUp) {
 			isFaceUp = false;

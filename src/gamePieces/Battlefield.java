@@ -20,9 +20,10 @@ public class Battlefield extends Pane {
 		cards = player.getBattlefieldCards();
 
 		this.getStyleClass().add("battlefield");
-		width = 400;
-		height = 200;
+		width = 1600;
+		height = 395;
 		this.setPrefSize(width, height);
+		this.setMinSize(width, height);
 
 		try {
 			this.getChildren().add(getCards().getCard(0));

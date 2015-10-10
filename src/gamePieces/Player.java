@@ -134,6 +134,14 @@ public class Player {
 		}
 	}
 
+	public void updateScaleFactorX(double newScaleFactorX) {
+		deckCards.updateScaleFactorX(newScaleFactorX);
+		handCards.updateScaleFactorX(newScaleFactorX);
+		battlefieldCards.updateScaleFactorX(newScaleFactorX);
+		graveyardCards.updateScaleFactorX(newScaleFactorX);
+
+	}
+
 	/**
 	 * Change 'Health' and 'poison count'
 	 */
