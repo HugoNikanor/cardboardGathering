@@ -27,6 +27,7 @@ public class Player {
 				this.drawCard();
 			}
 		} catch (CardNotFoundException e) {
+			// This should trigger a player lost condition
 			System.out.println(
 				"==\n" +
 				"Player (" +

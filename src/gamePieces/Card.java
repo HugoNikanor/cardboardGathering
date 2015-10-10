@@ -32,6 +32,9 @@ public class Card extends Pane {
 
 	private boolean isFaceUp;
 
+	private double width;
+	private double height;
+
 	public Card() {}
 
 	public Card(
@@ -74,7 +77,11 @@ public class Card extends Pane {
 		//===============================//
 		
 		this.getStyleClass().add("card");
-		this.setPrefSize(70, 100);
+
+		width = 70;
+		height = 100;
+		this.setPrefSize(width, height);
+
 		Text cardNameText = new Text(cardName);
 		cardNameText.setWrappingWidth(60);
 		cardNameText.setTranslateY(15);

@@ -11,13 +11,18 @@ public class Battlefield extends Pane {
 	private Player player;
 	private CardCollection cards;
 
+	private double width;
+	private double height;
+	
 	public Battlefield(String cardList) {
 		//System.out.println("Debug: start of Battlefield");
 		player = new Player(cardList);
 		cards = player.getBattlefieldCards();
 
 		this.getStyleClass().add("battlefield");
-		this.setPrefSize(400, 200);
+		width = 400;
+		height = 200;
+		this.setPrefSize(width, height);
 
 		try {
 			this.getChildren().add(getCards().getCard(0));

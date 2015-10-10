@@ -2,6 +2,8 @@ package central;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import exceptions.CardNotFoundException;
 
@@ -11,6 +13,8 @@ import gamePieces.Card;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -45,17 +49,15 @@ public class GameLogic extends Application {
 
 	private Stage primaryStage;
 
-
 	public GameLogic() {
 		// Loads the stylesheet, in a not to pretty way
 		File styleFile = new File("stylesheets/stylesheet.css");
 		styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
 
 		// Initiates the eventHandlers
-		keyEventHandler    = new KeyEventHandler();
+		keyEventHandler = new KeyEventHandler();
 
 		pressedKeys = new ArrayList<KeyCode>();
-
 
 		ownBattlefield   = new Battlefield("cardList");
 		otherBattlefield = new Battlefield("cardlist");
@@ -70,7 +72,7 @@ public class GameLogic extends Application {
 		// TODO testline
 		ownBattlefield.setId("test-id");
 
-		Platform.setImplicitExit(false);
+		//Platform.setImplicitExit(false);
 
 		try {
 			keyHandleThread = new KeyHandleThread();
@@ -122,9 +124,41 @@ public class GameLogic extends Application {
 
 		// Stage
 		// This never changes
-		primaryStage.setTitle("cardboardGathering");
+		//primaryStage.setTitle("cardboardGathering");
+		
+		/*
+		primaryStage.titleProperty().bind(
+			gameScene.widthProperty().asString().
+			concat(" : ").
+			concat(gameScene.heightProperty().asString())
+		);
+		*/
+		WindowSizeListener windowSizeListener = new WindowSizeListener();
+		primaryStage.widthProperty().addListener(windowSizeListener);
+		primaryStage.heightProperty().addListener(windowSizeListener);
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
+	}
+
+	private class WindowSizeListener implements ChangeListener<Number> {
+		final Timer timer = new Timer();
+		TimerTask task = null;
+		final long delayTime = 200;
+
+		@Override
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, final Number newValue) {
+			if( task != null ) {
+				task.cancel();
+			}
+
+			task = new TimerTask() {
+				@Override
+				public void run() {
+					System.out.println("resize to: " + primaryStage.getWidth() + " " + primaryStage.getHeight());
+				}
+			};
+			timer.schedule(task, delayTime);
+		}
 	}
 
 	public class KeyEventHandler implements EventHandler<KeyEvent> {
