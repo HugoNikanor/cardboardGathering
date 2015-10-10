@@ -139,7 +139,13 @@ public class Player {
 		handCards.updateScaleFactorX(newScaleFactorX);
 		battlefieldCards.updateScaleFactorX(newScaleFactorX);
 		graveyardCards.updateScaleFactorX(newScaleFactorX);
+	}
 
+	public void updateScaleFactorY(double newScaleFactorY) {
+		deckCards.updateScaleFactorY(newScaleFactorY);
+		handCards.updateScaleFactorY(newScaleFactorY);
+		battlefieldCards.updateScaleFactorY(newScaleFactorY);
+		graveyardCards.updateScaleFactorY(newScaleFactorY);
 	}
 
 	/**

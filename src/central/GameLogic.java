@@ -188,13 +188,14 @@ public class GameLogic extends Application {
 					scaleFactorY = (gameScene.getHeight() / defaultSceneHeight);
 
 
-					//rootGamePane.setScaleX(scaleX);
-					//rootGamePane.setScaleY(scaleX);
-					//System.out.println(scaleX);
+					System.out.println( "sfY GL: " + scaleFactorY);
 
 					scale.setX(scaleFactorY);
 					scale.setY(scaleFactorY);
-					//primaryStage.sizeToScene();
+
+					// I know, X ≠ Y 
+					ownBattlefield.getPlayer().updateScaleFactorX(scaleFactorY);
+					ownBattlefield.getPlayer().updateScaleFactorY(scaleFactorY);
 					
 				}
 			};

@@ -35,7 +35,7 @@ public class Card extends Pane {
 	private double width;
 	private double height;
 
-	//These variables currently doesn't work
+	// Clean up X & Y
 	private double scaleFactorX;
 	private double scaleFactorY;
 
@@ -156,11 +156,12 @@ public class Card extends Pane {
 				double xChange = event.getSceneX() - this.mouseInSceneX;
 				double yChange = event.getSceneY() - this.mouseInSceneY;
 
-				System.out.println(scaleFactorX);
-				System.out.println(scaleFactorY);
+				//System.out.println(scaleFactorX);
+				System.out.print( "sfY C: " + scaleFactorY);
+				System.out.println( "sfX C: " + scaleFactorX);
 
-				Card.this.setTranslateX(getTranslateX() + xChange * scaleFactorX);
-				Card.this.setTranslateY(getTranslateY() + yChange * scaleFactorY);
+				Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
+				Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
 
 				this.mouseInSceneX = event.getSceneX();
 				this.mouseInSceneY = event.getSceneY();
