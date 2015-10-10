@@ -4,8 +4,6 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
-import java.util.ArrayList;
-
 import javafx.animation.RotateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -52,7 +50,9 @@ public class Card extends Pane {
 	private double scaleFactorX;
 	private double scaleFactorY;
 
-	public Card() {}
+	private static Card currentCard;
+
+	//public Card() {}
 
 	public Card(
 		String cardName,
@@ -110,8 +110,9 @@ public class Card extends Pane {
 		//Label nameLabel = new Label(cardName);
 		this.getChildren().add(cardNameText);
 
-
 		this.setCursor(Cursor.HAND);
+
+		currentCard = this;
 
 		MouseEventHandler mouseEventHandler = new MouseEventHandler();
 
@@ -204,6 +205,8 @@ public class Card extends Pane {
 		@Override
 		public void handle(MouseEvent event) {
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+				Card.this.giveThisFocus();
+
 				this.mouseInSceneX = event.getSceneX();
 				this.mouseInSceneY = event.getSceneY();
 
@@ -227,8 +230,8 @@ public class Card extends Pane {
 				double yChange = event.getSceneY() - this.mouseInSceneY;
 
 				//System.out.println(scaleFactorX);
-				System.out.print( "sfY C: " + scaleFactorY);
-				System.out.println( "sfX C: " + scaleFactorX);
+				//System.out.print( "sfY C: " + scaleFactorY);
+				//System.out.println( "sfX C: " + scaleFactorX);
 
 				Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
 				Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
@@ -265,6 +268,7 @@ public class Card extends Pane {
 	private class ScrollEventHandler implements EventHandler<ScrollEvent> {
 		@Override
 		public void handle(ScrollEvent event) {
+			Card.this.giveThisFocus();
 			/**
 			 * Scales card by a factor 2 when scrolling over it,
 			 * please be avare that if you make the card to small then it 
@@ -304,6 +308,12 @@ public class Card extends Pane {
 			rt.setByAngle( -1 * Card.this.getRotate() );
 			rt.play();
 		}
+	}
+
+	public void giveThisFocus() {
+		currentCard.setId(null);
+		currentCard = this;
+		currentCard.setId("has-focus");
 	}
 
 	public void modifyTranslateX(double change) {
@@ -354,6 +364,22 @@ public class Card extends Pane {
 	public void setScaleFactorY(double scaleFactorY) {
 		this.scaleFactorY = scaleFactorY;
 	}
+
+	/**
+	 * @return the currentCard
+	 */
+	public static Card getCurrentCard() {
+		return currentCard;
+	}
+
+	/**
+	 * @param currentCard the currentCard to set
+	 */
+	/*
+	public static void setCurrentCard(Card currentCard) {
+		Card.currentCard = currentCard;
+	}
+	*/
 
 	public void flip() {
 		if(isFaceUp) {

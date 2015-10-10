@@ -234,13 +234,8 @@ public class GameLogic extends Application {
 						Platform.exit();
 						System.exit(0);
 					}
-					try {
-						tempCard = ownBattlefield.getCards().getCard(currentCard);
-					} catch (CardNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						tempCard = new Card();
-					}
+
+					tempCard = Card.getCurrentCard();
 
 					TranslateTransition tt;
 					if( pressedKeys.contains(KeyCode.DOWN) ||
@@ -297,15 +292,18 @@ public class GameLogic extends Application {
 					spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
 
 					if( pressedKeys.contains(KeyCode.TAB) ) {
-						if( pressedKeys.contains(KeyCode.SHIFT) ) {
-							currentCard--;
-							if( currentCard < 0 ) {
-								currentCard = ownBattlefield.getCards().size();
+						if( !pressedKeys.contains(KeyCode.SHIFT) ) {
+							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) + 1;
+							if( newCardIndex >= ownBattlefield.getCards().size() ) {
+								newCardIndex = 0;
 							}
-						}
-						currentCard++;
-						if( currentCard >= ownBattlefield.getCards().size() ) {
-							currentCard = 0;
+							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
+						} else {
+							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) - 1;
+							if( newCardIndex < 0 ) {
+								newCardIndex = ownBattlefield.getCards().size() - 1;
+							}
+							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
 						}
 					}
 
