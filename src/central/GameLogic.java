@@ -141,23 +141,24 @@ public class GameLogic extends Application {
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
-				ownBattlefield.getChildren().removeAll();
+		// Sets all the cards to be painted
+				//ownBattlefield.getChildren().removeAll();
 				for( Card ownTemp : ownBattlefield.getCards() ) {
 					//System.out.println(ownTemp.toString());
 					ownBattlefield.getChildren().add(ownTemp);
 				}
-				otherBattlefield.getChildren().removeAll();
+				//otherBattlefield.getChildren().removeAll();
 				for( Card otherTemp : otherBattlefield.getCards() ) {
 					//System.out.println(otherTemp.toString());
 					otherBattlefield.getChildren().add(otherTemp);
 				}
-				ownBattlefield.getPlayer().getChildren().removeAll();
+				//ownBattlefield.getPlayer().getChildren().removeAll();
 				// Players card in hand
 				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
 					System.out.println(handTemp.toString());
 					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
 					ownBattlefield.getPlayer().getChildren().add(handTemp);
-					handTemp.setTranslateX(100 * ownBattlefield.getPlayer().getHandCards().indexOf(handTemp));
+					handTemp.setTranslateX(150 * (1 + ownBattlefield.getPlayer().getHandCards().indexOf(handTemp)));
 					handTemp.setTranslateY(20);
 				}
 

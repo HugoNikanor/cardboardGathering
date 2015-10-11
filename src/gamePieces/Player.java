@@ -2,8 +2,6 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -75,23 +73,24 @@ public class Player extends Pane {
 		@Override
 		public void handle(MouseEvent event) {
 			//event.getSource() gives the card that is selected
-			Card tempCard = handCards.get(handCards.indexOf(event.getSource()));
-			if( tempCard.getCurrentLocation() == Card.HAND ) {
-				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-					tempCard.setTranslateY(-20);
-				}
-				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-					tempCard.setTranslateY(20);
-				}
-				if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-					try {
-						playCard(handCards.takeCard(tempCard));
-					} catch (CardNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			Card tempCard;
+			try {
+				tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
+				if( tempCard.getCurrentLocation() == Card.HAND ) {
+					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+						tempCard.setTranslateY(-20);
 					}
-					//System.out.println("Playing Card");
+					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+						tempCard.setTranslateY(20);
+					}
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						playCard(tempCard);
+					}
 				}
+			} catch (CardNotFoundException e1) {
+				// TODO This is triggered due to the card keeping this listener when it enters the battlefield
+				// TODO A problem might very well be here, due to no error reporting
+				// System.out.println("hover over card in battlefield");
 			}
 		}
 	}
