@@ -372,15 +372,6 @@ public class Card extends Pane {
 		return currentCard;
 	}
 
-	/**
-	 * @param currentCard the currentCard to set
-	 */
-	/*
-	public static void setCurrentCard(Card currentCard) {
-		Card.currentCard = currentCard;
-	}
-	*/
-
 	public void flip() {
 		if(isFaceUp) {
 			isFaceUp = false;

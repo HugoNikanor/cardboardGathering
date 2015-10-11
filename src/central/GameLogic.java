@@ -45,9 +45,6 @@ public class GameLogic extends Application {
 
 	private ArrayList<KeyCode> pressedKeys;
 
-	// used by the keylistener to know which card to move
-	private int currentCard;
-
 	private Stage primaryStage;
 	private Scene gameScene;
 
@@ -74,6 +71,13 @@ public class GameLogic extends Application {
 		ownBattlefield   = new Battlefield("cardList");
 		otherBattlefield = new Battlefield("cardlist");
 		otherBattlefield.setRotate(180d);
+
+		try {
+			ownBattlefield.getCards().getCard(0).giveThisFocus();
+		} catch (CardNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		// Pane for the cards in your hand
 		// TODO This should possibly get its own class 
@@ -143,7 +147,7 @@ public class GameLogic extends Application {
 
 		// Stage
 		// This never changes
-		//primaryStage.setTitle("cardboardGathering");
+		primaryStage.setTitle("cardboardGathering");
 		
 		/*
 		primaryStage.titleProperty().bind(
@@ -223,6 +227,8 @@ public class GameLogic extends Application {
 		boolean spacePressedBefore;
 		Card tempCard;
 
+		int moveSpeed = 20;
+
 		@Override
 		public void run() {
 			synchronized( this ) {
@@ -242,10 +248,10 @@ public class GameLogic extends Application {
 					    pressedKeys.contains(KeyCode.J) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
-						if( tempCard.getTranslateY() + 12 > ownBattlefield.getHeight() - tempCard.getHeight() ) {
+						if( tempCard.getTranslateY() + moveSpeed > ownBattlefield.getHeight() - tempCard.getHeight() ) {
 							tt.setByY( ownBattlefield.getHeight() - tempCard.getHeight() - tempCard.getTranslateY() );
 						} else {
-							tt.setByY( 12f );
+							tt.setByY( moveSpeed );
 						}
 						tt.play();
 					}
@@ -253,10 +259,10 @@ public class GameLogic extends Application {
 					    pressedKeys.contains(KeyCode.K) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
-						if( tempCard.getTranslateY() - 12 < 0 ) {
+						if( tempCard.getTranslateY() - moveSpeed < 0 ) {
 							tt.setByY( -1*tempCard.getTranslateY() );
 						} else {
-							tt.setByY( -12f );
+							tt.setByY( -1*moveSpeed );
 						}
 						tt.play();
 					}
@@ -264,10 +270,10 @@ public class GameLogic extends Application {
 					    pressedKeys.contains(KeyCode.L) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
-						if( tempCard.getTranslateX() + 12 > ownBattlefield.getWidth() - tempCard.getWidth() ) {
+						if( tempCard.getTranslateX() + moveSpeed > ownBattlefield.getWidth() - tempCard.getWidth() ) {
 							tt.setByX( ownBattlefield.getWidth() - tempCard.getWidth() - tempCard.getTranslateX() );
 						} else {
-							tt.setByX( 12f );
+							tt.setByX( moveSpeed );
 						}
 						tt.play();
 					}
@@ -275,10 +281,10 @@ public class GameLogic extends Application {
 					    pressedKeys.contains(KeyCode.H) ) {
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
-						if( tempCard.getTranslateX() - 12 < 0 ) {
+						if( tempCard.getTranslateX() - moveSpeed < 0 ) {
 							tt.setByX( -1*tempCard.getTranslateX() );
 						} else {
-							tt.setByX( -12f );
+							tt.setByX( -1*moveSpeed );
 						}
 						tt.play();
 					}
