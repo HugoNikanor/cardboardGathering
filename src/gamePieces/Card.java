@@ -5,6 +5,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import javafx.animation.RotateTransition;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.layout.Pane;
@@ -52,7 +53,14 @@ public class Card extends Pane {
 	private double scaleFactorX;
 	private double scaleFactorY;
 
+	public static final double HEIGHT = 150;
+	public static final double WIDTH = 105;
+
 	private static Card currentCard;
+
+	// Is this how you should do it‽
+	private ObservableValue<Boolean> readyToPlay;
+
 
 	/*
 	public static enum CardLocation {
@@ -118,9 +126,9 @@ public class Card extends Pane {
 		
 		this.getStyleClass().add("card");
 
-		this.setHeight(150);
-		this.setWidth(0.7 * 150);
-		this.setMinSize(0.7 * 150, 150);
+		this.setHeight(Card.HEIGHT);
+		this.setWidth(Card.WIDTH);
+		this.setMinSize(this.getWidth(), this.getHeight());
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
 		Text cardNameText = new Text(cardName);
@@ -137,11 +145,12 @@ public class Card extends Pane {
 
 		MouseEventHandler mouseEventHandler = new MouseEventHandler();
 
-		//this.setOnMouseClicked ( mouseEventHandler );
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
-		this.setOnMouseEntered ( mouseEventHandler );
+		//this.setOnMouseClicked ( mouseEventHandler );
+		//this.setOnMouseEntered ( mouseEventHandler );
+		//this.setOnMouseExited  ( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
 
@@ -160,7 +169,7 @@ public class Card extends Pane {
 	 * Adds up all the mana costs
 	 * Automacicly asigns the output to 'convertedManaCost'
 	 */
-	private void calcConvMana() {
+	private void calcConvMana() { // {{{
 		convertedManaCost = 
 			manaCostBlack + 
 			manaCostBlue  + 
@@ -218,7 +227,7 @@ public class Card extends Pane {
 			break;
 
 		}
-	}
+	} // }}}
 
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 
@@ -278,11 +287,6 @@ public class Card extends Pane {
 				this.lastEvent = event.getEventType();
 			} // end of BATTLEFIELD listeners
 
-			if( currentLocation == Card.HAND ) {
-				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-					System.out.println("Mouse now hovers over card in hand");
-				}
-			}
 		}
 	}
 
@@ -391,6 +395,13 @@ public class Card extends Pane {
 	 */
 	public static Card getCurrentCard() {
 		return currentCard;
+	}
+
+	/**
+	 * @return the currentLocation
+	 */
+	public int getCurrentLocation() {
+		return currentLocation;
 	}
 
 	/**

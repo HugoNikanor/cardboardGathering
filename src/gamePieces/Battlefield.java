@@ -26,6 +26,7 @@ public class Battlefield extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
+		/*
 		try {
 			this.getChildren().add(getCards().getCard(0));
 			getCards().getCard(0).setTranslateX(new Random().nextInt(331));
@@ -37,6 +38,7 @@ public class Battlefield extends Pane {
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
+		*/
 
 		//System.out.println("Debug: end of Battlefield");
 	}

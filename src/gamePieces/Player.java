@@ -2,7 +2,13 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
-public class Player {
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+
+public class Player extends Pane {
 	private CardCollection deckCards;
 	private CardCollection handCards;
 	private CardCollection battlefieldCards;
@@ -11,12 +17,22 @@ public class Player {
 	private int health;
 	private int poisonCounters;
 
+	private MouseEventHandler mouseEventHandler;
+
 	public Player(String cardList) {
 		//System.out.println("Debug: start of Player");
 		deckCards        = new CardCollection(cardList);
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
 		graveyardCards   = new CardCollection();
+
+		mouseEventHandler = new MouseEventHandler();
+
+		for( Card temp : deckCards ) {
+			temp.setOnMouseClicked( mouseEventHandler );
+			temp.setOnMouseEntered( mouseEventHandler );
+			temp.setOnMouseExited ( mouseEventHandler );
+		}
 
 		health = 20;
 		poisonCounters = 0;
@@ -44,7 +60,40 @@ public class Player {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//===============================//
+		//         JavaFX below          //
+		//===============================//
+
+		this.setPrefSize(Battlefield.WIDTH, 110);
+		this.getStyleClass().add("cards-in-hand-pane");
+
 		//System.out.println("Debug: end of Player");
+	}
+
+	private class MouseEventHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			//event.getSource() gives the card that is selected
+			Card tempCard = handCards.get(handCards.indexOf(event.getSource()));
+			if( tempCard.getCurrentLocation() == Card.HAND ) {
+				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+					tempCard.setTranslateY(-20);
+				}
+				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+					tempCard.setTranslateY(20);
+				}
+				if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+					try {
+						playCard(handCards.takeCard(tempCard));
+					} catch (CardNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					//System.out.println("Playing Card");
+				}
+			}
+		}
 	}
 
 	/**

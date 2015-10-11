@@ -21,7 +21,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -33,12 +32,13 @@ public class GameLogic extends Application {
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
-	private HBox cardsInHandPane;
+	//private HBox cardsInHandPane;
+	//private Pane cardsInHandPane;
 
 	private String styleFilePath;
 
 	//private Network network;
-	private NetworkThread networkThread;
+	//private NetworkThread networkThread;
 	private KeyHandleThread keyHandleThread;
 
 	private KeyEventHandler keyEventHandler;
@@ -50,18 +50,15 @@ public class GameLogic extends Application {
 
 	private BorderPane rootGamePane;
 
-	private double defaultSceneWidth;
+	//private double defaultSceneWidth;
 	private double defaultSceneHeight;
 
 	private Scale scale;
 
-	private double scaleFactorX;
+	//private double scaleFactorX;
 	private double scaleFactorY;
 
 	public GameLogic() {
-		// Loads the stylesheet, in a not to pretty way
-		File styleFile = new File("stylesheets/stylesheet.css");
-		styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
 
 		// Initiates the eventHandlers
 		keyEventHandler = new KeyEventHandler();
@@ -71,39 +68,54 @@ public class GameLogic extends Application {
 		otherBattlefield = new Battlefield("cardlist");
 		otherBattlefield.setRotate(180d);
 
+		// contain the ownBattlefield & and otherBattlefield
+		GridPane battlefieldContainer = new GridPane();
+		battlefieldContainer.add(otherBattlefield, 0, 0);
+		battlefieldContainer.add(ownBattlefield,   0, 1);
+
+
+		// The pane everything ingame should be placed in
+		// Change this for "out of game" menus & simmilar
+		rootGamePane = new BorderPane();
+		rootGamePane.setCenter(battlefieldContainer);
+		rootGamePane.setBottom(ownBattlefield.getPlayer());
+		
+		// Scene
+		// Only one at a time, can change
+		gameScene = new Scene(rootGamePane);
+		gameScene.setOnKeyPressed(keyEventHandler);
+		gameScene.setOnKeyReleased(keyEventHandler);
+
+		// ALL THE GRAPHICS OBJECTS SHOULD NOW BE INITIATED
+		// Loads the stylesheet, in a not to pretty way
+		File styleFile = new File("stylesheets/stylesheet.css");
+		styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
+		gameScene.getStylesheets().add(styleFilePath);
+
+
+
+		//Give a proper card focus
 		try {
 			ownBattlefield.getCards().getCard(0).giveThisFocus();
 		} catch (CardNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		// Pane for the cards in your hand
-		// TODO This should possibly get its own class 
-		cardsInHandPane = new HBox();
-		cardsInHandPane.setPrefSize(ownBattlefield.getWidth(), 110);
-		cardsInHandPane.getStyleClass().add("cards-in-hand-pane");
-
-		try {
-			cardsInHandPane.getChildren().add(ownBattlefield.getPlayer().getHandCards().getCard(0));
-		} catch (CardNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
+		// Set scale, for windown resize
 		scale = new Scale();
 		scale.setPivotX(0);
 		scale.setPivotY(0);
+		rootGamePane.getTransforms().add(scale);
 
+		//new Thread(new CardCheckThread()).start();
 		try {
 			keyHandleThread = new KeyHandleThread();
 			new Thread(keyHandleThread).start();
 		} catch( Exception e ) {
 			e.printStackTrace();
 		}
-
-		networkThread = new NetworkThread();
-		new Thread(networkThread).start();
+		//networkThread = new NetworkThread();
+		new Thread(new NetworkThread()).start();
 	}
 
 	@Override
@@ -122,30 +134,6 @@ public class GameLogic extends Application {
 			}
 		});
 
-		// contain the ownBattlefield & and otherBattlefield
-		GridPane battlefieldContainer = new GridPane();
-		battlefieldContainer.add(otherBattlefield, 0, 0);
-		battlefieldContainer.add(ownBattlefield,   0, 1);
-
-
-		// The pane everything ingame should be placed in
-		// Change this for "out of game" menus & simmilar
-		rootGamePane = new BorderPane();
-		rootGamePane.setCenter(battlefieldContainer);
-		rootGamePane.setBottom(cardsInHandPane);
-		
-		// Scene
-		// Only one at a time, can change
-		gameScene = new Scene(rootGamePane);
-		gameScene.setOnKeyPressed(keyEventHandler);
-		gameScene.setOnKeyReleased(keyEventHandler);
-
-
-		// Applies the stylesheet
-		gameScene.getStylesheets().add(styleFilePath);
-
-		// Stage
-		// This never changes
 		primaryStage.setTitle("cardboardGathering");
 
 		WindowSizeListener windowSizeListener = new WindowSizeListener();
@@ -153,15 +141,62 @@ public class GameLogic extends Application {
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
+				ownBattlefield.getChildren().removeAll();
+				for( Card ownTemp : ownBattlefield.getCards() ) {
+					//System.out.println(ownTemp.toString());
+					ownBattlefield.getChildren().add(ownTemp);
+				}
+				otherBattlefield.getChildren().removeAll();
+				for( Card otherTemp : otherBattlefield.getCards() ) {
+					//System.out.println(otherTemp.toString());
+					otherBattlefield.getChildren().add(otherTemp);
+				}
+				ownBattlefield.getPlayer().getChildren().removeAll();
+				// Players card in hand
+				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
+					System.out.println(handTemp.toString());
+					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
+					ownBattlefield.getPlayer().getChildren().add(handTemp);
+					handTemp.setTranslateX(100 * ownBattlefield.getPlayer().getHandCards().indexOf(handTemp));
+					handTemp.setTranslateY(20);
+				}
+
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
 
-		defaultSceneWidth = gameScene.getWidth();
+		//defaultSceneWidth = gameScene.getWidth();
 		defaultSceneHeight = gameScene.getHeight();
 
-		rootGamePane.getTransforms().add(scale);
 
 		//System.out.println(gameScene.getWidth() + primaryStage.getWidth());
+	}
+
+	private class CardCheckThread implements Runnable {
+		private int dispX = 100;
+		@Override
+		public void run() {
+			while( true ) {
+				ownBattlefield.getChildren().removeAll();
+				for( Card ownTemp : ownBattlefield.getCards() ) {
+					//System.out.println(ownTemp.toString());
+					ownBattlefield.getChildren().add(ownTemp);
+				}
+				otherBattlefield.getChildren().removeAll();
+				for( Card otherTemp : otherBattlefield.getCards() ) {
+					//System.out.println(otherTemp.toString());
+					otherBattlefield.getChildren().add(otherTemp);
+				}
+				ownBattlefield.getPlayer().getChildren().removeAll();
+				// Players card in hand
+				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
+					System.out.println(handTemp.toString());
+					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
+					ownBattlefield.getPlayer().getChildren().add(handTemp);
+					handTemp.setTranslateX(dispX * ownBattlefield.getPlayer().getHandCards().indexOf(handTemp));
+					handTemp.setTranslateY(20);
+				}
+			}
+		}
 	}
 
 	private class WindowSizeListener implements ChangeListener<Number> {
@@ -178,7 +213,7 @@ public class GameLogic extends Application {
 
 				@Override
 				public void run() {
-					scaleFactorX = (gameScene.getWidth() / defaultSceneWidth);
+					//scaleFactorX = (gameScene.getWidth() / defaultSceneWidth);
 					scaleFactorY = (gameScene.getHeight() / defaultSceneHeight);
 
 
