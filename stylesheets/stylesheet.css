@@ -1,9 +1,3 @@
-/* Debug identifiers */
-#test-id {
-}
-.test-class {
-}
-/* Actual identifiers */
 .battlefield {
 	-fx-border-color: black;
 }

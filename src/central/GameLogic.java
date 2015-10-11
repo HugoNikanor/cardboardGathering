@@ -65,7 +65,6 @@ public class GameLogic extends Application {
 
 		// Initiates the eventHandlers
 		keyEventHandler = new KeyEventHandler();
-
 		pressedKeys = new ArrayList<KeyCode>();
 
 		ownBattlefield   = new Battlefield("cardList");
@@ -82,15 +81,15 @@ public class GameLogic extends Application {
 		// Pane for the cards in your hand
 		// TODO This should possibly get its own class 
 		cardsInHandPane = new HBox();
-		cardsInHandPane.setPrefSize(1600, 110);
-		cardsInHandPane.setMinSize(1600, 110);
+		cardsInHandPane.setPrefSize(ownBattlefield.getWidth(), 110);
 		cardsInHandPane.getStyleClass().add("cards-in-hand-pane");
 
-
-		// TODO testline
-		ownBattlefield.setId("test-id");
-
-		//Platform.setImplicitExit(false);
+		try {
+			cardsInHandPane.getChildren().add(ownBattlefield.getPlayer().getHandCards().getCard(0));
+		} catch (CardNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		scale = new Scale();
 		scale.setPivotX(0);
@@ -148,18 +147,9 @@ public class GameLogic extends Application {
 		// Stage
 		// This never changes
 		primaryStage.setTitle("cardboardGathering");
-		
-		/*
-		primaryStage.titleProperty().bind(
-			gameScene.widthProperty().asString().
-			concat(" : ").
-			concat(gameScene.heightProperty().asString())
-		);
-		*/
+
 		WindowSizeListener windowSizeListener = new WindowSizeListener();
 
-		//gameScene.widthProperty().addListener(windowSizeListener);
-		//gameScene.heightProperty().addListener(windowSizeListener);
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
@@ -316,7 +306,6 @@ public class GameLogic extends Application {
 					try {
 						this.wait(50);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

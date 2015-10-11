@@ -39,7 +39,7 @@ public class Player {
 		}
 		try {
 			this.playCard(handCards.getNextCard());
-			this.playCard(handCards.getNextCard());
+			//this.playCard(handCards.getNextCard());
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,7 +52,9 @@ public class Player {
 	 * @throws CardNotFoundException
 	 */
 	public void drawCard() throws CardNotFoundException {
-		handCards.add(deckCards.takeNextCard());
+		Card tempCard = deckCards.takeNextCard();
+		tempCard.setCurrentLocation(Card.HAND);
+		handCards.add(tempCard);
 	}
 
 	/**
@@ -60,12 +62,15 @@ public class Player {
 	 */
 	public void playCard(Card whatCard) {
 		try {
+			whatCard.setCurrentLocation(Card.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
+	// This doesn't the cards status of where it is
+	// This should be looked into
 	public void moveCardBetweenCollection(
 			Card whatCard,
 			CardCollection oldCollection,
@@ -173,6 +178,20 @@ public class Player {
 	 * I think...
 	 ********************************************
 	 */
+
+	/**
+	 * @return the deckCards
+	 */
+	public CardCollection getDeckCards() {
+		return deckCards;
+	}
+
+	/**
+	 * @return the handCards
+	 */
+	public CardCollection getHandCards() {
+		return handCards;
+	}
 
 	/**
 	 * @return the battlefieldCards

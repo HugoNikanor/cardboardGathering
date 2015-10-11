@@ -23,13 +23,13 @@ public class Card extends Pane {
 	private int toughness;
 	private int loyalty;
 
-	enum Field {
-		manaCostBlank,
-		manaCostBlack,
-		manaCostBlue,
-		manaCostGreen,
-		manaCostRed,
-		manaCostWhite,
+	enum ManaTypes {
+		BLANK,
+		BLACK,
+		BLUE,
+		GREEN,
+		RED,
+		WHITE,
 	}
 	private int manaCostBlank;
 
@@ -43,6 +43,8 @@ public class Card extends Pane {
 
 	private boolean isFaceUp;
 
+	// These are the boundries of the battlefield node that the card is located in
+	// TODO Should these maybe be static...
 	private double containerSizeX;
 	private double containerSizeY;
 
@@ -52,6 +54,23 @@ public class Card extends Pane {
 
 	private static Card currentCard;
 
+	/*
+	public static enum CardLocation {
+		HAND,
+		BATTLEFIELD,
+		DECK,
+		GRAVEYARD
+	}
+	*/
+	public static final int HAND = 0;
+   	public static final int BATTLEFIELD = 1;
+	public static final int DECK = 2;
+	public static final int GRAVEYARD = 3;
+	
+	//This really should use the above enum
+	private int currentLocation;
+
+	// This should never be used, but is here if I need to test something quickly
 	//public Card() {}
 
 	public Card(
@@ -90,16 +109,18 @@ public class Card extends Pane {
 
 		this.calcConvMana();
 
+		currentLocation = Card.DECK;
+
+
 		//===============================//
 		//         JavaFX below          //
 		//===============================//
 		
 		this.getStyleClass().add("card");
 
-		//width = 70;
-		//height = 100;
 		this.setHeight(150);
 		this.setWidth(0.7 * 150);
+		this.setMinSize(0.7 * 150, 150);
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
 		Text cardNameText = new Text(cardName);
@@ -110,7 +131,7 @@ public class Card extends Pane {
 		//Label nameLabel = new Label(cardName);
 		this.getChildren().add(cardNameText);
 
-		this.setCursor(Cursor.HAND);
+		//this.setCursor(Cursor.HAND);
 
 		currentCard = this;
 
@@ -120,14 +141,16 @@ public class Card extends Pane {
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
+		this.setOnMouseEntered ( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
 
 		scaleFactorX = 1;
 		scaleFactorY = 1;
 
-		containerSizeX = 1600 - this.getWidth();
-		containerSizeY = 395 - this.getHeight();
+		// if there is a better way to do this, tell me
+		containerSizeX = Battlefield.WIDTH - this.getWidth();
+		containerSizeY = Battlefield.HEIGHT - this.getHeight();
 
 		//System.out.println("debug: end of Card");
 	}
@@ -146,50 +169,50 @@ public class Card extends Pane {
 			manaCostWhite + 
 			manaCostBlank;
 
-		Field largestField = Field.manaCostBlank;
+		ManaTypes largestField = ManaTypes.BLANK;
 		int largestValue = 0;
 		if( manaCostBlack > largestValue ) {
-			largestField = Field.manaCostBlack;
+			largestField = ManaTypes.BLACK;
 			largestValue = manaCostBlack;
 		}
 		if( manaCostBlue > largestValue ) {
-			largestField = Field.manaCostBlue;
+			largestField = ManaTypes.BLUE;
 			largestValue = manaCostBlue;
 		}
 		if( manaCostGreen > largestValue ) {
-			largestField = Field.manaCostGreen;
+			largestField = ManaTypes.GREEN;
 			largestValue = manaCostGreen;
 		}
 		if( manaCostRed > largestValue ) {
-			largestField = Field.manaCostRed;
+			largestField = ManaTypes.RED;
 			largestValue = manaCostRed;
 		}
 		if( manaCostWhite > largestValue ) {
-			largestField = Field.manaCostWhite;
+			largestField = ManaTypes.WHITE;
 			largestValue = manaCostWhite;
 		}
 		switch( largestField ) {
-			case manaCostBlank:
+			case BLANK:
 				System.out.println("blank");
 				this.getStyleClass().add("color-less");
 			break;
-			case manaCostBlack:
+			case BLACK:
 				System.out.println("black");
 				this.getStyleClass().add("black");
 			break;
-			case manaCostBlue:
+			case BLUE:
 				System.out.println("blue");
 				this.getStyleClass().add("blue");
 			break;
-			case manaCostGreen:
+			case GREEN:
 				System.out.println("green");
 				this.getStyleClass().add("green");
 			break;
-			case manaCostRed:
+			case RED:
 				System.out.println("red");
 				this.getStyleClass().add("red");
 			break;
-			case manaCostWhite:
+			case WHITE:
 				System.out.println("white");
 				this.getStyleClass().add("white");
 			break;
@@ -198,70 +221,68 @@ public class Card extends Pane {
 	}
 
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
+
+
 		private double mouseInSceneX;
 		private double mouseInSceneY;
 		private EventType<? extends MouseEvent> lastEvent;
 
 		@Override
 		public void handle(MouseEvent event) {
-			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				Card.this.giveThisFocus();
+			if( currentLocation == Card.BATTLEFIELD ) {
+				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+					Card.this.giveThisFocus();
 
-				this.mouseInSceneX = event.getSceneX();
-				this.mouseInSceneY = event.getSceneY();
+					this.mouseInSceneX = event.getSceneX();
+					this.mouseInSceneY = event.getSceneY();
 
-				Card.this.setCursor(Cursor.MOVE);
-			}
-
-			/*
-			 * Rotates the card if it's clicked and not draged
-			 */
-			if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
-				this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
-				Card.this.smoothRotate(90d);
-			}
-
-			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				Card.this.setCursor(Cursor.HAND);
-			}
-
-			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
-				double xChange = event.getSceneX() - this.mouseInSceneX;
-				double yChange = event.getSceneY() - this.mouseInSceneY;
-
-				//System.out.println(scaleFactorX);
-				//System.out.print( "sfY C: " + scaleFactorY);
-				//System.out.println( "sfX C: " + scaleFactorX);
-
-				Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
-				Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
-
-				if( getTranslateX() < 0 ) {
-					setTranslateX(0);
+					Card.this.setCursor(Cursor.MOVE);
 				}
-				if( getTranslateY() < 0 ) {
-					setTranslateY(0);
-				}
-				if( getTranslateX() > containerSizeX ) {
-					setTranslateX(containerSizeX);
-				}
-				if( getTranslateY() > containerSizeY ) {
-					setTranslateY(containerSizeY);
-				}
-
-				this.mouseInSceneX = event.getSceneX();
-				this.mouseInSceneY = event.getSceneY();
 
 				/*
-				System.out.print(" trX: " + Card.this.getTranslateX());
-				System.out.print(" trY: " + Card.this.getTranslateY());
-				System.out.print(" cgpX: " + mouseInSceneX);
-				System.out.print(" cgpY: " + mouseInSceneY);
-				System.out.println();
-				*/
-			}
+				 * Rotates the card if it's clicked and not draged
+				 */
+				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
+					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
+					Card.this.smoothRotate(90d);
+				}
 
-			this.lastEvent = event.getEventType();
+				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+					Card.this.setCursor(Cursor.HAND);
+				}
+
+				if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
+					double xChange = event.getSceneX() - this.mouseInSceneX;
+					double yChange = event.getSceneY() - this.mouseInSceneY;
+
+					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
+					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
+
+					if( getTranslateX() < 0 ) {
+						setTranslateX(0);
+					}
+					if( getTranslateY() < 0 ) {
+						setTranslateY(0);
+					}
+					if( getTranslateX() > containerSizeX ) {
+						setTranslateX(containerSizeX);
+					}
+					if( getTranslateY() > containerSizeY ) {
+						setTranslateY(containerSizeY);
+					}
+
+					this.mouseInSceneX = event.getSceneX();
+					this.mouseInSceneY = event.getSceneY();
+				}
+
+				this.lastEvent = event.getEventType();
+			} // end of BATTLEFIELD listeners
+
+			if( currentLocation == Card.HAND ) {
+				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+					System.out.println("Mouse now hovers over card in hand");
+				}
+			}
 		}
 	}
 
@@ -284,10 +305,10 @@ public class Card extends Pane {
 		}
 	}
 
-	/*************************************
-	 * Functions for manipulating the physical 
-	 * represontation of the card
-	 ************************************/
+	/********************************************
+	 * Functions for manipulating the physical  *
+	 * represontation of the card               *
+	 ********************************************/
 
 	/**
 	 * Rotates the card to 'rotation' if the rotation is 0
@@ -370,6 +391,13 @@ public class Card extends Pane {
 	 */
 	public static Card getCurrentCard() {
 		return currentCard;
+	}
+
+	/**
+	 * @param currentLocation the currentLocation to set
+	 */
+	public void setCurrentLocation(int currentLocation) {
+		this.currentLocation = currentLocation;
 	}
 
 	public void flip() {
