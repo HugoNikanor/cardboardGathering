@@ -161,6 +161,8 @@ public class Card extends Pane {
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
 		containerSizeY = Battlefield.HEIGHT - this.getHeight();
 
+		//System.out.println(this.getParent());
+
 		//System.out.println("debug: end of Card");
 	}
 
@@ -202,27 +204,27 @@ public class Card extends Pane {
 		}
 		switch( largestField ) {
 			case BLANK:
-				System.out.println("blank");
+				//System.out.println("blank");
 				this.getStyleClass().add("color-less");
 			break;
 			case BLACK:
-				System.out.println("black");
+				//System.out.println("black");
 				this.getStyleClass().add("black");
 			break;
 			case BLUE:
-				System.out.println("blue");
+				//System.out.println("blue");
 				this.getStyleClass().add("blue");
 			break;
 			case GREEN:
-				System.out.println("green");
+				//System.out.println("green");
 				this.getStyleClass().add("green");
 			break;
 			case RED:
-				System.out.println("red");
+				//System.out.println("red");
 				this.getStyleClass().add("red");
 			break;
 			case WHITE:
-				System.out.println("white");
+				//System.out.println("white");
 				this.getStyleClass().add("white");
 			break;
 

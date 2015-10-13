@@ -19,6 +19,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Scale;
@@ -64,8 +65,10 @@ public class GameLogic extends Application {
 		keyEventHandler = new KeyEventHandler();
 		pressedKeys = new ArrayList<KeyCode>();
 
-		ownBattlefield   = new Battlefield("cardList");
-		otherBattlefield = new Battlefield("cardlist");
+		CardPlayHandler cardPlayHandler = new CardPlayHandler();
+
+		ownBattlefield   = new Battlefield("cardList", cardPlayHandler);
+		otherBattlefield = new Battlefield("cardlist", cardPlayHandler);
 		otherBattlefield.setRotate(180d);
 
 		// contain the ownBattlefield & and otherBattlefield
@@ -141,26 +144,20 @@ public class GameLogic extends Application {
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
+
 		// Sets all the cards to be painted
-				//ownBattlefield.getChildren().removeAll();
-				for( Card ownTemp : ownBattlefield.getCards() ) {
-					//System.out.println(ownTemp.toString());
-					ownBattlefield.getChildren().add(ownTemp);
-				}
-				//otherBattlefield.getChildren().removeAll();
-				for( Card otherTemp : otherBattlefield.getCards() ) {
-					//System.out.println(otherTemp.toString());
-					otherBattlefield.getChildren().add(otherTemp);
-				}
-				//ownBattlefield.getPlayer().getChildren().removeAll();
-				// Players card in hand
-				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
-					System.out.println(handTemp.toString());
-					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
-					ownBattlefield.getPlayer().getChildren().add(handTemp);
-					handTemp.setTranslateX(150 * (1 + ownBattlefield.getPlayer().getHandCards().indexOf(handTemp)));
-					handTemp.setTranslateY(20);
-				}
+		for( Card ownTemp : ownBattlefield.getCards() ) {
+			ownBattlefield.getChildren().add(ownTemp);
+		}
+		for( Card otherTemp : otherBattlefield.getCards() ) {
+			otherBattlefield.getChildren().add(otherTemp);
+		}
+		for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
+			ownBattlefield.getPlayer().getChildren().add(handTemp);
+			handTemp.setTranslateX(150 * (1 + ownBattlefield.getPlayer().getHandCards().indexOf(handTemp)));
+			handTemp.setTranslateY(20);
+		}
+		//Platform.runLater(new CardCheckThread());
 
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
@@ -172,30 +169,23 @@ public class GameLogic extends Application {
 		//System.out.println(gameScene.getWidth() + primaryStage.getWidth());
 	}
 
-	private class CardCheckThread implements Runnable {
-		private int dispX = 100;
+	private class CardPlayHandler implements EventHandler<MouseEvent> {
 		@Override
-		public void run() {
-			while( true ) {
-				ownBattlefield.getChildren().removeAll();
-				for( Card ownTemp : ownBattlefield.getCards() ) {
-					//System.out.println(ownTemp.toString());
-					ownBattlefield.getChildren().add(ownTemp);
+		public void handle(MouseEvent event) {
+			try {
+				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
+				if( tempCard.getCurrentLocation() == Card.HAND ) {
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						System.out.println("card should now graphicly move");
+						ownBattlefield.getPlayer().getChildren().remove(tempCard);
+						ownBattlefield.getChildren().add(tempCard);
+						ownBattlefield.getPlayer().playCard(tempCard);
+					}
 				}
-				otherBattlefield.getChildren().removeAll();
-				for( Card otherTemp : otherBattlefield.getCards() ) {
-					//System.out.println(otherTemp.toString());
-					otherBattlefield.getChildren().add(otherTemp);
-				}
-				ownBattlefield.getPlayer().getChildren().removeAll();
-				// Players card in hand
-				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
-					System.out.println(handTemp.toString());
-					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
-					ownBattlefield.getPlayer().getChildren().add(handTemp);
-					handTemp.setTranslateX(dispX * ownBattlefield.getPlayer().getHandCards().indexOf(handTemp));
-					handTemp.setTranslateY(20);
-				}
+			} catch (CardNotFoundException e) {
+				//TODO this will fail when using a card on the battlefield.
+				//Be aware that it's the reason for not doing anything here
+				//e.printStackTrace();
 			}
 		}
 	}

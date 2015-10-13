@@ -17,7 +17,7 @@ public class Player extends Pane {
 
 	private MouseEventHandler mouseEventHandler;
 
-	public Player(String cardList) {
+	public Player(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Player");
 		deckCards        = new CardCollection(cardList);
 		handCards        = new CardCollection();
@@ -27,9 +27,15 @@ public class Player extends Pane {
 		mouseEventHandler = new MouseEventHandler();
 
 		for( Card temp : deckCards ) {
-			temp.setOnMouseClicked( mouseEventHandler );
 			temp.setOnMouseEntered( mouseEventHandler );
 			temp.setOnMouseExited ( mouseEventHandler );
+
+			temp.setOnMouseClicked( cardPlayHandler );
+		}
+		try {
+			System.out.println(deckCards.getCard(0).getOnMouseClicked());
+		} catch (CardNotFoundException e1) {
+			e1.printStackTrace();
 		}
 
 		health = 20;
@@ -53,7 +59,7 @@ public class Player extends Pane {
 		}
 		try {
 			this.playCard(handCards.getNextCard());
-			//this.playCard(handCards.getNextCard());
+			this.playCard(handCards.getNextCard());
 		} catch (CardNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,9 +89,6 @@ public class Player extends Pane {
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
 						tempCard.setTranslateY(20);
 					}
-					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-						playCard(tempCard);
-					}
 				}
 			} catch (CardNotFoundException e1) {
 				// TODO This is triggered due to the card keeping this listener when it enters the battlefield
@@ -110,6 +113,7 @@ public class Player extends Pane {
 	 */
 	public void playCard(Card whatCard) {
 		try {
+			System.out.println("Card played rule");
 			whatCard.setCurrentLocation(Card.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
 		} catch (CardNotFoundException e) {

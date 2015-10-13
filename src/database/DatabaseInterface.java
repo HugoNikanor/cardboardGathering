@@ -27,7 +27,7 @@ public class DatabaseInterface {
 			e.printStackTrace();
 		}
 
-		cards = new Card[3];
+		cards = new Card[4];
 
 		cards[0] = new Card(
 			pr.getProperty("card1Name"),
@@ -79,6 +79,23 @@ public class DatabaseInterface {
 			Integer.parseInt(pr.getProperty("card1ManaCostWhite")),
 			Integer.parseInt(pr.getProperty("card1ManaCostBlank"))
 		);
+
+		cards[3] = new Card(
+			pr.getProperty("card2Name"),
+			pr.getProperty("card2Type"),
+			pr.getProperty("card2Subtype"),
+			pr.getProperty("card2Ability"),
+			pr.getProperty("card2Flavour"),
+			Integer.parseInt(pr.getProperty("card2Power")),
+			Integer.parseInt(pr.getProperty("card2Toughness")),
+			Integer.parseInt(pr.getProperty("card2Loyalty")),
+			Integer.parseInt(pr.getProperty("card2ManaCostBlack")),
+			Integer.parseInt(pr.getProperty("card2ManaCostBlue")),
+			Integer.parseInt(pr.getProperty("card2ManaCostGreen")),
+			Integer.parseInt(pr.getProperty("card2ManaCostRed")),
+			Integer.parseInt(pr.getProperty("card2ManaCostWhite")),
+			Integer.parseInt(pr.getProperty("card2ManaCostBlank"))
+		); 
 	}
 
 	public Card[] getCards() {

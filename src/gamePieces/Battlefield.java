@@ -1,10 +1,8 @@
 package gamePieces;
 
-import java.util.Random;
-
-import exceptions.CardNotFoundException;
-
 import javafx.scene.layout.Pane;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 public class Battlefield extends Pane {
 
@@ -15,9 +13,9 @@ public class Battlefield extends Pane {
 	public static final double HEIGHT = 395;
 
 	
-	public Battlefield(String cardList) {
+	public Battlefield(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Battlefield");
-		player = new Player(cardList);
+		player = new Player(cardList, cardPlayHandler);
 		cards = player.getBattlefieldCards();
 
 		this.getStyleClass().add("battlefield");
@@ -26,19 +24,8 @@ public class Battlefield extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
-		/*
-		try {
-			this.getChildren().add(getCards().getCard(0));
-			getCards().getCard(0).setTranslateX(new Random().nextInt(331));
-			getCards().getCard(0).setTranslateY(new Random().nextInt(101));
+		//System.out.println(player.getParent());
 
-			this.getChildren().add(getCards().getCard(1));
-			getCards().getCard(1).setTranslateX(new Random().nextInt(331));
-			getCards().getCard(1).setTranslateY(new Random().nextInt(101));
-		} catch (CardNotFoundException e) {
-			e.printStackTrace();
-		}
-		*/
 
 		//System.out.println("Debug: end of Battlefield");
 	}
