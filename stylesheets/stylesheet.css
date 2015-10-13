@@ -1,6 +1,9 @@
 .battlefield {
 	-fx-border-color: black;
 }
+.deck {
+	-fx-background-color: brown;
+}
 .cards-in-hand-pane {
 
 }

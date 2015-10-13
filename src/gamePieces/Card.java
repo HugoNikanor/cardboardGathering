@@ -58,10 +58,6 @@ public class Card extends Pane {
 
 	private static Card currentCard;
 
-	// Is this how you should do it‽
-	private ObservableValue<Boolean> readyToPlay;
-
-
 	/*
 	public static enum CardLocation {
 		HAND,
@@ -148,9 +144,6 @@ public class Card extends Pane {
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
-		//this.setOnMouseClicked ( mouseEventHandler );
-		//this.setOnMouseEntered ( mouseEventHandler );
-		//this.setOnMouseExited  ( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
 

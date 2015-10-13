@@ -4,11 +4,12 @@ import exceptions.CardNotFoundException;
 
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
-public class Player extends Pane {
+public class Player extends HBox {
 	private CardCollection deckCards;
 	private CardCollection handCards;
 	private CardCollection battlefieldCards;
@@ -34,6 +35,7 @@ public class Player extends Pane {
 
 			temp.setOnMouseClicked( cardPlayHandler );
 		}
+
 		try {
 			System.out.println(deckCards.getCard(0).getOnMouseClicked());
 		} catch (CardNotFoundException e1) {
@@ -50,6 +52,7 @@ public class Player extends Pane {
 			}
 		} catch (CardNotFoundException e) {
 			// This should trigger a player lost condition
+			// It's however a non fatal state for the program
 			System.out.println(
 				"==\n" +
 				"Player (" +
@@ -57,22 +60,19 @@ public class Player extends Pane {
 				"): trying to draw card with no cards left in deck\n" +
 				"=="
 			);
-			//e.printStackTrace();
-		}
-		try {
-			this.playCard(handCards.getNextCard());
-			this.playCard(handCards.getNextCard());
-		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		//===============================//
 		//         JavaFX below          //
 		//===============================//
 
-		this.setPrefSize(Battlefield.WIDTH, 110);
+		this.setPrefWidth(Battlefield.WIDTH);
+		this.setMaxHeight(110);
+		this.setMinHeight(110);
 		this.getStyleClass().add("cards-in-hand-pane");
+
+		this.setSpacing(25);
+		this.setAlignment(Pos.CENTER);
 
 		//System.out.println("Debug: end of Player");
 	}
@@ -87,16 +87,18 @@ public class Player extends Pane {
 
 			try {
 				tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
-				tt = new TranslateTransition(Duration.millis(100), tempCard);
+				tt = new TranslateTransition(Duration.millis(200), tempCard);
 
-				int moveValue = 20;
+				int moveValue = 40;
 
 				if( tempCard.getCurrentLocation() == Card.HAND ) {
 					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+						//tt.setToY(-1*moveValue);
 						tt.setToY(-1*moveValue);
 						tt.play();
 					}
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+						//tt.setToY(moveValue);
 						tt.setToY(moveValue);
 						tt.play();
 					}
@@ -117,6 +119,10 @@ public class Player extends Pane {
 		Card tempCard = deckCards.takeNextCard();
 		tempCard.setCurrentLocation(Card.HAND);
 		handCards.add(tempCard);
+
+		tempCard.setTranslateY(40);
+
+		getChildren().add(tempCard);
 	}
 
 	/**

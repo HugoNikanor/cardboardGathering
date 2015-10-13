@@ -1,6 +1,7 @@
 package gamePieces;
 
 import javafx.scene.layout.Pane;
+import exceptions.CardNotFoundException;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
@@ -24,10 +25,30 @@ public class Battlefield extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
-		//System.out.println(player.getParent());
-
+		Pane deckPane;
+		deckPane = new Pane();
+		double deckHeight = 150;
+		double deckWidth = 105;
+		deckPane.setPrefSize(deckWidth, deckHeight);
+		deckPane.setTranslateX(10);
+		deckPane.setTranslateY(this.getHeight() - deckHeight - 10);
+		deckPane.getStyleClass().add("deck");
+		deckPane.setOnMouseClicked(new MouseEventHandler());
+		this.getChildren().add(deckPane);
 
 		//System.out.println("Debug: end of Battlefield");
+	}
+
+	private class MouseEventHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			System.out.println("card drawn");
+			try {
+				getPlayer().drawCard();
+			} catch (CardNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public Player getPlayer() {

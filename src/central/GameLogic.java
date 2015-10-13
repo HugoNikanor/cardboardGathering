@@ -83,7 +83,7 @@ public class GameLogic extends Application {
 		rootGamePane = new BorderPane();
 		rootGamePane.setCenter(battlefieldContainer);
 		rootGamePane.setBottom(ownBattlefield.getPlayer());
-		
+
 		// Scene
 		// Only one at a time, can change
 		gameScene = new Scene(rootGamePane);
@@ -102,9 +102,10 @@ public class GameLogic extends Application {
 		try {
 			ownBattlefield.getCards().getCard(0).giveThisFocus();
 		} catch (CardNotFoundException e1) {
-			e1.printStackTrace();
+			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
+			//e1.printStackTrace();
 		}
-		
+
 		// Set scale, for windown resize
 		scale = new Scale();
 		scale.setPivotX(0);
@@ -146,19 +147,13 @@ public class GameLogic extends Application {
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
 
-		// Sets all the cards to be painted
+		// Adds the initial cards to the graphical display
 		for( Card ownTemp : ownBattlefield.getCards() ) {
 			ownBattlefield.getChildren().add(ownTemp);
 		}
 		for( Card otherTemp : otherBattlefield.getCards() ) {
 			otherBattlefield.getChildren().add(otherTemp);
 		}
-		for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
-			ownBattlefield.getPlayer().getChildren().add(handTemp);
-			handTemp.setTranslateX(150 * (1 + ownBattlefield.getPlayer().getHandCards().indexOf(handTemp)));
-			handTemp.setTranslateY(20);
-		}
-		//Platform.runLater(new CardCheckThread());
 
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
@@ -199,10 +194,12 @@ public class GameLogic extends Application {
 								ownBattlefield.getPlayer().getChildren().remove(tempCard);
 								ownBattlefield.getChildren().add(tempCard);
 								ownBattlefield.getPlayer().playCard(tempCard);
+								System.out.println("2: " + tempCard.getLayoutX());
 							}
 						});
 
 						tt.play();
+						System.out.println("1: " + tempCard.getLayoutX());
 					}
 				}
 			} catch (CardNotFoundException e) {
