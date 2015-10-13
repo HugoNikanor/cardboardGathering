@@ -15,6 +15,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -175,11 +176,33 @@ public class GameLogic extends Application {
 			try {
 				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
 				if( tempCard.getCurrentLocation() == Card.HAND ) {
+					/**
+					 * Moves the card upwards from the hand to the battlefield
+					 * Then jerk it back down only to have it moved by actually
+					 * placing it on the battlefield
+					 *
+					 * Only locks up its private 'thread'
+					 */
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-						System.out.println("card should now graphicly move");
-						ownBattlefield.getPlayer().getChildren().remove(tempCard);
-						ownBattlefield.getChildren().add(tempCard);
-						ownBattlefield.getPlayer().playCard(tempCard);
+						tempCard.setCurrentLocation(Card.BATTLEFIELD);
+
+						double finalPosY = 50;
+						double moveDistance = ownBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
+						TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
+						tt.setByY( -1*moveDistance );
+
+						tt.setOnFinished(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent event) {
+								tempCard.setTranslateY( finalPosY );
+
+								ownBattlefield.getPlayer().getChildren().remove(tempCard);
+								ownBattlefield.getChildren().add(tempCard);
+								ownBattlefield.getPlayer().playCard(tempCard);
+							}
+						});
+
+						tt.play();
 					}
 				}
 			} catch (CardNotFoundException e) {

@@ -2,9 +2,11 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
+import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 public class Player extends Pane {
 	private CardCollection deckCards;
@@ -78,16 +80,25 @@ public class Player extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			//event.getSource() gives the card that is selected
+			// event.getSource() gives the card that is selected
+
 			Card tempCard;
+			TranslateTransition tt;
+
 			try {
 				tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
+				tt = new TranslateTransition(Duration.millis(100), tempCard);
+
+				int moveValue = 20;
+
 				if( tempCard.getCurrentLocation() == Card.HAND ) {
 					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-						tempCard.setTranslateY(-20);
+						tt.setToY(-1*moveValue);
+						tt.play();
 					}
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-						tempCard.setTranslateY(20);
+						tt.setToY(moveValue);
+						tt.play();
 					}
 				}
 			} catch (CardNotFoundException e1) {
@@ -113,7 +124,7 @@ public class Player extends Pane {
 	 */
 	public void playCard(Card whatCard) {
 		try {
-			System.out.println("Card played rule");
+			// This is also set before the code reaches thes point
 			whatCard.setCurrentLocation(Card.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
 		} catch (CardNotFoundException e) {
