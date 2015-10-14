@@ -2,10 +2,14 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.ShuffleBtn;
+
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 public class Player extends Pane {
@@ -21,6 +25,7 @@ public class Player extends Pane {
 
 	private int handPopupValue = 20;
 
+	private ShuffleBtn shuffleBtn;
 
 	public Player(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Player");
@@ -36,12 +41,6 @@ public class Player extends Pane {
 			temp.setOnMouseExited ( mouseEventHandler );
 
 			temp.setOnMouseClicked( cardPlayHandler );
-		}
-
-		try {
-			System.out.println(deckCards.getCard(0).getOnMouseClicked());
-		} catch (CardNotFoundException e1) {
-			e1.printStackTrace();
 		}
 
 		health = 20;
@@ -69,13 +68,34 @@ public class Player extends Pane {
 		//===============================//
 
 		this.setPrefWidth(Battlefield.WIDTH);
-		this.setMaxHeight(110);
-		this.setMinHeight(110);
+		int height = 110;
+		this.setPrefHeight(height);
 		this.getStyleClass().add("cards-in-hand-pane");
+
+
+		StackPane btnPane = new StackPane();
+		btnPane.setPrefSize(height, height);
+		btnPane.getStyleClass().add("btn-pane");
+		this.getChildren().add(btnPane);
+
+		shuffleBtn = new ShuffleBtn();
+		shuffleBtn.setOnAction(new ShuffleBtnHandler());
+
+		btnPane.getChildren().add(shuffleBtn);
 
 		//System.out.println("Debug: end of Player");
 	}
 
+	private class ShuffleBtnHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent event) {
+			if( event.getSource() == shuffleBtn ) {
+				System.out.println("button pressed");
+				handCards.shuffleCards();
+				rearangeCards();
+			}
+		}
+	}
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
@@ -119,30 +139,33 @@ public class Player extends Pane {
 
 		tempCard.setTranslateY(handPopupValue);
 
-		tempCard.setTranslateX( ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+		tempCard.setTranslateX( 130 + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
 
 		getChildren().add(tempCard);
 	}
 
-	public void rearangeCards(int removedCard) {
+	private void rearangeCards() {
+		TranslateTransition tt;
 		for( Card temp : handCards ) {
-			temp.setTranslateX( ( handCards.indexOf(temp) ) * ( temp.getWidth() + temp.getPreferdMargin() * 2) );
+			 tt = new TranslateTransition(Duration.millis(200), temp);
+			 tt.setToX( 130 + ( handCards.indexOf(temp) ) * ( temp.getWidth() + temp.getPreferdMargin() * 2) );
+			 tt.play();
 		}
-
 	}
+
 
 	/**
 	 * Moves card to the table
 	 */
 	public void playCard(Card whatCard) {
 		try {
-			// This is also set before the code reaches thes point
-			int cardIndex = handCards.indexOf(whatCard);
 
+			// This is also set before the code reaches thes point
 			whatCard.setCurrentLocation(Card.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
+			whatCard.giveThisFocus();
 
-			rearangeCards(cardIndex);
+			rearangeCards();
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}

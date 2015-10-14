@@ -186,19 +186,17 @@ public class GameLogic extends Application {
 						TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
 						tt.setByY( -1*moveDistance );
 
+						ownBattlefield.getPlayer().playCard(tempCard);
+
 						tt.setOnFinished(new EventHandler<ActionEvent>() {
 							@Override
 							public void handle(ActionEvent event) {
 								tempCard.setTranslateY( finalPosY );
 
-
 								ownBattlefield.getPlayer().getChildren().remove(tempCard);
 								ownBattlefield.getChildren().add(tempCard);
-								ownBattlefield.getPlayer().playCard(tempCard);
 
 								tempCard.setTranslateY( finalPosY );
-
-								ownBattlefield.getPlayer().rearangeCards(ownBattlefield.getPlayer().getHandCards().indexOf(tempCard));
 							}
 						});
 
@@ -264,7 +262,7 @@ public class GameLogic extends Application {
 		boolean spacePressedBefore;
 		Card tempCard;
 
-		int moveSpeed = 20;
+		int moveSpeed = 30;
 
 		@Override
 		public void run() {

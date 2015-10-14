@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 // TODO The Pane extension should be another type of pane
@@ -32,7 +33,6 @@ public class Card extends Pane {
 		WHITE,
 	}
 	private int manaCostBlank;
-
 	private int manaCostBlack;
 	private int manaCostBlue;
 	private int manaCostGreen;
@@ -40,8 +40,6 @@ public class Card extends Pane {
 	private int manaCostWhite;
 
 	private int convertedManaCost;
-
-	private boolean isFaceUp;
 
 	// These are the boundries of the battlefield node that the card is located in
 	// TODO Should these maybe be static...
@@ -247,7 +245,9 @@ public class Card extends Pane {
 				 */
 				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
 					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
+					// TODO This actually shold tap the card, it's only temporarly changed to fliping it 
 					Card.this.smoothRotate(90d);
+					//Card.this.smoothFlip(-180d);
 				}
 
 				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
@@ -317,15 +317,29 @@ public class Card extends Pane {
 	public void smoothRotate( double rotation ) {
 		RotateTransition rt;
 		if( Card.this.getRotate() == 0 ) {
+			rt = new RotateTransition(Duration.millis(500), Card.this);
+			rt.setByAngle(rotation);
+			rt.play();
+		} else {
+			rt = new RotateTransition(Duration.millis(500), Card.this);
+			rt.setByAngle( -1 * Card.this.getRotate() );
+			rt.play();
+		}
+	}
+	public void smoothFlip( double rotation ) {
+		RotateTransition rt;
+		if( Card.this.getRotate() == 0 ) {
 			// Rotates the card by 90 degrees
 			// Always rotates clockwise
 			rt = new RotateTransition(Duration.millis(300), Card.this);
+			rt.setAxis(Rotate.Y_AXIS);
 			rt.setByAngle(rotation);
 			rt.play();
 		} else {
 			// if the rotation isn't 90 degrees then return to 0 degrees
 			// always rotates counter clockwise
 			rt = new RotateTransition(Duration.millis(300), Card.this);
+			rt.setAxis(Rotate.Y_AXIS);
 			rt.setByAngle( -1 * Card.this.getRotate() );
 			rt.play();
 		}
@@ -346,16 +360,6 @@ public class Card extends Pane {
 
 	public void modifyRotate(double change) {
 		this.setRotate(this.getRotate() + change);
-	}
-
-	public boolean isFaceUp() {
-		return isFaceUp;
-	}
-	/**
-	 * @param isFaceUp the isFaceUp to set
-	 */
-	public void setFaceUp(boolean isFaceUp) {
-		this.isFaceUp = isFaceUp;
 	}
 
 	/**
@@ -405,14 +409,6 @@ public class Card extends Pane {
 	 */
 	public int getPreferdMargin() {
 		return preferdMargin;
-	}
-
-	public void flip() {
-		if(isFaceUp) {
-			isFaceUp = false;
-		} else {
-			isFaceUp = true;
-		}
 	}
 
 	@Override
