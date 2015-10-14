@@ -2,9 +2,17 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.ResetBoardBtn;
+import graphicsObjects.ShuffleBtn;
+
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class Player extends Pane {
 	private CardCollection deckCards;
@@ -17,7 +25,12 @@ public class Player extends Pane {
 
 	private MouseEventHandler mouseEventHandler;
 
-	public Player(String cardList) {
+	private int handPopupValue = 20;
+
+	private ShuffleBtn shuffleBtn;
+	private ResetBoardBtn resetBoardBtn;
+
+	public Player(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Player");
 		deckCards        = new CardCollection(cardList);
 		handCards        = new CardCollection();
@@ -27,9 +40,10 @@ public class Player extends Pane {
 		mouseEventHandler = new MouseEventHandler();
 
 		for( Card temp : deckCards ) {
-			temp.setOnMouseClicked( mouseEventHandler );
 			temp.setOnMouseEntered( mouseEventHandler );
 			temp.setOnMouseExited ( mouseEventHandler );
+
+			temp.setOnMouseClicked( cardPlayHandler );
 		}
 
 		health = 20;
@@ -42,6 +56,7 @@ public class Player extends Pane {
 			}
 		} catch (CardNotFoundException e) {
 			// This should trigger a player lost condition
+			// It's however a non fatal state for the program
 			System.out.println(
 				"==\n" +
 				"Player (" +
@@ -49,42 +64,82 @@ public class Player extends Pane {
 				"): trying to draw card with no cards left in deck\n" +
 				"=="
 			);
-			//e.printStackTrace();
-		}
-		try {
-			this.playCard(handCards.getNextCard());
-			//this.playCard(handCards.getNextCard());
-		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		//===============================//
 		//         JavaFX below          //
 		//===============================//
 
-		this.setPrefSize(Battlefield.WIDTH, 110);
+		this.setPrefWidth(Battlefield.WIDTH);
+		int height = 110;
+		this.setPrefHeight(height);
 		this.getStyleClass().add("cards-in-hand-pane");
+
+
+		VBox btnPane = new VBox();
+		btnPane.setPrefSize(height, height);
+		btnPane.setFillWidth(true);
+		btnPane.setSpacing(10);
+		btnPane.getStyleClass().add("btn-pane");
+		this.getChildren().add(btnPane);
+
+		btnPane.setAlignment(Pos.CENTER);
+
+		shuffleBtn = new ShuffleBtn(new BtnPaneHandler());
+		btnPane.getChildren().add(shuffleBtn);
+
+		resetBoardBtn = new ResetBoardBtn(new BtnPaneHandler());
+		btnPane.getChildren().add(resetBoardBtn);
 
 		//System.out.println("Debug: end of Player");
 	}
 
+	private class BtnPaneHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent event) {
+			if( event.getSource() == shuffleBtn ) {
+				handCards.shuffleCards();
+				rearangeCards();
+			}
+			if( event.getSource() == resetBoardBtn ) { 
+				int displacement = 0;
+				int laps = 0;
+				for( int i = 0; i < battlefieldCards.size(); i++ ) {
+					if(i%12 == 0 && i != 0) {
+						displacement = 0;
+						laps++;
+					}
+
+					battlefieldCards.get(i).setTranslateX(displacement * 10 + 200 * laps);
+					battlefieldCards.get(i).setTranslateY(displacement * 20);
+
+					displacement++;
+				}
+			}
+		}
+	}
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			//event.getSource() gives the card that is selected
+			// event.getSource() gives the card that is selected
+
 			Card tempCard;
+			TranslateTransition tt;
+
 			try {
 				tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
+				tt = new TranslateTransition(Duration.millis(200), tempCard);
+
+				//int moveValue = 0;
+
 				if( tempCard.getCurrentLocation() == Card.HAND ) {
 					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-						tempCard.setTranslateY(-20);
+						tt.setToY(-3*handPopupValue);
+						tt.play();
 					}
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-						tempCard.setTranslateY(20);
-					}
-					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-						playCard(tempCard);
+						tt.setToY(handPopupValue);
+						tt.play();
 					}
 				}
 			} catch (CardNotFoundException e1) {
@@ -103,15 +158,36 @@ public class Player extends Pane {
 		Card tempCard = deckCards.takeNextCard();
 		tempCard.setCurrentLocation(Card.HAND);
 		handCards.add(tempCard);
+
+		tempCard.setTranslateY(handPopupValue);
+
+		tempCard.setTranslateX( 130 + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+
+		getChildren().add(tempCard);
 	}
+
+	private void rearangeCards() {
+		TranslateTransition tt;
+		for( Card temp : handCards ) {
+			 tt = new TranslateTransition(Duration.millis(200), temp);
+			 tt.setToX( 130 + ( handCards.indexOf(temp) ) * ( temp.getWidth() + temp.getPreferdMargin() * 2) );
+			 tt.play();
+		}
+	}
+
 
 	/**
 	 * Moves card to the table
 	 */
 	public void playCard(Card whatCard) {
 		try {
+
+			// This is also set before the code reaches thes point
 			whatCard.setCurrentLocation(Card.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
+			whatCard.giveThisFocus();
+
+			rearangeCards();
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -187,18 +263,11 @@ public class Player extends Pane {
 		}
 	}
 
-	public void updateScaleFactorX(double newScaleFactorX) {
-		deckCards.updateScaleFactorX(newScaleFactorX);
-		handCards.updateScaleFactorX(newScaleFactorX);
-		battlefieldCards.updateScaleFactorX(newScaleFactorX);
-		graveyardCards.updateScaleFactorX(newScaleFactorX);
-	}
-
-	public void updateScaleFactorY(double newScaleFactorY) {
-		deckCards.updateScaleFactorY(newScaleFactorY);
-		handCards.updateScaleFactorY(newScaleFactorY);
-		battlefieldCards.updateScaleFactorY(newScaleFactorY);
-		graveyardCards.updateScaleFactorY(newScaleFactorY);
+	public void updateScaleFactor(double newScaleFactor) {
+		deckCards.updateScaleFactor(newScaleFactor);
+		handCards.updateScaleFactor(newScaleFactor);
+		battlefieldCards.updateScaleFactor(newScaleFactor);
+		graveyardCards.updateScaleFactor(newScaleFactor);
 	}
 
 	/**

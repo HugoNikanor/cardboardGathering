@@ -5,11 +5,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import javafx.animation.RotateTransition;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 // TODO The Pane extension should be another type of pane
@@ -33,7 +33,6 @@ public class Card extends Pane {
 		WHITE,
 	}
 	private int manaCostBlank;
-
 	private int manaCostBlack;
 	private int manaCostBlue;
 	private int manaCostGreen;
@@ -42,25 +41,17 @@ public class Card extends Pane {
 
 	private int convertedManaCost;
 
-	private boolean isFaceUp;
-
 	// These are the boundries of the battlefield node that the card is located in
 	// TODO Should these maybe be static...
 	private double containerSizeX;
 	private double containerSizeY;
 
-	// Clean up X & Y
-	private double scaleFactorX;
-	private double scaleFactorY;
+	private double scaleFactor;
 
 	public static final double HEIGHT = 150;
 	public static final double WIDTH = 105;
 
 	private static Card currentCard;
-
-	// Is this how you should do it‽
-	private ObservableValue<Boolean> readyToPlay;
-
 
 	/*
 	public static enum CardLocation {
@@ -77,6 +68,10 @@ public class Card extends Pane {
 	
 	//This really should use the above enum
 	private int currentLocation;
+
+	// Used for the margin on one side of the card
+	// the margins of two cards shouldn't overlap
+	private int preferdMargin;
 
 	// This should never be used, but is here if I need to test something quickly
 	//public Card() {}
@@ -119,6 +114,7 @@ public class Card extends Pane {
 
 		currentLocation = Card.DECK;
 
+		this.preferdMargin = 25;
 
 		//===============================//
 		//         JavaFX below          //
@@ -148,14 +144,10 @@ public class Card extends Pane {
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
-		//this.setOnMouseClicked ( mouseEventHandler );
-		//this.setOnMouseEntered ( mouseEventHandler );
-		//this.setOnMouseExited  ( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
 
-		scaleFactorX = 1;
-		scaleFactorY = 1;
+		scaleFactor = 1;
 
 		// if there is a better way to do this, tell me
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
@@ -202,27 +194,27 @@ public class Card extends Pane {
 		}
 		switch( largestField ) {
 			case BLANK:
-				System.out.println("blank");
+				//System.out.println("blank");
 				this.getStyleClass().add("color-less");
 			break;
 			case BLACK:
-				System.out.println("black");
+				//System.out.println("black");
 				this.getStyleClass().add("black");
 			break;
 			case BLUE:
-				System.out.println("blue");
+				//System.out.println("blue");
 				this.getStyleClass().add("blue");
 			break;
 			case GREEN:
-				System.out.println("green");
+				//System.out.println("green");
 				this.getStyleClass().add("green");
 			break;
 			case RED:
-				System.out.println("red");
+				//System.out.println("red");
 				this.getStyleClass().add("red");
 			break;
 			case WHITE:
-				System.out.println("white");
+				//System.out.println("white");
 				this.getStyleClass().add("white");
 			break;
 
@@ -253,7 +245,9 @@ public class Card extends Pane {
 				 */
 				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
 					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
+					// TODO This actually shold tap the card, it's only temporarly changed to fliping it 
 					Card.this.smoothRotate(90d);
+					//Card.this.smoothFlip(-180d);
 				}
 
 				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
@@ -264,9 +258,11 @@ public class Card extends Pane {
 					double xChange = event.getSceneX() - this.mouseInSceneX;
 					double yChange = event.getSceneY() - this.mouseInSceneY;
 
-					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
-					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
+					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactor ));
+					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactor ));
 
+					System.out.print("layX: " + getTranslateX());
+					System.out.println("trY: " + getTranslateY());
 					if( getTranslateX() < 0 ) {
 						setTranslateX(0);
 					}
@@ -321,15 +317,29 @@ public class Card extends Pane {
 	public void smoothRotate( double rotation ) {
 		RotateTransition rt;
 		if( Card.this.getRotate() == 0 ) {
+			rt = new RotateTransition(Duration.millis(500), Card.this);
+			rt.setByAngle(rotation);
+			rt.play();
+		} else {
+			rt = new RotateTransition(Duration.millis(500), Card.this);
+			rt.setByAngle( -1 * Card.this.getRotate() );
+			rt.play();
+		}
+	}
+	public void smoothFlip( double rotation ) {
+		RotateTransition rt;
+		if( Card.this.getRotate() == 0 ) {
 			// Rotates the card by 90 degrees
 			// Always rotates clockwise
 			rt = new RotateTransition(Duration.millis(300), Card.this);
+			rt.setAxis(Rotate.Y_AXIS);
 			rt.setByAngle(rotation);
 			rt.play();
 		} else {
 			// if the rotation isn't 90 degrees then return to 0 degrees
 			// always rotates counter clockwise
 			rt = new RotateTransition(Duration.millis(300), Card.this);
+			rt.setAxis(Rotate.Y_AXIS);
 			rt.setByAngle( -1 * Card.this.getRotate() );
 			rt.play();
 		}
@@ -352,16 +362,6 @@ public class Card extends Pane {
 		this.setRotate(this.getRotate() + change);
 	}
 
-	public boolean isFaceUp() {
-		return isFaceUp;
-	}
-	/**
-	 * @param isFaceUp the isFaceUp to set
-	 */
-	public void setFaceUp(boolean isFaceUp) {
-		this.isFaceUp = isFaceUp;
-	}
-
 	/**
 	 * @param containerSizeX the containerSizeX to set
 	 */
@@ -377,17 +377,10 @@ public class Card extends Pane {
 	}
 
 	/**
-	 * @param scaleFactorX the scaleFactorX to set
-	 */
-	public void setScaleFactorX(double scaleFactorX) {
-		this.scaleFactorX = scaleFactorX;
-	}
-
-	/**
 	 * @param scaleFactorY the scaleFactorY to set
 	 */
-	public void setScaleFactorY(double scaleFactorY) {
-		this.scaleFactorY = scaleFactorY;
+	public void setScaleFactor(double scaleFactor) {
+		this.scaleFactor = scaleFactor;
 	}
 
 	/**
@@ -411,12 +404,11 @@ public class Card extends Pane {
 		this.currentLocation = currentLocation;
 	}
 
-	public void flip() {
-		if(isFaceUp) {
-			isFaceUp = false;
-		} else {
-			isFaceUp = true;
-		}
+	/**
+	 * @return the preferdMargin
+	 */
+	public int getPreferdMargin() {
+		return preferdMargin;
 	}
 
 	@Override

@@ -125,14 +125,19 @@ public class CardCollection extends ArrayList<Card> {
 
 	}
 
-	public void updateScaleFactorX(double newScaleFactorX) {
-		for( Card temp : this ) {
-			temp.setScaleFactorX(newScaleFactorX);
+	public Card getCard(Card card) throws CardNotFoundException {
+		int indexOfCard = this.indexOf(card);
+		// ArrayList.indexOf returns '-1' if there is no such element
+		if( indexOfCard == -1 ) {
+			throw new CardNotFoundException("No such card in collection");
 		}
+		Card returnCard = this.get(indexOfCard);
+		return returnCard;
 	}
-	public void updateScaleFactorY(double newScaleFactorY) {
+
+	public void updateScaleFactor(double newScaleFactor) {
 		for( Card temp : this ) {
-			temp.setScaleFactorX(newScaleFactorY);
+			temp.setScaleFactor(newScaleFactor);
 		}
 	}
 

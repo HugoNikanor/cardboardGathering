@@ -15,10 +15,12 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Scale;
@@ -64,8 +66,10 @@ public class GameLogic extends Application {
 		keyEventHandler = new KeyEventHandler();
 		pressedKeys = new ArrayList<KeyCode>();
 
-		ownBattlefield   = new Battlefield("cardList");
-		otherBattlefield = new Battlefield("cardlist");
+		CardPlayHandler cardPlayHandler = new CardPlayHandler();
+
+		ownBattlefield   = new Battlefield("cardList", cardPlayHandler);
+		otherBattlefield = new Battlefield("cardlist", cardPlayHandler);
 		otherBattlefield.setRotate(180d);
 
 		// contain the ownBattlefield & and otherBattlefield
@@ -79,7 +83,7 @@ public class GameLogic extends Application {
 		rootGamePane = new BorderPane();
 		rootGamePane.setCenter(battlefieldContainer);
 		rootGamePane.setBottom(ownBattlefield.getPlayer());
-		
+
 		// Scene
 		// Only one at a time, can change
 		gameScene = new Scene(rootGamePane);
@@ -98,9 +102,10 @@ public class GameLogic extends Application {
 		try {
 			ownBattlefield.getCards().getCard(0).giveThisFocus();
 		} catch (CardNotFoundException e1) {
-			e1.printStackTrace();
+			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
+			//e1.printStackTrace();
 		}
-		
+
 		// Set scale, for windown resize
 		scale = new Scale();
 		scale.setPivotX(0);
@@ -141,26 +146,14 @@ public class GameLogic extends Application {
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
-		// Sets all the cards to be painted
-				//ownBattlefield.getChildren().removeAll();
-				for( Card ownTemp : ownBattlefield.getCards() ) {
-					//System.out.println(ownTemp.toString());
-					ownBattlefield.getChildren().add(ownTemp);
-				}
-				//otherBattlefield.getChildren().removeAll();
-				for( Card otherTemp : otherBattlefield.getCards() ) {
-					//System.out.println(otherTemp.toString());
-					otherBattlefield.getChildren().add(otherTemp);
-				}
-				//ownBattlefield.getPlayer().getChildren().removeAll();
-				// Players card in hand
-				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
-					System.out.println(handTemp.toString());
-					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
-					ownBattlefield.getPlayer().getChildren().add(handTemp);
-					handTemp.setTranslateX(150 * (1 + ownBattlefield.getPlayer().getHandCards().indexOf(handTemp)));
-					handTemp.setTranslateY(20);
-				}
+
+		// Adds the initial cards to the graphical display
+		for( Card ownTemp : ownBattlefield.getCards() ) {
+			ownBattlefield.getChildren().add(ownTemp);
+		}
+		for( Card otherTemp : otherBattlefield.getCards() ) {
+			otherBattlefield.getChildren().add(otherTemp);
+		}
 
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
@@ -172,30 +165,48 @@ public class GameLogic extends Application {
 		//System.out.println(gameScene.getWidth() + primaryStage.getWidth());
 	}
 
-	private class CardCheckThread implements Runnable {
-		private int dispX = 100;
+	private class CardPlayHandler implements EventHandler<MouseEvent> {
 		@Override
-		public void run() {
-			while( true ) {
-				ownBattlefield.getChildren().removeAll();
-				for( Card ownTemp : ownBattlefield.getCards() ) {
-					//System.out.println(ownTemp.toString());
-					ownBattlefield.getChildren().add(ownTemp);
+		public void handle(MouseEvent event) {
+			try {
+				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
+				if( tempCard.getCurrentLocation() == Card.HAND ) {
+					/**
+					 * Moves the card upwards from the hand to the battlefield
+					 * Then jerk it back down only to have it moved by actually
+					 * placing it on the battlefield
+					 *
+					 * Only locks up its private 'thread'
+					 */
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						tempCard.setCurrentLocation(Card.BATTLEFIELD);
+
+						double finalPosY = 25;
+						double moveDistance = ownBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
+						TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
+						tt.setByY( -1*moveDistance );
+
+						ownBattlefield.getPlayer().playCard(tempCard);
+
+						tt.setOnFinished(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent event) {
+								tempCard.setTranslateY( finalPosY );
+
+								ownBattlefield.getPlayer().getChildren().remove(tempCard);
+								ownBattlefield.getChildren().add(tempCard);
+
+								tempCard.setTranslateY( finalPosY );
+							}
+						});
+
+						tt.play();
+					}
 				}
-				otherBattlefield.getChildren().removeAll();
-				for( Card otherTemp : otherBattlefield.getCards() ) {
-					//System.out.println(otherTemp.toString());
-					otherBattlefield.getChildren().add(otherTemp);
-				}
-				ownBattlefield.getPlayer().getChildren().removeAll();
-				// Players card in hand
-				for( Card handTemp : ownBattlefield.getPlayer().getHandCards() ) {
-					System.out.println(handTemp.toString());
-					//Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard(0);
-					ownBattlefield.getPlayer().getChildren().add(handTemp);
-					handTemp.setTranslateX(dispX * ownBattlefield.getPlayer().getHandCards().indexOf(handTemp));
-					handTemp.setTranslateY(20);
-				}
+			} catch (CardNotFoundException e) {
+				//TODO this will fail when using a card on the battlefield.
+				//Be aware that it's the reason for not doing anything here
+				//e.printStackTrace();
 			}
 		}
 	}
@@ -223,9 +234,7 @@ public class GameLogic extends Application {
 					scale.setX(scaleFactorY);
 					scale.setY(scaleFactorY);
 
-					// I know, X ≠ Y 
-					ownBattlefield.getPlayer().updateScaleFactorX(scaleFactorY);
-					ownBattlefield.getPlayer().updateScaleFactorY(scaleFactorY);
+					ownBattlefield.getPlayer().updateScaleFactor(scaleFactorY);
 					
 				}
 			};
@@ -253,7 +262,7 @@ public class GameLogic extends Application {
 		boolean spacePressedBefore;
 		Card tempCard;
 
-		int moveSpeed = 20;
+		int moveSpeed = 30;
 
 		@Override
 		public void run() {
@@ -292,8 +301,10 @@ public class GameLogic extends Application {
 						}
 						tt.play();
 					}
+					//TODO moving left and right with the keys currently don't work
 					if( pressedKeys.contains(KeyCode.RIGHT) ||
 					    pressedKeys.contains(KeyCode.L) ) {
+
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
 						if( tempCard.getTranslateX() + moveSpeed > ownBattlefield.getWidth() - tempCard.getWidth() ) {
@@ -305,6 +316,7 @@ public class GameLogic extends Application {
 					}
 					if( pressedKeys.contains(KeyCode.LEFT) ||
 					    pressedKeys.contains(KeyCode.H) ) {
+
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
 						if( tempCard.getTranslateX() - moveSpeed < 0 ) {
