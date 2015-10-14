@@ -25,6 +25,7 @@ public class Player extends Pane {
 
 	private MouseEventHandler mouseEventHandler;
 
+	// How far a card should pop up when you hoover over it
 	private int handPopupValue = 20;
 
 	private ShuffleBtn shuffleBtn;
@@ -79,6 +80,7 @@ public class Player extends Pane {
 		resetBoardBtn = new ResetBoardBtn(new BtnPaneHandler());
 		btnPane.getChildren().add(resetBoardBtn);
 
+
 		//System.out.println("Debug: end of Player");
 	}
 
@@ -89,11 +91,18 @@ public class Player extends Pane {
 				handCards.shuffleCards();
 				rearangeCards();
 			}
+
+			/**
+			 * Places the cards in accending order,
+			 * starting from the top left and going down and right
+			 * Starts a new 'stack' after 'cardsPerRow' cards.
+			 */
+			int cardsPerRow = 12;
 			if( event.getSource() == resetBoardBtn ) { 
 				int displacement = 0;
 				int laps = 0;
 				for( int i = 0; i < battlefieldCards.size(); i++ ) {
-					if(i%12 == 0 && i != 0) {
+					if(i % cardsPerRow  == 0 && i != 0) {
 						displacement = 0;
 						laps++;
 					}
@@ -109,22 +118,18 @@ public class Player extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			// event.getSource() gives the card that is selected
-
-			Card tempCard;
 			TranslateTransition tt;
 
 			try {
-				tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
+				Card tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
 				tt = new TranslateTransition(Duration.millis(200), tempCard);
 
-				//int moveValue = 0;
-
-				if( tempCard.getCurrentLocation() == Card.HAND ) {
+				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
 					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
 						tt.setToY(-3*handPopupValue);
 						tt.play();
 					}
+
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
 						tt.setToY(handPopupValue);
 						tt.play();
@@ -132,8 +137,7 @@ public class Player extends Pane {
 				}
 			} catch (CardNotFoundException e1) {
 				// TODO This is triggered due to the card keeping this listener when it enters the battlefield
-				// TODO A problem might very well be here, due to no error reporting
-				// System.out.println("hover over card in battlefield");
+				// A problem might very well be here, due to no error reporting
 			}
 		}
 	}
@@ -145,7 +149,7 @@ public class Player extends Pane {
 	public void drawCard() {
 		try {
 			Card tempCard = deckCards.takeNextCard();
-			tempCard.setCurrentLocation(Card.HAND);
+			tempCard.setCurrentLocation(Card.CardLocation.HAND);
 			handCards.add(tempCard);
 
 			tempCard.setTranslateY(handPopupValue);
@@ -155,15 +159,18 @@ public class Player extends Pane {
 			// This should trigger a player lost condition
 			// It's however a non fatal state for the program
 			System.out.println(
-				"==\n" +
-				"Player (" +
+				"==== Player (" +
 				this.hashCode() + 
-				"): trying to draw card with no cards left in deck\n" +
-				"=="
+				"): trying to draw card with no cards left in deckn ===="
 			);
 		}
 	}
 
+	/**
+	 * Moves the cards to their new position, if it where to change,
+	 * Used to recenter the cards when playing a card, and to move
+	 * them when "shuffle" is pressed.
+	 */
 	private void rearangeCards() {
 		TranslateTransition tt;
 		for( Card temp : handCards ) {
@@ -179,20 +186,17 @@ public class Player extends Pane {
 	 */
 	public void playCard(Card whatCard) {
 		try {
-
 			// This is also set before the code reaches thes point
-			whatCard.setCurrentLocation(Card.BATTLEFIELD);
+			whatCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
 			whatCard.giveThisFocus();
 
-			rearangeCards();
+			this.rearangeCards();
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// This doesn't the cards status of where it is
-	// This should be looked into
 	public void moveCardBetweenCollection(
 			Card whatCard,
 			CardCollection oldCollection,
@@ -209,63 +213,50 @@ public class Player extends Pane {
 	 * TODO, Warn if a card that isn't on the battlefield is trying to be
 	 * moved
 	 */
-	public void moveCardX(Card whatCard, int xChange) {
+	public void modifyCardTranslateX(Card whatCard, int xChange) {
 		try {
 			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyTranslateX(xChange);
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void moveCardY(Card whatCard, int yChange) {
+	public void modifyCardTranslateY(Card whatCard, int yChange) {
 		try {
 			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyTranslateY(yChange);
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void placeCardX(Card whatCard, int xPos) {
+	public void setCartTranslateX(Card whatCard, int xPos) {
 		try {
 			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setTranslateX(xPos);
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void placeCardY(Card whatCard, int yPos) {
+	public void setCartTranslateY(Card whatCard, int yPos) {
 		try {
 			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setTranslateY(yPos);
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void rotateCard(Card whatCard, int rotation) {
+	public void modifyCardRotate(Card whatCard, int rotation) {
 		try {
 			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).modifyRotate(rotation);
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
-	public void setCardRotation(Card whatCard, int rotation) {
+	public void setCardRotate(Card whatCard, int rotation) {
 		try {
 			battlefieldCards.getCard(battlefieldCards.indexOf(whatCard)).setRotate(rotation);
 		} catch (CardNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public void updateScaleFactor(double newScaleFactor) {
-		deckCards.updateScaleFactor(newScaleFactor);
-		handCards.updateScaleFactor(newScaleFactor);
-		battlefieldCards.updateScaleFactor(newScaleFactor);
-		graveyardCards.updateScaleFactor(newScaleFactor);
 	}
 
 	/**

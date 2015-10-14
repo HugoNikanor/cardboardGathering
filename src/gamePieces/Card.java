@@ -12,7 +12,6 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-// TODO The Pane extension should be another type of pane
 public class Card extends Pane {
 	private String cardName;
 	private String type;
@@ -53,28 +52,17 @@ public class Card extends Pane {
 
 	private static Card currentCard;
 
-	/*
 	public static enum CardLocation {
 		HAND,
 		BATTLEFIELD,
 		DECK,
 		GRAVEYARD
 	}
-	*/
-	public static final int HAND = 0;
-   	public static final int BATTLEFIELD = 1;
-	public static final int DECK = 2;
-	public static final int GRAVEYARD = 3;
-	
-	//This really should use the above enum
-	private int currentLocation;
+	private CardLocation currentLocation;
 
 	// Used for the margin on one side of the card
 	// the margins of two cards shouldn't overlap
 	private int preferdMargin;
-
-	// This should never be used, but is here if I need to test something quickly
-	//public Card() {}
 
 	public Card(
 		String cardName,
@@ -112,7 +100,7 @@ public class Card extends Pane {
 
 		this.calcConvMana();
 
-		currentLocation = Card.DECK;
+		currentLocation = CardLocation.DECK;
 
 		this.preferdMargin = 25;
 
@@ -132,10 +120,9 @@ public class Card extends Pane {
 		cardNameText.setTranslateY(15);
 		cardNameText.setTranslateX(5);
 
-		//Label nameLabel = new Label(cardName);
 		this.getChildren().add(cardNameText);
 
-		//this.setCursor(Cursor.HAND);
+		this.setCursor(Cursor.HAND);
 
 		currentCard = this;
 
@@ -147,7 +134,7 @@ public class Card extends Pane {
 
 		this.setOnScroll( new ScrollEventHandler() );
 
-		scaleFactor = 1;
+		this.scaleFactor = 1;
 
 		// if there is a better way to do this, tell me
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
@@ -194,30 +181,23 @@ public class Card extends Pane {
 		}
 		switch( largestField ) {
 			case BLANK:
-				//System.out.println("blank");
 				this.getStyleClass().add("color-less");
 			break;
 			case BLACK:
-				//System.out.println("black");
 				this.getStyleClass().add("black");
 			break;
 			case BLUE:
-				//System.out.println("blue");
 				this.getStyleClass().add("blue");
 			break;
 			case GREEN:
-				//System.out.println("green");
 				this.getStyleClass().add("green");
 			break;
 			case RED:
-				//System.out.println("red");
 				this.getStyleClass().add("red");
 			break;
 			case WHITE:
-				//System.out.println("white");
 				this.getStyleClass().add("white");
 			break;
-
 		}
 	} // }}}
 
@@ -230,7 +210,7 @@ public class Card extends Pane {
 
 		@Override
 		public void handle(MouseEvent event) {
-			if( currentLocation == Card.BATTLEFIELD ) {
+			if( currentLocation == CardLocation.BATTLEFIELD ) {
 				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 					Card.this.giveThisFocus();
 
@@ -240,19 +220,22 @@ public class Card extends Pane {
 					Card.this.setCursor(Cursor.MOVE);
 				}
 
-				/*
-				 * Rotates the card if it's clicked and not draged
-				 */
+				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+					Card.this.setCursor(Cursor.HAND);
+				}
+
+				// Rotates the card if it's clicked and not draged
 				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
 					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
-					// TODO This actually shold tap the card, it's only temporarly changed to fliping it 
 					Card.this.smoothRotate(90d);
 					//Card.this.smoothFlip(-180d);
 				}
 
+				/*
 				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 					Card.this.setCursor(Cursor.HAND);
 				}
+				*/
 
 				if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
 					double xChange = event.getSceneX() - this.mouseInSceneX;
@@ -294,6 +277,9 @@ public class Card extends Pane {
 			 * Scales card by a factor 2 when scrolling over it,
 			 * please be avare that if you make the card to small then it 
 			 * dissapears.
+			 *
+			 * TODO This should have a fancy animation,
+			 * It also should have a locked max and min size 
 			 */
 			if( event.getDeltaY() > 0 ) {
 				setScaleX(getScaleX() * (event.getDeltaY() / 20));
@@ -383,30 +369,18 @@ public class Card extends Pane {
 		this.scaleFactor = scaleFactor;
 	}
 
-	/**
-	 * @return the currentCard
-	 */
 	public static Card getCurrentCard() {
 		return currentCard;
 	}
 
-	/**
-	 * @return the currentLocation
-	 */
-	public int getCurrentLocation() {
+	public CardLocation getCurrentLocation() {
 		return currentLocation;
 	}
 
-	/**
-	 * @param currentLocation the currentLocation to set
-	 */
-	public void setCurrentLocation(int currentLocation) {
+	public void setCurrentLocation(CardLocation currentLocation) {
 		this.currentLocation = currentLocation;
 	}
 
-	/**
-	 * @return the preferdMargin
-	 */
 	public int getPreferdMargin() {
 		return preferdMargin;
 	}
@@ -431,12 +405,10 @@ public class Card extends Pane {
 		return returnString;
 	}
 	
-	/*
-	 *************************************
+	 /**************************************
 	 * Thread no futher, there is nothing 
 	 * here but the vilest of getters ahead.
-	 ************************************
-	 */
+	 ***************************************/
 
 	public String getCardName() {
 		return cardName;

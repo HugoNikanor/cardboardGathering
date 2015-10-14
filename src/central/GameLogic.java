@@ -34,14 +34,8 @@ public class GameLogic extends Application {
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
-	//private HBox cardsInHandPane;
-	//private Pane cardsInHandPane;
-
-	private String styleFilePath;
-
 	//private Network network;
 	//private NetworkThread networkThread;
-	private KeyHandleThread keyHandleThread;
 
 	private KeyEventHandler keyEventHandler;
 
@@ -57,11 +51,9 @@ public class GameLogic extends Application {
 
 	private Scale scale;
 
-	//private double scaleFactorX;
-	private double scaleFactorY;
+	private double scaleFactor;
 
 	public GameLogic() {
-
 		// Initiates the eventHandlers
 		keyEventHandler = new KeyEventHandler();
 		pressedKeys = new ArrayList<KeyCode>();
@@ -71,6 +63,22 @@ public class GameLogic extends Application {
 		ownBattlefield   = new Battlefield("cardList", cardPlayHandler);
 		otherBattlefield = new Battlefield("cardlist", cardPlayHandler);
 		otherBattlefield.setRotate(180d);
+
+		// Adds the initial cards to the graphical display
+		for( Card ownTemp : ownBattlefield.getCards() ) {
+			ownBattlefield.getChildren().add(ownTemp);
+		}
+		for( Card otherTemp : otherBattlefield.getCards() ) {
+			otherBattlefield.getChildren().add(otherTemp);
+		}
+
+		//Give a proper card focus
+		try {
+			ownBattlefield.getCards().getCard(0).giveThisFocus();
+		} catch (CardNotFoundException e1) {
+			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
+			//e1.printStackTrace();
+		}
 
 		// contain the ownBattlefield & and otherBattlefield
 		GridPane battlefieldContainer = new GridPane();
@@ -84,42 +92,27 @@ public class GameLogic extends Application {
 		rootGamePane.setCenter(battlefieldContainer);
 		rootGamePane.setBottom(ownBattlefield.getPlayer());
 
-		// Scene
-		// Only one at a time, can change
-		gameScene = new Scene(rootGamePane);
-		gameScene.setOnKeyPressed(keyEventHandler);
-		gameScene.setOnKeyReleased(keyEventHandler);
-
-		// ALL THE GRAPHICS OBJECTS SHOULD NOW BE INITIATED
-		// Loads the stylesheet, in a not to pretty way
-		File styleFile = new File("stylesheets/stylesheet.css");
-		styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
-		gameScene.getStylesheets().add(styleFilePath);
-
-
-
-		//Give a proper card focus
-		try {
-			ownBattlefield.getCards().getCard(0).giveThisFocus();
-		} catch (CardNotFoundException e1) {
-			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
-			//e1.printStackTrace();
-		}
-
 		// Set scale, for windown resize
 		scale = new Scale();
 		scale.setPivotX(0);
 		scale.setPivotY(0);
 		rootGamePane.getTransforms().add(scale);
 
-		//new Thread(new CardCheckThread()).start();
-		try {
-			keyHandleThread = new KeyHandleThread();
-			new Thread(keyHandleThread).start();
-		} catch( Exception e ) {
-			e.printStackTrace();
-		}
-		//networkThread = new NetworkThread();
+		// Scene
+		// Only one at a time, can change
+		gameScene = new Scene(rootGamePane);
+		gameScene.setOnKeyPressed(keyEventHandler);
+		gameScene.setOnKeyReleased(keyEventHandler);
+
+
+		// ALL THE GRAPHICS OBJECTS SHOULD NOW BE INITIATED
+		// Loads the stylesheet, in a not to pretty way
+		File styleFile = new File("stylesheets/stylesheet.css");
+		String styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
+		gameScene.getStylesheets().add(styleFilePath);
+
+		new Thread(new KeyHandleThread()).start();
+
 		new Thread(new NetworkThread()).start();
 	}
 
@@ -131,6 +124,7 @@ public class GameLogic extends Application {
 		 */
 		primaryStage = inStage;
 
+		primaryStage.setTitle("cardboardGathering");
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle( WindowEvent event ) {
@@ -139,47 +133,42 @@ public class GameLogic extends Application {
 			}
 		});
 
-		primaryStage.setTitle("cardboardGathering");
-
 		WindowSizeListener windowSizeListener = new WindowSizeListener();
-
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
-
-
-		// Adds the initial cards to the graphical display
-		for( Card ownTemp : ownBattlefield.getCards() ) {
-			ownBattlefield.getChildren().add(ownTemp);
-		}
-		for( Card otherTemp : otherBattlefield.getCards() ) {
-			otherBattlefield.getChildren().add(otherTemp);
-		}
 
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
 
 		//defaultSceneWidth = gameScene.getWidth();
 		defaultSceneHeight = gameScene.getHeight();
-
-
-		//System.out.println(gameScene.getWidth() + primaryStage.getWidth());
 	}
 
+	/**
+	 * EventHandler for cards being played,
+	 *
+	 * This Handler is applied to the cards and is used when they are pressed
+	 * and in a players hand.
+	 */
 	private class CardPlayHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
 			try {
 				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
-				if( tempCard.getCurrentLocation() == Card.HAND ) {
+				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
 					/**
 					 * Moves the card upwards from the hand to the battlefield
 					 * Then jerk it back down only to have it moved by actually
 					 * placing it on the battlefield
 					 *
 					 * Only locks up its private 'thread'
+					 *
+					 *  TODO This should be changed so that it is first placed
+					 *  on the battlefield, and then glides up from the hand,
+					 *  This will allow the other player to see the transition. 
 					 */
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-						tempCard.setCurrentLocation(Card.BATTLEFIELD);
+						tempCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
 
 						double finalPosY = 25;
 						double moveDistance = ownBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
@@ -211,6 +200,19 @@ public class GameLogic extends Application {
 		}
 	}
 
+	/**
+	 * Listens for window resizing,
+	 * If a resize is detected, the graphics will scale to match
+	 *
+	 * TODO Currently there is a problem with the background being slightly
+	 * darker when making the window smaller
+	 *
+	 * TODO The cards on hand have a tendancy to dissapear when making the 
+	 * window larger
+	 *
+	 * TODO The graphics only resize when the window is changed in the 'y'
+	 * direction
+	 */ 
 	private class WindowSizeListener implements ChangeListener<Number> {
 		final Timer timer = new Timer();
 		TimerTask task = null;
@@ -221,27 +223,24 @@ public class GameLogic extends Application {
 			if( task != null ) {
 				task.cancel();
 			}
-			task = new TimerTask() {
 
+			task = new TimerTask() {
 				@Override
 				public void run() {
-					//scaleFactorX = (gameScene.getWidth() / defaultSceneWidth);
-					scaleFactorY = (gameScene.getHeight() / defaultSceneHeight);
-
-
-					System.out.println( "sfY GL: " + scaleFactorY);
-
-					scale.setX(scaleFactorY);
-					scale.setY(scaleFactorY);
-
-					ownBattlefield.getPlayer().updateScaleFactor(scaleFactorY);
+					scaleFactor = (gameScene.getHeight() / defaultSceneHeight);
+					//System.out.println( "sf GL: " + scaleFactor);
 					
+					scale.setX(scaleFactor);
+					scale.setY(scaleFactor);
 				}
 			};
 			timer.schedule(task, delayTime);
 		}
 	}
 
+	/**
+	 * Registers all the keys being pressed
+	 */
 	public class KeyEventHandler implements EventHandler<KeyEvent> {
 		@Override
 		public void handle(KeyEvent event) {
@@ -258,6 +257,10 @@ public class GameLogic extends Application {
 		}
 	}
 
+	/**
+	 * Takes all the keys currently pressed and performs the actions linked 
+	 * to them.
+	 */
 	private class KeyHandleThread implements Runnable {
 		boolean spacePressedBefore;
 		Card tempCard;
@@ -278,6 +281,10 @@ public class GameLogic extends Application {
 
 					tempCard = Card.getCurrentCard();
 
+					/**
+					 * Use the arrow keys or 'hjkl' to move the card,
+					 * TODO This has the risk of crashing the program.
+					 */
 					TranslateTransition tt;
 					if( pressedKeys.contains(KeyCode.DOWN) ||
 					    pressedKeys.contains(KeyCode.J) ) {
@@ -301,7 +308,6 @@ public class GameLogic extends Application {
 						}
 						tt.play();
 					}
-					//TODO moving left and right with the keys currently don't work
 					if( pressedKeys.contains(KeyCode.RIGHT) ||
 					    pressedKeys.contains(KeyCode.L) ) {
 
@@ -335,6 +341,13 @@ public class GameLogic extends Application {
 					}
 					spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
 
+					/**
+					 * Cycles thrugh the cards on the battlefield when <tab> or
+					 * <S-tab> is pressed,
+					 * TODO This currently doesn't play nicely with the buttons
+					 * focus, the cards on the battlefield should be changed to
+					 * use proper focus instead of my own version.
+					 */ 
 					if( pressedKeys.contains(KeyCode.TAB) ) {
 						if( !pressedKeys.contains(KeyCode.SHIFT) ) {
 							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) + 1;
@@ -352,6 +365,7 @@ public class GameLogic extends Application {
 					}
 
 					try {
+						// Check for key inputs 20 times a secound
 						this.wait(50);
 					} catch (InterruptedException e) {
 						e.printStackTrace();

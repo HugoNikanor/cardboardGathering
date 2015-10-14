@@ -11,12 +11,7 @@ import exceptions.CardNotFoundException;
 public class CardCollection extends ArrayList<Card> {
 	private static final long serialVersionUID = 1L;
 
-	/*
-	 * Create a new card collection without any card in it.
-	 * Used for everything but the deck
-	 */
-	public CardCollection() {
-	}
+	public CardCollection() { }
 
 	/*
 	 * cardList should be a string pointing to the name of a preprepared text 
@@ -27,7 +22,6 @@ public class CardCollection extends ArrayList<Card> {
 		//System.out.println("Debug: start of cardCollection");
 		this.addAll(Arrays.asList(this.fetchCards(cardList)));
 
-		//Should this be called upon constuction? TODO
 		this.shuffleCards();
 
 		//System.out.println("Debug: end of cardCollection");
@@ -39,14 +33,6 @@ public class CardCollection extends ArrayList<Card> {
 
 	}
 
-	/**
-	 * Shuffles the cards
-	 * Currently, this doesnt seem to actually generate different random nubmers
-	 * for each use, resulting in the same shuffle all the time
-	 *
-	 * TODO Possibly have a special clause that if cardIndex == i then just
-	 * skip the iteration, due to nothing changing in that case
-	 */
 	public void shuffleCards() {
 		Random rand = new Random();
 		Card tempCard;
@@ -61,12 +47,8 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 	/**
-	 * These following methods fetches the card you want from the list
-	 * and then delets it from the list, 
-	 */
-	/**
-	 * Returns the last card in a collection,
-	 * The last one is choosen since that wont mess up the other indexes.
+	 * the 'Take' methods removes the card from the collection,
+	 * the 'Get' are comparable to ArrayList.get, except with a different error
 	 */
 	public Card takeNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
@@ -99,14 +81,6 @@ public class CardCollection extends ArrayList<Card> {
 		return returnCard;
 	}
 
-	/**
-	 * The following functions are for looking at card in a collection without 
-	 * removing it.
-	 */
-	/**
-	 * Returns the last card in a collection,
-	 * The last one is choosen since that wont mess up the other indexes.
-	 */
 	public Card getNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
@@ -120,9 +94,7 @@ public class CardCollection extends ArrayList<Card> {
 			throw new CardNotFoundException("Index out of bounds");
 		}
 		Card returnCard = this.get(indexOfCard);
-
 		return returnCard;
-
 	}
 
 	public Card getCard(Card card) throws CardNotFoundException {
@@ -134,11 +106,4 @@ public class CardCollection extends ArrayList<Card> {
 		Card returnCard = this.get(indexOfCard);
 		return returnCard;
 	}
-
-	public void updateScaleFactor(double newScaleFactor) {
-		for( Card temp : this ) {
-			temp.setScaleFactor(newScaleFactor);
-		}
-	}
-
 }

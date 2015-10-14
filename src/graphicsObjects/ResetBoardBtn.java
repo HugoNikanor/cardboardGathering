@@ -12,7 +12,5 @@ public class ResetBoardBtn extends Button {
 		this.getStyleClass().add("reset-board-btn");
 
 		this.setMaxWidth(Double.MAX_VALUE);
-
 	}
-
 }
