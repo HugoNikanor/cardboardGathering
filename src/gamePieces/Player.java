@@ -105,7 +105,6 @@ public class Player extends Pane {
 				int displacement = 0;
 				int laps = 0;
 				for( int i = 0; i < battlefieldCards.size(); i++ ) {
-					System.out.println(i%12);
 					if(i%12 == 0 && i != 0) {
 						displacement = 0;
 						laps++;
