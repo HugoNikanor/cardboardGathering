@@ -5,7 +5,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import javafx.animation.RotateTransition;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.layout.Pane;
@@ -49,9 +48,7 @@ public class Card extends Pane {
 	private double containerSizeX;
 	private double containerSizeY;
 
-	// Clean up X & Y
-	private double scaleFactorX;
-	private double scaleFactorY;
+	private double scaleFactor;
 
 	public static final double HEIGHT = 150;
 	public static final double WIDTH = 105;
@@ -73,6 +70,10 @@ public class Card extends Pane {
 	
 	//This really should use the above enum
 	private int currentLocation;
+
+	// Used for the margin on one side of the card
+	// the margins of two cards shouldn't overlap
+	private int preferdMargin;
 
 	// This should never be used, but is here if I need to test something quickly
 	//public Card() {}
@@ -115,6 +116,7 @@ public class Card extends Pane {
 
 		currentLocation = Card.DECK;
 
+		this.preferdMargin = 25;
 
 		//===============================//
 		//         JavaFX below          //
@@ -147,14 +149,11 @@ public class Card extends Pane {
 
 		this.setOnScroll( new ScrollEventHandler() );
 
-		scaleFactorX = 1;
-		scaleFactorY = 1;
+		scaleFactor = 1;
 
 		// if there is a better way to do this, tell me
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
 		containerSizeY = Battlefield.HEIGHT - this.getHeight();
-
-		//System.out.println(this.getParent());
 
 		//System.out.println("debug: end of Card");
 	}
@@ -259,9 +258,11 @@ public class Card extends Pane {
 					double xChange = event.getSceneX() - this.mouseInSceneX;
 					double yChange = event.getSceneY() - this.mouseInSceneY;
 
-					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactorX ));
-					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactorX ));
+					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactor ));
+					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactor ));
 
+					System.out.print("layX: " + getTranslateX());
+					System.out.println("trY: " + getTranslateY());
 					if( getTranslateX() < 0 ) {
 						setTranslateX(0);
 					}
@@ -372,17 +373,10 @@ public class Card extends Pane {
 	}
 
 	/**
-	 * @param scaleFactorX the scaleFactorX to set
-	 */
-	public void setScaleFactorX(double scaleFactorX) {
-		this.scaleFactorX = scaleFactorX;
-	}
-
-	/**
 	 * @param scaleFactorY the scaleFactorY to set
 	 */
-	public void setScaleFactorY(double scaleFactorY) {
-		this.scaleFactorY = scaleFactorY;
+	public void setScaleFactor(double scaleFactor) {
+		this.scaleFactor = scaleFactor;
 	}
 
 	/**
@@ -404,6 +398,13 @@ public class Card extends Pane {
 	 */
 	public void setCurrentLocation(int currentLocation) {
 		this.currentLocation = currentLocation;
+	}
+
+	/**
+	 * @return the preferdMargin
+	 */
+	public int getPreferdMargin() {
+		return preferdMargin;
 	}
 
 	public void flip() {

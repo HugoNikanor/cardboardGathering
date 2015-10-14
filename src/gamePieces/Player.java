@@ -4,12 +4,11 @@ import exceptions.CardNotFoundException;
 
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public class Player extends HBox {
+public class Player extends Pane {
 	private CardCollection deckCards;
 	private CardCollection handCards;
 	private CardCollection battlefieldCards;
@@ -19,6 +18,9 @@ public class Player extends HBox {
 	private int poisonCounters;
 
 	private MouseEventHandler mouseEventHandler;
+
+	private int handPopupValue = 20;
+
 
 	public Player(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Player");
@@ -71,9 +73,6 @@ public class Player extends HBox {
 		this.setMinHeight(110);
 		this.getStyleClass().add("cards-in-hand-pane");
 
-		this.setSpacing(25);
-		this.setAlignment(Pos.CENTER);
-
 		//System.out.println("Debug: end of Player");
 	}
 
@@ -89,17 +88,15 @@ public class Player extends HBox {
 				tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
 				tt = new TranslateTransition(Duration.millis(200), tempCard);
 
-				int moveValue = 40;
+				//int moveValue = 0;
 
 				if( tempCard.getCurrentLocation() == Card.HAND ) {
 					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-						//tt.setToY(-1*moveValue);
-						tt.setToY(-1*moveValue);
+						tt.setToY(-3*handPopupValue);
 						tt.play();
 					}
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-						//tt.setToY(moveValue);
-						tt.setToY(moveValue);
+						tt.setToY(handPopupValue);
 						tt.play();
 					}
 				}
@@ -120,9 +117,18 @@ public class Player extends HBox {
 		tempCard.setCurrentLocation(Card.HAND);
 		handCards.add(tempCard);
 
-		tempCard.setTranslateY(40);
+		tempCard.setTranslateY(handPopupValue);
+
+		tempCard.setTranslateX( ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
 
 		getChildren().add(tempCard);
+	}
+
+	public void rearangeCards(int removedCard) {
+		for( Card temp : handCards ) {
+			temp.setTranslateX( ( handCards.indexOf(temp) ) * ( temp.getWidth() + temp.getPreferdMargin() * 2) );
+		}
+
 	}
 
 	/**
@@ -131,8 +137,12 @@ public class Player extends HBox {
 	public void playCard(Card whatCard) {
 		try {
 			// This is also set before the code reaches thes point
+			int cardIndex = handCards.indexOf(whatCard);
+
 			whatCard.setCurrentLocation(Card.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
+
+			rearangeCards(cardIndex);
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -208,18 +218,11 @@ public class Player extends HBox {
 		}
 	}
 
-	public void updateScaleFactorX(double newScaleFactorX) {
-		deckCards.updateScaleFactorX(newScaleFactorX);
-		handCards.updateScaleFactorX(newScaleFactorX);
-		battlefieldCards.updateScaleFactorX(newScaleFactorX);
-		graveyardCards.updateScaleFactorX(newScaleFactorX);
-	}
-
-	public void updateScaleFactorY(double newScaleFactorY) {
-		deckCards.updateScaleFactorY(newScaleFactorY);
-		handCards.updateScaleFactorY(newScaleFactorY);
-		battlefieldCards.updateScaleFactorY(newScaleFactorY);
-		graveyardCards.updateScaleFactorY(newScaleFactorY);
+	public void updateScaleFactor(double newScaleFactor) {
+		deckCards.updateScaleFactor(newScaleFactor);
+		handCards.updateScaleFactor(newScaleFactor);
+		battlefieldCards.updateScaleFactor(newScaleFactor);
+		graveyardCards.updateScaleFactor(newScaleFactor);
 	}
 
 	/**

@@ -1,3 +1,9 @@
+.ruler50 {
+	-fx-background-color: red;
+}
+.ruler25 {
+	-fx-background-color: blue;
+}
 .battlefield {
 	-fx-border-color: black;
 }

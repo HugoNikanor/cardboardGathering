@@ -181,7 +181,7 @@ public class GameLogic extends Application {
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
 						tempCard.setCurrentLocation(Card.BATTLEFIELD);
 
-						double finalPosY = 50;
+						double finalPosY = 25;
 						double moveDistance = ownBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
 						TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
 						tt.setByY( -1*moveDistance );
@@ -191,15 +191,18 @@ public class GameLogic extends Application {
 							public void handle(ActionEvent event) {
 								tempCard.setTranslateY( finalPosY );
 
+
 								ownBattlefield.getPlayer().getChildren().remove(tempCard);
 								ownBattlefield.getChildren().add(tempCard);
 								ownBattlefield.getPlayer().playCard(tempCard);
-								System.out.println("2: " + tempCard.getLayoutX());
+
+								tempCard.setTranslateY( finalPosY );
+
+								ownBattlefield.getPlayer().rearangeCards(ownBattlefield.getPlayer().getHandCards().indexOf(tempCard));
 							}
 						});
 
 						tt.play();
-						System.out.println("1: " + tempCard.getLayoutX());
 					}
 				}
 			} catch (CardNotFoundException e) {
@@ -233,9 +236,7 @@ public class GameLogic extends Application {
 					scale.setX(scaleFactorY);
 					scale.setY(scaleFactorY);
 
-					// I know, X ≠ Y 
-					ownBattlefield.getPlayer().updateScaleFactorX(scaleFactorY);
-					ownBattlefield.getPlayer().updateScaleFactorY(scaleFactorY);
+					ownBattlefield.getPlayer().updateScaleFactor(scaleFactorY);
 					
 				}
 			};
@@ -302,8 +303,10 @@ public class GameLogic extends Application {
 						}
 						tt.play();
 					}
+					//TODO moving left and right with the keys currently don't work
 					if( pressedKeys.contains(KeyCode.RIGHT) ||
 					    pressedKeys.contains(KeyCode.L) ) {
+
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
 						if( tempCard.getTranslateX() + moveSpeed > ownBattlefield.getWidth() - tempCard.getWidth() ) {
@@ -315,6 +318,7 @@ public class GameLogic extends Application {
 					}
 					if( pressedKeys.contains(KeyCode.LEFT) ||
 					    pressedKeys.contains(KeyCode.H) ) {
+
 						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
 						if( tempCard.getTranslateX() - moveSpeed < 0 ) {

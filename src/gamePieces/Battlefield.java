@@ -22,6 +22,8 @@ public class Battlefield extends Pane {
 		this.getStyleClass().add("battlefield");
 		this.setWidth(WIDTH);
 		this.setHeight(HEIGHT);
+		this.setMinHeight(HEIGHT);
+		this.setMaxHeight(HEIGHT);
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
@@ -36,6 +38,21 @@ public class Battlefield extends Pane {
 		deckPane.setOnMouseClicked(new MouseEventHandler());
 		this.getChildren().add(deckPane);
 
+		Pane ruler50 = new Pane();
+		ruler50.setMaxSize(50,50);
+		ruler50.setPrefSize(50,50);
+		ruler50.setMinSize(50,50);
+		ruler50.setTranslateX(500);
+		ruler50.getStyleClass().add("ruler50");
+		this.getChildren().add(ruler50);
+
+		Pane ruler25 = new Pane();
+		ruler25.setMaxSize(25,25);
+		ruler25.setPrefSize(25,25);
+		ruler25.setMinSize(25,25);
+		ruler25.setTranslateX(250);
+		ruler25.getStyleClass().add("ruler25");
+		this.getChildren().add(ruler25);
 		//System.out.println("Debug: end of Battlefield");
 	}
 
