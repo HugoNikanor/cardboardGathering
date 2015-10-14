@@ -103,16 +103,17 @@ public class Player extends Pane {
 			}
 			if( event.getSource() == resetBoardBtn ) { 
 				int displacement = 0;
+				int laps = 0;
 				for( int i = 0; i < battlefieldCards.size(); i++ ) {
-					battlefieldCards.get(i).setTranslateX(displacement * 10);
-					battlefieldCards.get(i).setTranslateY(displacement * 20);
-					if(i == 12) {
+					System.out.println(i%12);
+					if(i%12 == 0 && i != 0) {
 						displacement = 0;
+						laps++;
 					}
-					if(i > 12) {
-						battlefieldCards.get(i).setTranslateX(displacement * 10 + 200);
-						battlefieldCards.get(i).setTranslateY(displacement * 20);
-					}
+
+					battlefieldCards.get(i).setTranslateX(displacement * 10 + 200 * laps);
+					battlefieldCards.get(i).setTranslateY(displacement * 20);
+
 					displacement++;
 				}
 			}
