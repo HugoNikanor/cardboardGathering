@@ -2,8 +2,6 @@ package gamePieces;
 
 import javafx.scene.layout.Pane;
 
-import exceptions.CardNotFoundException;
-
 import graphicsObjects.DeckPane;
 
 import javafx.event.EventHandler;
@@ -44,12 +42,8 @@ public class Battlefield extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			try {
-				getPlayer().drawCard();
-				deckPane.updateText(Integer.toString(getPlayer().getDeckCards().size()));
-			} catch (CardNotFoundException e) {
-				e.printStackTrace();
-			}
+			getPlayer().drawCard();
+			deckPane.updateText(Integer.toString(getPlayer().getDeckCards().size()));
 		}
 	}
 

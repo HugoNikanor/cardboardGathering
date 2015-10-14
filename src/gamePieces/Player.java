@@ -49,21 +49,9 @@ public class Player extends Pane {
 		health = 20;
 		poisonCounters = 0;
 
-		try {
-			//Draws the starting hand
-			for( int i = 0; i < 7; i++ ) {
-				this.drawCard();
-			}
-		} catch (CardNotFoundException e) {
-			// This should trigger a player lost condition
-			// It's however a non fatal state for the program
-			System.out.println(
-				"==\n" +
-				"Player (" +
-				this.hashCode() + 
-				"): trying to draw card with no cards left in deck\n" +
-				"=="
-			);
+		//Draws the starting hand
+		for( int i = 0; i < 7; i++ ) {
+			this.drawCard();
 		}
 		
 		//===============================//
@@ -154,16 +142,26 @@ public class Player extends Pane {
 	 * Moves a card from the deck to the hand
 	 * @throws CardNotFoundException
 	 */
-	public void drawCard() throws CardNotFoundException {
-		Card tempCard = deckCards.takeNextCard();
-		tempCard.setCurrentLocation(Card.HAND);
-		handCards.add(tempCard);
+	public void drawCard() {
+		try {
+			Card tempCard = deckCards.takeNextCard();
+			tempCard.setCurrentLocation(Card.HAND);
+			handCards.add(tempCard);
 
-		tempCard.setTranslateY(handPopupValue);
-
-		tempCard.setTranslateX( 130 + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
-
-		getChildren().add(tempCard);
+			tempCard.setTranslateY(handPopupValue);
+			tempCard.setTranslateX( 130 + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+		this.getChildren().add(tempCard);
+		} catch ( CardNotFoundException exception ) {
+			// This should trigger a player lost condition
+			// It's however a non fatal state for the program
+			System.out.println(
+				"==\n" +
+				"Player (" +
+				this.hashCode() + 
+				"): trying to draw card with no cards left in deck\n" +
+				"=="
+			);
+		}
 	}
 
 	private void rearangeCards() {
