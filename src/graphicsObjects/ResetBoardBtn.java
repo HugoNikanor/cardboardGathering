@@ -4,15 +4,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 
-public class ShuffleBtn extends Button {
-	public ShuffleBtn(EventHandler<ActionEvent> listener) {
-		super("Shuffle Hand");
-
+public class ResetBoardBtn extends Button {
+	public ResetBoardBtn(EventHandler<ActionEvent> listener) {
+		super("Reset Board");
 		this.setOnAction(listener);
 
-		this.getStyleClass().add("shuffle-btn");
+		this.getStyleClass().add("reset-board-btn");
 
 		this.setMaxWidth(Double.MAX_VALUE);
 
 	}
+
 }

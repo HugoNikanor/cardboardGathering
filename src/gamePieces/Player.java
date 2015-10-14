@@ -2,14 +2,16 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.ResetBoardBtn;
 import graphicsObjects.ShuffleBtn;
 
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class Player extends Pane {
@@ -26,6 +28,7 @@ public class Player extends Pane {
 	private int handPopupValue = 20;
 
 	private ShuffleBtn shuffleBtn;
+	private ResetBoardBtn resetBoardBtn;
 
 	public Player(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Player");
@@ -73,26 +76,45 @@ public class Player extends Pane {
 		this.getStyleClass().add("cards-in-hand-pane");
 
 
-		StackPane btnPane = new StackPane();
+		VBox btnPane = new VBox();
 		btnPane.setPrefSize(height, height);
+		btnPane.setFillWidth(true);
+		btnPane.setSpacing(10);
 		btnPane.getStyleClass().add("btn-pane");
 		this.getChildren().add(btnPane);
 
-		shuffleBtn = new ShuffleBtn();
-		shuffleBtn.setOnAction(new ShuffleBtnHandler());
+		btnPane.setAlignment(Pos.CENTER);
 
+		shuffleBtn = new ShuffleBtn(new BtnPaneHandler());
 		btnPane.getChildren().add(shuffleBtn);
+
+		resetBoardBtn = new ResetBoardBtn(new BtnPaneHandler());
+		btnPane.getChildren().add(resetBoardBtn);
 
 		//System.out.println("Debug: end of Player");
 	}
 
-	private class ShuffleBtnHandler implements EventHandler<ActionEvent> {
+	private class BtnPaneHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent event) {
 			if( event.getSource() == shuffleBtn ) {
-				System.out.println("button pressed");
 				handCards.shuffleCards();
 				rearangeCards();
+			}
+			if( event.getSource() == resetBoardBtn ) { 
+				int displacement = 0;
+				for( int i = 0; i < battlefieldCards.size(); i++ ) {
+					battlefieldCards.get(i).setTranslateX(displacement * 10);
+					battlefieldCards.get(i).setTranslateY(displacement * 20);
+					if(i == 12) {
+						displacement = 0;
+					}
+					if(i > 12) {
+						battlefieldCards.get(i).setTranslateX(displacement * 10 + 200);
+						battlefieldCards.get(i).setTranslateY(displacement * 20);
+					}
+					displacement++;
+				}
 			}
 		}
 	}
