@@ -53,6 +53,8 @@ public class GameLogic extends Application {
 
 	private double scaleFactor;
 
+	private boolean isFullscreen;
+
 	public GameLogic() {
 		// Initiates the eventHandlers
 		keyEventHandler = new KeyEventHandler();
@@ -137,6 +139,7 @@ public class GameLogic extends Application {
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
+		primaryStage.setFullScreenExitHint("There is no escape! except for escape and F11...");
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
 
@@ -247,12 +250,12 @@ public class GameLogic extends Application {
 			if( event.getEventType() == KeyEvent.KEY_PRESSED) {
 				if( !(pressedKeys.contains(event.getCode())) ) {
 					pressedKeys.add(event.getCode());
-					System.out.println("added: " + event.getCode());
+					//System.out.println("added: " + event.getCode());
 				}
 			}
 			if( event.getEventType() == KeyEvent.KEY_RELEASED) {
 				pressedKeys.remove(event.getCode());
-				System.out.println("removed: " + event.getCode());
+				//System.out.println("removed: " + event.getCode());
 			}
 		}
 	}
@@ -362,6 +365,21 @@ public class GameLogic extends Application {
 							}
 							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
 						}
+					}
+
+					if( pressedKeys.contains(KeyCode.F11) ) {
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								if( isFullscreen ) {
+									isFullscreen = false;
+									primaryStage.setFullScreen( isFullscreen );
+								} else {
+									isFullscreen = true;
+									primaryStage.setFullScreen( isFullscreen );
+								}
+							}
+						});
 					}
 
 					try {
