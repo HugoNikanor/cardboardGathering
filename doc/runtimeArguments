@@ -1,3 +1,0 @@
-#Card movement is sluggish, launching with
--Dprism.vsync=false
-#seem to slightly fix it
