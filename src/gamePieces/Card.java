@@ -116,7 +116,7 @@ public class Card extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
 		Text cardNameText = new Text(cardName);
-		cardNameText.setWrappingWidth(60);
+		cardNameText.setWrappingWidth(95);
 		cardNameText.setTranslateY(15);
 		cardNameText.setTranslateX(5);
 

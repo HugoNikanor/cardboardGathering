@@ -1,69 +1,109 @@
 package database;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import gamePieces.Card;
 
 public class DatabaseInterface {
 
 	Card[] cards;
+	Card[] tempCards;
+	int noCards;
 
-	/**
-	 * TODO
-	 * The final product will NOT use 'properties' but rather aproper database
-	 * The following varaibles and objects are mearly a placehalder.
-	 */
-	Properties pr;
-	
+	Connection connection = null;
+	Statement statement   = null;
+	ResultSet resultSet   = null;
+
+	//String url      = "jdbc:mysql://localhost:3306/testdb";
+	String url      = "jdbc:mysql://localhost:3306/cardlist";
+	//String user     = "testuser";
+	//String password = "test623";
+	String user     = "root";
+	String password = "";
 	
 	public DatabaseInterface(String cardList) {
-		pr = new Properties();
-		try {
-			pr.load(new FileInputStream("/home/hugo/code/java/cardboardGathering/database/cards.properties"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		cards = new Card[60];
 
 
-		for( int i = 0; i < 60; i += 2 ) {
-			cards[i] = new Card(
-				pr.getProperty("card1Name"),
-				pr.getProperty("card1Type"),
-				pr.getProperty("card1Subtype"),
-				pr.getProperty("card1Ability"),
-				pr.getProperty("card1Flavour"),
-				Integer.parseInt(pr.getProperty("card1Power")),
-				Integer.parseInt(pr.getProperty("card1Toughness")),
-				Integer.parseInt(pr.getProperty("card1Loyalty")),
-				Integer.parseInt(pr.getProperty("card1ManaCostBlack")),
-				Integer.parseInt(pr.getProperty("card1ManaCostBlue")),
-				Integer.parseInt(pr.getProperty("card1ManaCostGreen")),
-				Integer.parseInt(pr.getProperty("card1ManaCostRed")),
-				Integer.parseInt(pr.getProperty("card1ManaCostWhite")),
-				Integer.parseInt(pr.getProperty("card1ManaCostBlank"))
-			);
+		try {
+			connection = DriverManager.getConnection(url, user, password);
 
-			cards[i + 1] = new Card(
-				pr.getProperty("card2Name"),
-				pr.getProperty("card2Type"),
-				pr.getProperty("card2Subtype"),
-				pr.getProperty("card2Ability"),
-				pr.getProperty("card2Flavour"),
-				Integer.parseInt(pr.getProperty("card2Power")),
-				Integer.parseInt(pr.getProperty("card2Toughness")),
-				Integer.parseInt(pr.getProperty("card2Loyalty")),
-				Integer.parseInt(pr.getProperty("card2ManaCostBlack")),
-				Integer.parseInt(pr.getProperty("card2ManaCostBlue")),
-				Integer.parseInt(pr.getProperty("card2ManaCostGreen")),
-				Integer.parseInt(pr.getProperty("card2ManaCostRed")),
-				Integer.parseInt(pr.getProperty("card2ManaCostWhite")),
-				Integer.parseInt(pr.getProperty("card2ManaCostBlank"))
-			); 
+			statement = connection.createStatement();
+
+			String querry1 = "SELECT COUNT(*) FROM cards;";
+			resultSet = statement.executeQuery(querry1);
+			if( resultSet.next() ) {
+				noCards = resultSet.getInt("count(*)");
+				tempCards = new Card[noCards];
+			}
+
+			String querry2 = "SELECT * FROM cards;";
+			resultSet = statement.executeQuery(querry2);
+
+			while( resultSet.next() ) {
+				int currentRow = resultSet.getRow() - 1;
+				tempCards[currentRow] = new Card(
+					resultSet.getString("name"),
+					resultSet.getString("type"),
+					resultSet.getString("subtype"),
+					resultSet.getString("ability"),
+					resultSet.getString("flavour"),
+					resultSet.getInt("power")    ,
+					resultSet.getInt("toughness"),
+					0,
+					resultSet.getInt("manaBlack"),
+					resultSet.getInt("manaBlue") ,
+					resultSet.getInt("manaGreen"),
+					resultSet.getInt("manaRed")  ,
+					resultSet.getInt("manaWhite"),
+					resultSet.getInt("manaBlank")
+				);
+			}
+			for( int i = 0; i < 60; i++ ) {
+				Random rand = new Random();
+				int c = rand.nextInt(noCards);
+				cards[i] = new Card(
+					tempCards[c].getCardName(),
+					tempCards[c].getType(),
+					tempCards[c].getSubtype(),
+					tempCards[c].getAbility(),
+					tempCards[c].getFlavour(),
+					tempCards[c].getPower(),
+					tempCards[c].getToughness(),
+					tempCards[c].getLoyalty(),
+					tempCards[c].getManaCostBlack(),
+					tempCards[c].getManaCostBlue(),
+					tempCards[c].getManaCostGreen(),
+					tempCards[c].getManaCostRed(),
+					tempCards[c].getManaCostWhite(),
+					tempCards[c].getManaCostBlank()
+				);
+			}
+		} catch (SQLException e) {
+			Logger lgr = Logger.getLogger(DatabaseInterface.class.getName());
+			lgr.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			try {
+				if( resultSet != null ) {
+					resultSet.close();
+				}
+				if( statement!= null ) {
+					statement.close();
+				}
+				if( connection != null ) {
+					connection.close();
+				}
+			} catch (SQLException ex) {
+				Logger lgr = Logger.getLogger(DatabaseInterface.class.getName());
+				lgr.log(Level.WARNING, ex.getMessage(), ex);
+			}
 		}
 
 
@@ -72,5 +112,4 @@ public class DatabaseInterface {
 	public Card[] getCards() {
 		return cards;
 	}
-
 }
