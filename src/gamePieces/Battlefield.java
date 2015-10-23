@@ -84,6 +84,10 @@ public class Battlefield extends Pane {
 		}
 	}
 
+	public void updateScaleFactor(double newScaleFactor) {
+		player.updateScaleFactor(newScaleFactor);
+	}
+
 	public Player getPlayer() {
 		return player;
 	}

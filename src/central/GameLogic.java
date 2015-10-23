@@ -235,6 +235,8 @@ public class GameLogic extends Application {
 					
 					scale.setX(scaleFactor);
 					scale.setY(scaleFactor);
+					
+					ownBattlefield.updateScaleFactor(scaleFactor);
 				}
 			};
 			timer.schedule(task, delayTime);

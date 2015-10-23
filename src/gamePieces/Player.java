@@ -168,6 +168,21 @@ public class Player extends Pane {
 		}
 	}
 
+	public void updateScaleFactor(double newScaleFactor) {
+		for( Card tch : handCards ) {
+			tch.setScaleFactor(newScaleFactor);
+		}
+		for( Card tcd : deckCards ) {
+			tcd.setScaleFactor(newScaleFactor);
+		}
+		for( Card tcg : graveyardCards ) {
+			tcg.setScaleFactor(newScaleFactor);
+		}
+		for( Card tcb : battlefieldCards ) {
+			tcb.setScaleFactor(newScaleFactor);
+		}
+	}
+
 	/**
 	 * Moves the cards to their new position, if it where to change,
 	 * Used to recenter the cards when playing a card, and to move

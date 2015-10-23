@@ -244,8 +244,6 @@ public class Card extends Pane {
 					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactor ));
 					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactor ));
 
-					System.out.print("layX: " + getTranslateX());
-					System.out.println("trY: " + getTranslateY());
 					if( getTranslateX() < 0 ) {
 						setTranslateX(0);
 					}
