@@ -1,3 +1,7 @@
+# Currently it doesn't really work
+And that is due to database that isn't really included...  
+Please stand by for futher instructions.
+
 #Cardboard Gathering
 *Totaly not inspired by a certain other game...*
 
