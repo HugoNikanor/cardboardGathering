@@ -47,8 +47,8 @@ public class Card extends Pane {
 
 	private double scaleFactor;
 
-	public static final double HEIGHT = 150;
-	public static final double WIDTH = 105;
+	public static final double HEIGHT = 180;//150;
+	public static final double WIDTH = 126;//105;
 
 	private static Card currentCard;
 

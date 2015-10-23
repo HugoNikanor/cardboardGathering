@@ -36,7 +36,7 @@ public class Battlefield extends Pane {
 
 		// Deck 
 		String deckString = Integer.toString(getPlayer().getDeckCards().size());
-		deckPane = new DeckPane(deckString, 105, 150, this.getWidth(), this.getHeight());
+		deckPane = new DeckPane(deckString, Card.WIDTH, Card.HEIGHT, this.getWidth(), this.getHeight());
 		deckPane.setOnMouseClicked(new MouseEventHandler());
 		this.getChildren().add(deckPane);
 

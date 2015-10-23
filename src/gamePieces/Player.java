@@ -2,16 +2,13 @@ package gamePieces;
 
 import exceptions.CardNotFoundException;
 
-import graphicsObjects.ResetBoardBtn;
-import graphicsObjects.ShuffleBtn;
+import graphicsObjects.PlayerBtnPane;
 
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class Player extends Pane {
@@ -27,9 +24,9 @@ public class Player extends Pane {
 
 	// How far a card should pop up when you hoover over it
 	private int handPopupValue = 20;
+	private static final int HEIGHT = 132;//110;
 
-	private ShuffleBtn shuffleBtn;
-	private ResetBoardBtn resetBoardBtn;
+	private PlayerBtnPane playerBtnPane;
 
 	public Player(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Player");
@@ -60,25 +57,11 @@ public class Player extends Pane {
 		//===============================//
 
 		this.setPrefWidth(Battlefield.WIDTH);
-		int height = 132;//110;
-		this.setPrefHeight(height);
+		this.setPrefHeight(HEIGHT);
 		this.getStyleClass().add("cards-in-hand-pane");
 
-
-		VBox btnPane = new VBox();
-		btnPane.setPrefSize(height, height);
-		btnPane.setFillWidth(true);
-		btnPane.setSpacing(10);
-		btnPane.getStyleClass().add("btn-pane");
-		this.getChildren().add(btnPane);
-
-		btnPane.setAlignment(Pos.CENTER);
-
-		shuffleBtn = new ShuffleBtn(new BtnPaneHandler());
-		btnPane.getChildren().add(shuffleBtn);
-
-		resetBoardBtn = new ResetBoardBtn(new BtnPaneHandler());
-		btnPane.getChildren().add(resetBoardBtn);
+		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
+		this.getChildren().add(playerBtnPane);
 
 		//System.out.println("Debug: end of Player");
 	}
@@ -86,7 +69,7 @@ public class Player extends Pane {
 	private class BtnPaneHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent event) {
-			if( event.getSource() == shuffleBtn ) {
+			if( event.getSource() == playerBtnPane.getShuffleBtn() ) {
 				handCards.shuffleCards();
 				rearangeCards();
 			}
@@ -98,7 +81,7 @@ public class Player extends Pane {
 			 */
 			int cardsPerRow = 12;
 			TranslateTransition tt;
-			if( event.getSource() == resetBoardBtn ) { 
+			if( event.getSource() == playerBtnPane.getResetBoardBtn() ) { 
 				int displacement = 0;
 				int laps = 0;
 				for( int i = 0; i < battlefieldCards.size(); i++ ) {
