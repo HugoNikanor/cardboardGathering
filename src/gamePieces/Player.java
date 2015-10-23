@@ -137,7 +137,8 @@ public class Player extends Pane {
 			handCards.add(tempCard);
 
 			tempCard.setTranslateY(handPopupValue);
-			tempCard.setTranslateX( 130 + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+			double cardPlacement = Battlefield.WIDTH * 0.08125;
+			tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
 		this.getChildren().add(tempCard);
 		} catch ( CardNotFoundException exception ) {
 			// This should trigger a player lost condition
