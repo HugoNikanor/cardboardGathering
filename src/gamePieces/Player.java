@@ -51,9 +51,9 @@ public class Player extends Pane {
 		poisonCounters = 0;
 
 		//Draws the starting hand
-		for( int i = 0; i < 7; i++ ) {
+		//for( int i = 0; i < 7; i++ ) {
 			this.drawCard();
-		}
+		//}
 		
 		//===============================//
 		//         JavaFX below          //
@@ -79,7 +79,6 @@ public class Player extends Pane {
 
 		resetBoardBtn = new ResetBoardBtn(new BtnPaneHandler());
 		btnPane.getChildren().add(resetBoardBtn);
-
 
 		//System.out.println("Debug: end of Player");
 	}
