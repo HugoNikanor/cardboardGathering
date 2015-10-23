@@ -3,3 +3,5 @@ At the moment X & Y scale are different variables, but both can use one of them
 
 In Card, the size of the Battlefield are hardcoded. 
 See around line 115
+
+If the game window exceed 1080*1920 pixels then some functionalty is lost

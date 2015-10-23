@@ -137,7 +137,7 @@ public class Player extends Pane {
 			handCards.add(tempCard);
 
 			tempCard.setTranslateY(handPopupValue);
-			double cardPlacement = Battlefield.WIDTH * 0.08125;
+			double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
 			tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
 		this.getChildren().add(tempCard);
 		} catch ( CardNotFoundException exception ) {
