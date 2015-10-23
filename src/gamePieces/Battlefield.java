@@ -17,8 +17,8 @@ public class Battlefield extends Pane {
 	private DeckPane deckPane;
 	private LifeCounter lifeCounter;
 
-	public static final double WIDTH = 1600;
-	public static final double HEIGHT = 395;
+	public static final double WIDTH = 1920;//1600;
+	public static final double HEIGHT = 474;//395;
 	
 	public Battlefield(String cardList, EventHandler<MouseEvent> cardPlayHandler) {
 		//System.out.println("Debug: start of Battlefield");

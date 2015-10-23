@@ -60,7 +60,7 @@ public class Player extends Pane {
 		//===============================//
 
 		this.setPrefWidth(Battlefield.WIDTH);
-		int height = 110;
+		int height = 132;//110;
 		this.setPrefHeight(height);
 		this.getStyleClass().add("cards-in-hand-pane");
 
