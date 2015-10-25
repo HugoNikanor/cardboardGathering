@@ -21,7 +21,12 @@ public class CardChooser {
 		Path filepath = Paths.get(filepathString);
 
 		cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
+		// Removes all lines starting with '#'
+		// Allows for comments
+		cardStream = cardStream
+			.filter( u -> u.charAt(0) != '#' );
 		it = cardStream.iterator();
+
 
 	}
 	public String next() {
