@@ -1,10 +1,11 @@
 package gamePieces;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import database.DatabaseInterface;
+import database.DeckCreator;
 
 import exceptions.CardNotFoundException;
 
@@ -20,7 +21,18 @@ public class CardCollection extends ArrayList<Card> {
 	 */
 	public CardCollection(String cardList) {
 		//System.out.println("Debug: start of cardCollection");
-		this.addAll(Arrays.asList(this.fetchCards(cardList)));
+
+		try {
+			//DeckCreator dc = new DeckCreator(cardList);
+			DeckCreator dc = new DeckCreator("cardlist1.txt");
+			DatabaseInterface di = new DatabaseInterface();
+
+			while( dc.hasNext() ) {
+				this.add( di.get( dc.next() ) );
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		this.shuffleCards();
 
@@ -28,10 +40,10 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 
-	private Card[] fetchCards(String cardList) {
-		return new DatabaseInterface(cardList).getCards();
+	//private Card[] fetchCards(String cardList) {
+	//	return new DatabaseInterface(cardList).getCards();
 
-	}
+	//}
 
 	public void shuffleCards() {
 		Random rand = new Random();

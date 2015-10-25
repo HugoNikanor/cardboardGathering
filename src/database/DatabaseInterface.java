@@ -2,9 +2,8 @@ package database;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -17,12 +16,12 @@ import gamePieces.Card;
 public class DatabaseInterface {
 
 	ArrayList<Card> cards;
-	ArrayList<JSONObject> cardArrayList;
+	ArrayList<JSONObject> cardBufferList;
 
-	public DatabaseInterface(String cardList) {
+	public DatabaseInterface() {
 		cards = new ArrayList<Card>();
 
-		ArrayList<JSONObject> cardArrayList;
+		ArrayList<JSONObject> cardBufferList;
 
 		try {
 
@@ -31,14 +30,11 @@ public class DatabaseInterface {
 
 			JSONArray jsonCards = obj.getJSONArray("cards");
 
-			cardArrayList = new ArrayList<JSONObject>();
+			cardBufferList = new ArrayList<JSONObject>();
 
 			for( int i = 0; i < jsonCards.length(); i++ ) {
-				cardArrayList.add(jsonCards.getJSONObject(i));
+				cardBufferList.add(jsonCards.getJSONObject(i));
 			}
-
-			DeckCreator dc = new DeckCreator("cardlist1.txt");
-			dc.next();
 
 
 			String name;
@@ -56,10 +52,9 @@ public class DatabaseInterface {
 			int manaWhite;
 			int manaBlank;
 
-			Random rand = new Random();
-			while( cards.size() < 61 ) {
-				int tempIndex = rand.nextInt(cardArrayList.size());
-				JSONObject tempObject = cardArrayList.get(tempIndex);
+			int tempIndex = 0;
+			while( cards.size() < cardBufferList.size() ) {
+				JSONObject tempObject = cardBufferList.get(tempIndex++);
 
 				try {
 					name = tempObject.getString("name");
@@ -153,17 +148,46 @@ public class DatabaseInterface {
 					manaBlank 
 				));
 			}
+
+			//for ( Card printCard :  cards ) { 
+		//		System.out.println( printCard.getCardName() );
+		//	}
 		} catch (JSONException je) {
 			je.printStackTrace();
 		} catch (FileNotFoundException fe) {
 			fe.printStackTrace();
-		} catch (IOException ie) {
-			ie.printStackTrace();
 		}
 
 	}
 
-	public Card[] getCards() {
-		return cards.toArray(new Card[cards.size()]);
+	public Card get( String cardName ) {
+		for( Card returnCard : cards ) {
+			System.out.println("*************");
+			System.out.println(returnCard.getCardName());
+			System.out.println(cardName);
+			if( Objects.equals( returnCard.getCardName(), cardName ) ) {
+				return returnCard;
+			}
+		}
+		return new Card(
+			"Name",
+			"type",
+			"subtype",
+			"ability",
+			"flavor",
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		);
 	}
+
+	//public Card[] getCards() {
+	//	return cards.toArray(new Card[cards.size()]);
+	//}
 }

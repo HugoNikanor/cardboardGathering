@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 
 public class DeckCreator {
 
-	Iterator<String> it;
-	Stream<String> cardStream;
+	private Iterator<String> it;
+	private Stream<String> cardStream;
 
 	public DeckCreator( String filename ) throws IOException {
 		String filepathString = 
@@ -22,8 +22,6 @@ public class DeckCreator {
 
 		cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
 		it = cardStream.iterator();
-
-		//cardStream.forEach(System.out::println);
 
 	}
 	public String next() {
@@ -36,8 +34,5 @@ public class DeckCreator {
 	}
 	public boolean hasNext() {
 		return it.hasNext();
-	}
-	public long getCount() {
-		return 1;
 	}
 }
