@@ -2,6 +2,7 @@ package database;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,12 +16,10 @@ import gamePieces.Card;
 
 public class DatabaseInterface {
 
-	//Card[] cards;
 	ArrayList<Card> cards;
 	ArrayList<JSONObject> cardArrayList;
 
 	public DatabaseInterface(String cardList) {
-		//cards = new Card[60];
 		cards = new ArrayList<Card>();
 
 		ArrayList<JSONObject> cardArrayList;
@@ -38,32 +37,30 @@ public class DatabaseInterface {
 				cardArrayList.add(jsonCards.getJSONObject(i));
 			}
 
-			/*
-			for( JSONObject tempObj : cardArrayList ) {
-				System.out.println(tempObj.getString("name"));
-			}
-			*/
+			DeckCreator dc = new DeckCreator("cardlist1.txt");
+			dc.next();
+
+
+			String name;
+			String type;
+			String subtype;
+			String text;
+			String flavor;
+			int power;
+			int toughness;
+			String mana;
+			int manaBlack;
+			int manaBlue;
+			int manaGreen;
+			int manaRed;
+			int manaWhite;
+			int manaBlank;
 
 			Random rand = new Random();
 			while( cards.size() < 61 ) {
-			//for( int i = 0; i < 60; i++ ) {
 				int tempIndex = rand.nextInt(cardArrayList.size());
 				JSONObject tempObject = cardArrayList.get(tempIndex);
 
-				String name;
-				String type;
-				String subtype;
-				String text;
-				String flavor;
-				int power;
-				int toughness;
-				String mana;
-				int manaBlack;
-				int manaBlue;
-				int manaGreen;
-				int manaRed;
-				int manaWhite;
-				int manaBlank;
 				try {
 					name = tempObject.getString("name");
 				} catch (JSONException e) {
@@ -160,8 +157,9 @@ public class DatabaseInterface {
 			je.printStackTrace();
 		} catch (FileNotFoundException fe) {
 			fe.printStackTrace();
+		} catch (IOException ie) {
+			ie.printStackTrace();
 		}
-
 
 	}
 

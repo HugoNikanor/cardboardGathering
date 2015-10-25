@@ -1,1 +1,1 @@
-java -cp bin central.Main
+java -cp bin:commands-lang3.4.jar:org.json-20120521 central.Main

@@ -175,7 +175,7 @@ public class Player extends Pane {
 		TranslateTransition tt;
 		for( Card temp : handCards ) {
 			 tt = new TranslateTransition(Duration.millis(200), temp);
-			 tt.setToX( 130 + ( handCards.indexOf(temp) ) * ( temp.getWidth() + temp.getPreferdMargin() * 2) );
+			 tt.setToX( Card.WIDTH + temp.getPreferdMargin() + ( handCards.indexOf(temp) ) * ( temp.getWidth() + temp.getPreferdMargin() * 2) );
 			 tt.play();
 		}
 	}
