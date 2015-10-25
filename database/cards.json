@@ -1,0 +1,40 @@
+{
+"cards": [
+	{
+		"name"      : "Thrummingbird",
+		"type"      : "Creature",
+		"subtype"   : "Bird Horror",
+		"ability"   : [
+			"Flying",
+			"Whenever Thrummingbird deals combat damage to a player, proliferate."
+		],
+		"flavour"   : "",
+		"power"     : 1,
+		"toughness" : 1,
+		"manaBlack" : 0,
+		"manaBlue"  : 1,
+		"manaGreen" : 0,
+		"manaRed"   : 0,
+		"manaWhite" : 0,
+		"manaBlank" : 1
+	},
+	{
+		"name"      : "Kessig Recluse",
+		"type"      : "Creature",
+		"subtype"   : "Spider",
+		"ability"   : [
+			"Reach",
+			"Deathtouch"
+		],
+		"flavour"   : "Its silk is heighly prized, but then again, so is your life",
+		"power"     : 2,
+		"toughness" : 3,
+		"manaBlack" : 0,
+		"manaBlue"  : 0,
+		"manaGreen" : 2,
+		"manaRed"   : 0,
+		"manaWhite" : 0,
+		"manaBlank" : 2
+	}
+]
+}
