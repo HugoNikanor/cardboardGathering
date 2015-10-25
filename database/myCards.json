@@ -1,11 +1,13 @@
 {
 	"cards": [
+		{
 		"types": [
 			"Sorcery"
 		],
 		"name": "Forsee",
-		"manaCost": "{3}{B}",
+		"manaCost": "{3}{U}",
 		"text": "Scry 4",
 		"flavor": "Two eyes to see what could be, who eyes to see what will"
+		}
 	]
-}
+},

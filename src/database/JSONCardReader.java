@@ -31,10 +31,16 @@ public class JSONCardReader {
 
 		try {
 
-			JSONTokener jTokener = new JSONTokener(new FileReader("/home/hugo/code/java/cardboardGathering/database/SOM-x.json"));
-			JSONObject obj = new JSONObject(jTokener);
+			JSONTokener jTokener1 = new JSONTokener(new FileReader("/home/hugo/code/java/cardboardGathering/database/SOM-x.json"));
+			JSONTokener jTokener2 = new JSONTokener(new FileReader("/home/hugo/code/java/cardboardGathering/database/myCards.json"));
+			JSONObject obj1 = new JSONObject(jTokener1);
+			JSONObject obj2 = new JSONObject(jTokener2);
 
-			JSONArray jsonCards = obj.getJSONArray("cards");
+			JSONArray jsonCards = obj1.getJSONArray("cards");
+			JSONArray jar2 = obj2.getJSONArray("cards");
+			for( int i = 0; i < jar2.length(); i++) {
+				jsonCards.put(jar2.get(i));
+			}
 
 			cardBufferList = new ArrayList<JSONObject>();
 
@@ -180,6 +186,6 @@ public class JSONCardReader {
 				return returnCard;
 			}
 		}
-		throw new CardNotFoundException("No such card in cardlist");
+		throw new CardNotFoundException("No such card in cardlist (" + cardName + ")");
 	}
 }
