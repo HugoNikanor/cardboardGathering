@@ -134,7 +134,17 @@ public class JSONCardReader {
 				manaGreen = StringUtils.countMatches(mana, "{G}");
 				manaRed   = StringUtils.countMatches(mana, "{R}");
 				manaWhite = StringUtils.countMatches(mana, "{W}");
-				manaBlank = 0;
+				String possibleManaCost;
+				try {
+					possibleManaCost = mana.substring(mana.indexOf('{') + 1, mana.indexOf('}') - 1);
+				} catch (StringIndexOutOfBoundsException e) {
+					possibleManaCost = "0";
+				}
+				if( StringUtils.isNumeric(possibleManaCost) ) {
+					manaBlank = Integer.parseInt(possibleManaCost);
+				} else {
+					manaBlank = 0;
+				}
 
 				cards.add(new Card(
 					name,
