@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import database.DatabaseInterface;
-import database.DeckCreator;
+import database.CardChooser;
+import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
@@ -23,14 +23,15 @@ public class CardCollection extends ArrayList<Card> {
 		//System.out.println("Debug: start of cardCollection");
 
 		try {
-			//DeckCreator dc = new DeckCreator(cardList);
-			DeckCreator dc = new DeckCreator("cardlist1.txt");
-			DatabaseInterface di = new DatabaseInterface();
+			CardChooser cardChooser = new CardChooser( cardList );
+			JSONCardReader jCardReader = new JSONCardReader();
 
-			while( dc.hasNext() ) {
-				this.add( di.get( dc.next() ) );
+			while( cardChooser.hasNext() ) {
+				this.add( jCardReader.get( cardChooser.next() ) );
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
 
@@ -38,12 +39,6 @@ public class CardCollection extends ArrayList<Card> {
 
 		//System.out.println("Debug: end of cardCollection");
 	}
-
-
-	//private Card[] fetchCards(String cardList) {
-	//	return new DatabaseInterface(cardList).getCards();
-
-	//}
 
 	public void shuffleCards() {
 		Random rand = new Random();

@@ -8,14 +8,14 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-public class DeckCreator {
+public class CardChooser {
 
 	private Iterator<String> it;
 	private Stream<String> cardStream;
 
-	public DeckCreator( String filename ) throws IOException {
+	public CardChooser( String filename ) throws IOException {
 		String filepathString = 
-			"/home/hugo/code/java/cardboardGathering/database/" +
+			"/home/hugo/code/java/cardboardGathering/decks/" +
 			filename;
 
 		Path filepath = Paths.get(filepathString);

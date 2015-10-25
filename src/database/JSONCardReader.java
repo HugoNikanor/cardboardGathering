@@ -11,14 +11,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import exceptions.CardNotFoundException;
+
 import gamePieces.Card;
 
-public class DatabaseInterface {
+public class JSONCardReader {
 
 	ArrayList<Card> cards;
 	ArrayList<JSONObject> cardBufferList;
 
-	public DatabaseInterface() {
+	/**
+	 * Loads all possible cards into memory,
+	 * the other method allows to access the data
+	 */
+	public JSONCardReader() {
 		cards = new ArrayList<Card>();
 
 		ArrayList<JSONObject> cardBufferList;
@@ -35,7 +41,6 @@ public class DatabaseInterface {
 			for( int i = 0; i < jsonCards.length(); i++ ) {
 				cardBufferList.add(jsonCards.getJSONObject(i));
 			}
-
 
 			String name;
 			String type;
@@ -148,10 +153,6 @@ public class DatabaseInterface {
 					manaBlank 
 				));
 			}
-
-			//for ( Card printCard :  cards ) { 
-		//		System.out.println( printCard.getCardName() );
-		//	}
 		} catch (JSONException je) {
 			je.printStackTrace();
 		} catch (FileNotFoundException fe) {
@@ -160,34 +161,15 @@ public class DatabaseInterface {
 
 	}
 
-	public Card get( String cardName ) {
+	/**
+	 * @return the card with the desired name
+	 */
+	public Card get( String cardName ) throws CardNotFoundException {
 		for( Card returnCard : cards ) {
-			System.out.println("*************");
-			System.out.println(returnCard.getCardName());
-			System.out.println(cardName);
 			if( Objects.equals( returnCard.getCardName(), cardName ) ) {
 				return returnCard;
 			}
 		}
-		return new Card(
-			"Name",
-			"type",
-			"subtype",
-			"ability",
-			"flavor",
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0
-		);
+		throw new CardNotFoundException("No such card in cardlist");
 	}
-
-	//public Card[] getCards() {
-	//	return cards.toArray(new Card[cards.size()]);
-	//}
 }

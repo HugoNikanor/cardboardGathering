@@ -48,9 +48,9 @@ public class Player extends Pane {
 		poisonCounters = 0;
 
 		//Draws the starting hand
-		//for( int i = 0; i < 7; i++ ) {
+		for( int i = 0; i < 7; i++ ) {
 			this.drawCard();
-		//}
+		}
 		
 		//===============================//
 		//         JavaFX below          //

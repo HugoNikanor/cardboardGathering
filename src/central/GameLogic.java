@@ -62,8 +62,8 @@ public class GameLogic extends Application {
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
-		ownBattlefield   = new Battlefield("cardList", cardPlayHandler);
-		otherBattlefield = new Battlefield("cardlist", cardPlayHandler);
+		ownBattlefield   = new Battlefield("cardlist1", cardPlayHandler);
+		otherBattlefield = new Battlefield("cardlist2", cardPlayHandler);
 		otherBattlefield.setRotate(180d);
 
 		// Adds the initial cards to the graphical display
