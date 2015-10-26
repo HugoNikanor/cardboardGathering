@@ -31,28 +31,38 @@ public class JSONCardReader {
 
 		try {
 
+			/*
+			 * Loads all json files into an arraylist
+			 */
 			ArrayList<JSONTokener> tokenerList = new ArrayList<JSONTokener>();
-
 			String pathRoot = "/home/hugo/code/java/cardboardGathering/database/";
 			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "SOM-x.json"  )));
 			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "myCards.json")));
 			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "M11-x.json")));
-
-			JSONObject[] jObjects = new JSONObject[tokenerList.size()];
+			/*
+			 * Gets all the card objects from the json files
+			 */
 			JSONArray jsonCards = new JSONArray();
 			for( int i = 0; i < tokenerList.size(); i++ ) {
-				jObjects[i] = new JSONObject(tokenerList.get(i));
-				JSONArray tempJArray = jObjects[i].getJSONArray("cards");
+				JSONObject tempJObject = new JSONObject(tokenerList.get(i));
+				// tempJArray holds all the objects in the "cards" array
+				JSONArray tempJArray = tempJObject.getJSONArray("cards");
 				for( int j = 0; j < tempJArray.length(); j++) {
 					jsonCards.put(tempJArray.get(j));
 				}
 			}
+			/*
+			 * Puts the card objects into a regular arraylist
+			 */
 			cardBufferList = new ArrayList<JSONObject>();
-
 			for( int i = 0; i < jsonCards.length(); i++ ) {
 				cardBufferList.add(jsonCards.getJSONObject(i));
 			}
 
+			/*
+			 * Extract the data from the json card objects.
+			 * Then put it into gamePieces.Card objects
+			 */
 			String name;
 			String type;
 			String subtype;
@@ -109,13 +119,13 @@ public class JSONCardReader {
 				try {
 					String indata = tempObject.getString("power");
 					if( indata == "*" ) {
-						power = -2;
+						power = -200;
 					}
 					else { 
 						try {
 							power = Integer.parseInt(indata);
 						} catch (NumberFormatException nfe) {
-							power = -3;
+							power = -300;
 						}
 					}
 				} catch (JSONException e) {
