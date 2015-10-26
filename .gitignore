@@ -5,4 +5,5 @@ workbench.xmi
 
 *x.json
 
-!jars/*java
+!jars/*jar
+
