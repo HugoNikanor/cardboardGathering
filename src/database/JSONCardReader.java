@@ -31,17 +31,22 @@ public class JSONCardReader {
 
 		try {
 
-			JSONTokener jTokener1 = new JSONTokener(new FileReader("/home/hugo/code/java/cardboardGathering/database/SOM-x.json"));
-			JSONTokener jTokener2 = new JSONTokener(new FileReader("/home/hugo/code/java/cardboardGathering/database/myCards.json"));
-			JSONObject obj1 = new JSONObject(jTokener1);
-			JSONObject obj2 = new JSONObject(jTokener2);
+			ArrayList<JSONTokener> tokenerList = new ArrayList<JSONTokener>();
 
-			JSONArray jsonCards = obj1.getJSONArray("cards");
-			JSONArray jar2 = obj2.getJSONArray("cards");
-			for( int i = 0; i < jar2.length(); i++) {
-				jsonCards.put(jar2.get(i));
+			String pathRoot = "/home/hugo/code/java/cardboardGathering/database/";
+			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "SOM-x.json"  )));
+			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "myCards.json")));
+			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "M11-x.json")));
+
+			JSONObject[] jObjects = new JSONObject[tokenerList.size()];
+			JSONArray jsonCards = new JSONArray();
+			for( int i = 0; i < tokenerList.size(); i++ ) {
+				jObjects[i] = new JSONObject(tokenerList.get(i));
+				JSONArray tempJArray = jObjects[i].getJSONArray("cards");
+				for( int j = 0; j < tempJArray.length(); j++) {
+					jsonCards.put(tempJArray.get(j));
+				}
 			}
-
 			cardBufferList = new ArrayList<JSONObject>();
 
 			for( int i = 0; i < jsonCards.length(); i++ ) {
@@ -55,6 +60,7 @@ public class JSONCardReader {
 			String flavor;
 			int power;
 			int toughness;
+			int loyalty;
 			String mana;
 			int manaBlack;
 			int manaBlue;
@@ -113,27 +119,32 @@ public class JSONCardReader {
 						}
 					}
 				} catch (JSONException e) {
-					power = -1;
+					power = -100;
 				}
 				try {
 					String indata = tempObject.getString("toughness");
 					if( indata == "*" ) {
-						toughness = -2;
+						toughness = -200;
 					}
 					else { 
 						try {
 							toughness = Integer.parseInt(indata);
 						} catch (NumberFormatException nfe) {
-							toughness = -3;
+							toughness = -300;
 						}
 					}
 				} catch (JSONException e) {
-					toughness = -1;
+					toughness = -100;
 				}
 				try {
 					mana = tempObject.getString("manaCost");
 				} catch (JSONException e) {
 					mana = "";
+				}
+				try {
+					loyalty = tempObject.getInt("loyalty");
+				} catch (JSONException e) {
+					loyalty = -100;
 				}
 				manaBlack = StringUtils.countMatches(mana, "{B}");
 				manaBlue  = StringUtils.countMatches(mana, "{U}");
@@ -160,7 +171,7 @@ public class JSONCardReader {
 					flavor,
 					power,
 					toughness,
-					0,
+					loyalty,
 					manaBlack,
 					manaBlue,
 					manaGreen,
