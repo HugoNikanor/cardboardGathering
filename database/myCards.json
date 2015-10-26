@@ -1,13 +1,13 @@
 {
-	"cards": [
-		{
-		"types": [
-			"Magic"
-		],
-		"name": "MyCard",
-		"manaCost": "{3}{U}",
-		"text": "Kill everything",
-		"flavor": "This card has everything, but in reality, it's rather shitty"
-		}
-	]
-},
+    "cards": [
+        {
+            "types": [
+                "Magic"
+            ],
+            "name": "MyCard",
+            "manaCost": "{3}{U}",
+            "text": "Kill everything",
+            "flavor": "This card has everything, but in reality, it's rather shitty"
+        }
+    ]
+}

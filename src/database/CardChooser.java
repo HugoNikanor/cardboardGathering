@@ -21,10 +21,11 @@ public class CardChooser {
 		Path filepath = Paths.get(filepathString);
 
 		cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
-		// Removes all lines starting with '#'
-		// Allows for comments
+		// DO NOT HAVE LEADING WHITESPACE!
 		cardStream = cardStream
-			.filter( u -> u.charAt(0) != '#' );
+			.filter( u -> u.charAt(0) != '#' ) // '#' for comment
+			.sorted();                         // Alphabetical
+
 		it = cardStream.iterator();
 
 

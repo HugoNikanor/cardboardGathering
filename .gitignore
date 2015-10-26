@@ -4,3 +4,5 @@ workbench.xmi
 .settings/
 
 *x.json
+
+!jars/*java

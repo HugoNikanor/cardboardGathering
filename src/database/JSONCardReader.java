@@ -58,7 +58,8 @@ public class JSONCardReader {
 						jsonCards.put(tempJArray.get(j));
 					}
 				} catch (JSONException innerJException) {
-					System.out.print  ("json problem, non fatal: ");
+					System.out.print  ("json problem, non fatal in file ");
+					System.out.print  ( listOfFiles[i].getName() + "@");
 					System.out.println(tokenerList.get(i).toString());
 				}
 			}
