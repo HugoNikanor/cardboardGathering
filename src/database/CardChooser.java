@@ -15,7 +15,7 @@ public class CardChooser {
 
 	public CardChooser( String filename ) throws IOException {
 		String filepathString = 
-			"/home/hugo/code/java/cardboardGathering/decks/" +
+			"decks/" +
 			filename;
 
 		Path filepath = Paths.get(filepathString);

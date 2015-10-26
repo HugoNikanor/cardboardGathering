@@ -1,5 +1,6 @@
 package database;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -30,25 +31,35 @@ public class JSONCardReader {
 		ArrayList<JSONObject> cardBufferList;
 
 		try {
+			ArrayList<JSONTokener> tokenerList = new ArrayList<JSONTokener>();
+			String pathRoot = "database/";
 
 			/*
-			 * Loads all json files into an arraylist
+			 * Loads all files in database/ and makes them ready to be read.
 			 */
-			ArrayList<JSONTokener> tokenerList = new ArrayList<JSONTokener>();
-			String pathRoot = "/home/hugo/code/java/cardboardGathering/database/";
-			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "SOM-x.json"  )));
-			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "myCards.json")));
-			tokenerList.add( new JSONTokener(new FileReader( pathRoot + "M11-x.json")));
+			File folder = new File(pathRoot);
+			File[] listOfFiles = folder.listFiles();
+			for ( int i = 0; i < listOfFiles.length; i++ ) {
+				if( !listOfFiles[i].isDirectory() ) {
+					tokenerList.add( new JSONTokener( new FileReader( listOfFiles[i] )));
+				}
+			}
+
 			/*
 			 * Gets all the card objects from the json files
 			 */
 			JSONArray jsonCards = new JSONArray();
 			for( int i = 0; i < tokenerList.size(); i++ ) {
-				JSONObject tempJObject = new JSONObject(tokenerList.get(i));
-				// tempJArray holds all the objects in the "cards" array
-				JSONArray tempJArray = tempJObject.getJSONArray("cards");
-				for( int j = 0; j < tempJArray.length(); j++) {
-					jsonCards.put(tempJArray.get(j));
+				try {
+					JSONObject tempJObject = new JSONObject(tokenerList.get(i));
+					// tempJArray holds all the objects in the "cards" array
+					JSONArray tempJArray = tempJObject.getJSONArray("cards");
+					for( int j = 0; j < tempJArray.length(); j++) {
+						jsonCards.put(tempJArray.get(j));
+					}
+				} catch (JSONException innerJException) {
+					System.out.print  ("json problem, non fatal: ");
+					System.out.println(tokenerList.get(i).toString());
 				}
 			}
 			/*

@@ -1,0 +1,20 @@
+database/
+is the folder where all the database files should reside. All files there will
+be read into the programs. Any directories will however be ignored.
+
+When creating databases, follow the sample in the accompanying file: sample.json.
+All fields in the objects present in the "cards" array can be removed. But I
+would STRONGLY recommend that you at least keep "name".
+
+"manaCost" have multiple {x} blocks. For colorless mana, start with an {n} block,
+where 'n' is an integer value.
+You can also use:
+	{B} - Black
+	{U} - Blue
+	{G} - Green
+	{R} - Red
+	{W} - White
+These five can appear in any order, and any number of each of these
+
+If a NULL value is desired for any of the fields, just refrain from having the
+key present.
