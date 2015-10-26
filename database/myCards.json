@@ -2,12 +2,12 @@
 	"cards": [
 		{
 		"types": [
-			"Sorcery"
+			"Magic"
 		],
-		"name": "Forsee",
+		"name": "MyCard",
 		"manaCost": "{3}{U}",
-		"text": "Scry 4",
-		"flavor": "Two eyes to see what could be, who eyes to see what will"
+		"text": "Kill everything",
+		"flavor": "This card has everything, but in reality, it's rather shitty"
 		}
 	]
 },
