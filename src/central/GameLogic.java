@@ -1,6 +1,7 @@
 package central;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,14 +29,15 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
+import network.Connection;
+
 public class GameLogic extends Application {
 
 	private Battlefield ownBattlefield;
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
-	//private Network network;
-	//private NetworkThread networkThread;
+	private Connection connection;
 
 	private KeyEventHandler keyEventHandler;
 
@@ -56,15 +58,24 @@ public class GameLogic extends Application {
 	private boolean isFullscreen;
 
 	public GameLogic() {
+
 		// Initiates the eventHandlers
 		keyEventHandler = new KeyEventHandler();
 		pressedKeys = new ArrayList<KeyCode>();
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
-		ownBattlefield   = new Battlefield("cardlist1", cardPlayHandler);
-		otherBattlefield = new Battlefield("cardlist2", cardPlayHandler);
+		ownBattlefield = new Battlefield("cardlist1", cardPlayHandler);
+
+		connection = new Connection( ownBattlefield, 1224 );
+
+		try {
+			otherBattlefield = connection.getOponent();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 		otherBattlefield.setRotate(180d);
+
 
 		// Adds the initial cards to the graphical display
 		for( Card ownTemp : ownBattlefield.getCards() ) {
@@ -114,8 +125,6 @@ public class GameLogic extends Application {
 		gameScene.getStylesheets().add(styleFilePath);
 
 		new Thread(new KeyHandleThread()).start();
-
-		new Thread(new NetworkThread()).start();
 	}
 
 	@Override
@@ -392,18 +401,6 @@ public class GameLogic extends Application {
 					}
 				}
 			}
-		}
-	}
-
-	private class NetworkThread implements Runnable {
-		@Override
-		public void run() {
-			/**
-			 * TODO
-			 * Ask the network class if anything has happenend,
-			 * and if it has, tell 'GameLogic'
-			 */
-			System.out.println("Network thread, reporting for duty.");
 		}
 	}
 }
