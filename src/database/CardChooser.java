@@ -13,7 +13,7 @@ public class CardChooser {
 	private Iterator<String> it;
 	private Stream<String> cardStream;
 
-	public CardChooser( String filename ) throws IOException {
+	public CardChooser( String[] cardList ) throws IOException {
 		String filepathString = 
 			"decks/" +
 			filename;

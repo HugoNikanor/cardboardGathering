@@ -2,7 +2,7 @@ package gamePieces;
 
 import javafx.scene.layout.Pane;
 
-import java.io.Serializable;
+import network.Connection;
 
 import graphicsObjects.DeckPane;
 import graphicsObjects.LifeCounter;
@@ -11,11 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
-public class Battlefield 
-	extends Pane 
-	implements Serializable {
-
-	private static final long serialVersionUID = 2233593307311995032L;
+public class Battlefield extends Pane {
 
 	private Player player;
 	private CardCollection cards;
@@ -25,10 +21,29 @@ public class Battlefield
 
 	public static final double WIDTH = 1920;//1600;
 	public static final double HEIGHT = 474;//395;
+
+	private String[] cardList;
+
+
+	public enum Populate {
+		LOCAL,
+		NETWORK
+	};
+
+	private Connection connection;
 	
-	public Battlefield( String cardList, EventHandler<MouseEvent> cardPlayHandler ) {
+	public Battlefield( Populate populationMethod ) {
+		connection = new Connection( this );
+	}
+	public Battlefield( String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Populate populationMethod ) {
 		//System.out.println("Debug: start of Battlefield");
-		player = new Player( cardList, cardPlayHandler );
+
+		Path filepath = Paths.get( "decks/" + cardListFile );
+
+
+
+
+		player = new Player( cardList, mouseEventHandler );
 		cards = player.getBattlefieldCards();
 
 		// JavaFX

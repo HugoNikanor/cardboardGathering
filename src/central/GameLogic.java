@@ -1,7 +1,6 @@
 package central;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,18 +28,13 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
-import network.Connection;
-
 public class GameLogic extends Application {
 
 	private Battlefield ownBattlefield;
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
-	private Connection connection;
-
 	private KeyEventHandler keyEventHandler;
-
 	private ArrayList<KeyCode> pressedKeys;
 
 	private Stage primaryStage;
@@ -52,9 +46,7 @@ public class GameLogic extends Application {
 	private double defaultSceneHeight;
 
 	private Scale scale;
-
 	private double scaleFactor;
-
 	private boolean isFullscreen;
 
 	public GameLogic() {
@@ -65,15 +57,9 @@ public class GameLogic extends Application {
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
-		ownBattlefield = new Battlefield("cardlist1", cardPlayHandler);
-
-		connection = new Connection( ownBattlefield, 1224 );
-
-		try {
-			otherBattlefield = connection.getOponent();
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
+		ownBattlefield = new Battlefield(
+				"cardlist1", cardPlayHandler, Battlefield.Populate.LOCAL );
+		otherBattlefield = new Battlefield( Battlefield.Populate.NETWORK );
 		otherBattlefield.setRotate(180d);
 
 

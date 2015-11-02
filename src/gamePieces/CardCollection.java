@@ -19,7 +19,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * file containing a list of all cards desired. This shold be sent to the 
 	 * card fectcher, which gets them from the database
 	 */
-	public CardCollection(String cardList) {
+	public CardCollection( String[] cardList ) {
 		//System.out.println("Debug: start of cardCollection");
 
 		try {
