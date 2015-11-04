@@ -3,6 +3,7 @@ package gamePieces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import database.CardChooser;
 import database.JSONCardReader;
@@ -19,11 +20,11 @@ public class CardCollection extends ArrayList<Card> {
 	 * file containing a list of all cards desired. This shold be sent to the 
 	 * card fectcher, which gets them from the database
 	 */
-	public CardCollection( String[] cardList ) {
+	public CardCollection( Stream<String> cardListStream ) {
 		//System.out.println("Debug: start of cardCollection");
 
 		try {
-			CardChooser cardChooser = new CardChooser( cardList );
+			CardChooser cardChooser = new CardChooser( cardListStream );
 			JSONCardReader jCardReader = new JSONCardReader();
 
 			while( cardChooser.hasNext() ) {

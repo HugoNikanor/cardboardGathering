@@ -1,35 +1,27 @@
 package network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import gamePieces.Battlefield;
-
 public class Connection {
-
-	private Battlefield battlefield;
-	private Battlefield otherBattlefield;
 
 	private String ip = "127.0.0.1";
 
 	private Socket socket;
 	private ObjectInputStream objInStream;
 	private ObjectOutputStream objOutStream;
-	private DataInputStream dataInStream;
-	private DataOutputStream dataOutStream;
+
+	private InputObjectHandeler inObjHandeler;
 
 	private boolean connected;
 
-	public Connection( Battlefield battlefield ) {
-		this( battlefield, 23732 );
+	public Connection() {
+		this( 23732 );
 	}
 
-	public Connection( Battlefield battlefield, int port ) {
-		this.battlefield = battlefield;
+	public Connection( int port ) {
 		
 		connected = false;
 
@@ -49,14 +41,16 @@ public class Connection {
 			}
 		}
 		System.out.println( "Connected to server" );
+
+		inObjHandeler = new InputObjectHandeler();
 		
 		boolean streamsReady = false;
 		while( !streamsReady ) {
 			try {
 				objOutStream = new ObjectOutputStream( socket.getOutputStream() );
-				System.out.println( "check 1" );
+				//System.out.println( "check 1" );
 				objInStream = new ObjectInputStream( socket.getInputStream() );
-				System.out.println( "check 2" );
+				//System.out.println( "check 2" );
 				streamsReady = true;
 			} catch( IOException ie ) {
 				ie.printStackTrace();
@@ -65,28 +59,18 @@ public class Connection {
 
 		System.out.println( "Streams set up" );
 
-		new Thread( new NetworkInputThread() ).start();
-		new Thread( new NetworkOutputThread() ).start();
+		new Thread( new NetworkObjectInputThread() ).start();
 
 	}
-	
-	private void sendData() throws IOException {
-		objOutStream.writeObject( battlefield );
-	}
 
-	public Battlefield getOponent() throws ClassNotFoundException, IOException {
-		return otherBattlefield;
-	}
-
-	private class NetworkInputThread implements Runnable {
-		Battlefield temp;
+	private class NetworkObjectInputThread implements Runnable {
 		@Override
 		public void run() {
 			synchronized( this ) {
 				//while( true ) {
 				try {
-					temp = (Battlefield) objInStream.readObject();
-					otherBattlefield = temp;
+					NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
+					inObjHandeler.handleObject( inPacket );
 				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 				}
@@ -96,16 +80,11 @@ public class Connection {
 		}
 	}
 
-	private class NetworkOutputThread implements Runnable {
-		@Override
-		public void run() {
-			synchronized( this ) {
-				try {
-					sendData();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+	public void sendPacket( NetworkPacket networkPacket ) {
+		try {
+			objOutStream.writeObject( networkPacket );
+		} catch( IOException e ) {
+			e.printStackTrace();
 		}
 	}
 

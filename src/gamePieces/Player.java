@@ -1,5 +1,7 @@
 package gamePieces;
 
+import java.util.stream.Stream;
+
 import exceptions.CardNotFoundException;
 
 import graphicsObjects.PlayerBtnPane;
@@ -28,9 +30,9 @@ public class Player extends Pane {
 
 	private PlayerBtnPane playerBtnPane;
 
-	public Player( String cardList[], EventHandler<MouseEvent> cardPlayHandler ) {
+	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler ) {
 		//System.out.println("Debug: start of Player");
-		deckCards        = new CardCollection( cardList );
+		deckCards        = new CardCollection( cardListStream );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
 		graveyardCards   = new CardCollection();

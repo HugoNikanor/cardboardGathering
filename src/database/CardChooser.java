@@ -1,40 +1,23 @@
 package database;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class CardChooser {
 
 	private Iterator<String> it;
-	private Stream<String> cardStream;
+	private Stream<String> cardListStream;
 
-	public CardChooser( String[] cardList ) throws IOException {
-		String filepathString = 
-			"decks/" +
-			filename;
-
-		Path filepath = Paths.get(filepathString);
-
-		cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
-		// DO NOT HAVE LEADING WHITESPACE!
-		cardStream = cardStream
-			.filter( u -> u.charAt(0) != '#' ) // '#' for comment
-			.sorted();                         // Alphabetical
-
-		it = cardStream.iterator();
-
-
+	public CardChooser( Stream<String> cardListStream ) throws IOException {
+		this.cardListStream = cardListStream;
+		it = cardListStream.iterator();
 	}
 	public String next() {
 		if( it.hasNext() ) {
 			return it.next();
 		} else {
-			cardStream.close();
+			cardListStream.close();
 			return "0";
 		}
 	}

@@ -1,8 +1,12 @@
 package gamePieces;
 
-import javafx.scene.layout.Pane;
-
-import network.Connection;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 import graphicsObjects.DeckPane;
 import graphicsObjects.LifeCounter;
@@ -10,7 +14,9 @@ import graphicsObjects.LifeCounter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
+import network.Connection;
 public class Battlefield extends Pane {
 
 	private Player player;
@@ -22,8 +28,8 @@ public class Battlefield extends Pane {
 	public static final double WIDTH = 1920;//1600;
 	public static final double HEIGHT = 474;//395;
 
-	private String[] cardList;
-
+	private String cardListFile;
+	private Stream<String> cardStream;
 
 	public enum Populate {
 		LOCAL,
@@ -35,15 +41,14 @@ public class Battlefield extends Pane {
 	public Battlefield( Populate populationMethod ) {
 		connection = new Connection( this );
 	}
-	public Battlefield( String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Populate populationMethod ) {
+
+	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Populate populationMethod) {
 		//System.out.println("Debug: start of Battlefield");
+		
+		this.cardListFile = cardListFile;
+		this.setupCardStream();
 
-		Path filepath = Paths.get( "decks/" + cardListFile );
-
-
-
-
-		player = new Player( cardList, mouseEventHandler );
+		player = new Player( cardStream, mouseEventHandler );
 		cards = player.getBattlefieldCards();
 
 		// JavaFX
@@ -66,6 +71,27 @@ public class Battlefield extends Pane {
 		this.getChildren().add( lifeCounter );
 
 		//System.out.println("Debug: end of Battlefield");
+	}
+
+	public Stream<String> getStream() {
+		return cardStream;
+	}
+	private void setupCardStream() {
+		try {
+			Path filepath = Paths.get( "decks/" + cardListFile );
+
+			@SuppressWarnings("resource")
+			Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
+
+			// DO NOT HAVE LEADING WHITESPACE!
+			cardStream = cardStream
+				.filter( u -> u.charAt(0) != '#' ) // '#' for comment
+				.sorted();                         // Alphabetical
+
+		} catch( IOException e ) {
+			System.out.println( "No file with that name" );
+			e.printStackTrace();
+		}
 	}
 
 	private class LifeCounterHandler implements EventHandler<ActionEvent> {
