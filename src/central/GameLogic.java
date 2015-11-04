@@ -295,54 +295,28 @@ public class GameLogic extends Application {
 
 					/**
 					 * Use the arrow keys or 'hjkl' to move the card,
-					 * TODO This has the risk of crashing the program.
+					 * TODO This has the risk of crashing the program
+					 * TODO Why doesn't this use a switch statement
 					 */
-					TranslateTransition tt;
 					if( pressedKeys.contains(KeyCode.DOWN) ||
 					    pressedKeys.contains(KeyCode.J) ) {
-						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
-						if( tempCard.getTranslateY() + moveSpeed > ownBattlefield.getHeight() - tempCard.getHeight() ) {
-							tt.setByY( ownBattlefield.getHeight() - tempCard.getHeight() - tempCard.getTranslateY() );
-						} else {
-							tt.setByY( moveSpeed );
-						}
-						tt.play();
+						tempCard.moveSmooth( 0, moveSpeed, 50 );
 					}
 					if( pressedKeys.contains(KeyCode.UP) ||
 					    pressedKeys.contains(KeyCode.K) ) {
-						tt = new TranslateTransition( Duration.millis(50), tempCard );
 
-						if( tempCard.getTranslateY() - moveSpeed < 0 ) {
-							tt.setByY( -1*tempCard.getTranslateY() );
-						} else {
-							tt.setByY( -1*moveSpeed );
-						}
-						tt.play();
+						tempCard.moveSmooth( 0, -moveSpeed, 50 );
 					}
 					if( pressedKeys.contains(KeyCode.RIGHT) ||
 					    pressedKeys.contains(KeyCode.L) ) {
 
-						tt = new TranslateTransition( Duration.millis(50), tempCard );
-
-						if( tempCard.getTranslateX() + moveSpeed > ownBattlefield.getWidth() - tempCard.getWidth() ) {
-							tt.setByX( ownBattlefield.getWidth() - tempCard.getWidth() - tempCard.getTranslateX() );
-						} else {
-							tt.setByX( moveSpeed );
-						}
-						tt.play();
+						tempCard.moveSmooth( moveSpeed, 0, 50 );
 					}
 					if( pressedKeys.contains(KeyCode.LEFT) ||
 					    pressedKeys.contains(KeyCode.H) ) {
 
-						tt = new TranslateTransition( Duration.millis(50), tempCard );
-
-						if( tempCard.getTranslateX() - moveSpeed < 0 ) {
-							tt.setByX( -1*tempCard.getTranslateX() );
-						} else {
-							tt.setByX( -1*moveSpeed );
-						}
-						tt.play();
+						tempCard.moveSmooth( -moveSpeed, 0, 50 );
 					}
 
 					// Rotate the card when space is released

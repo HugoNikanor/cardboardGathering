@@ -82,7 +82,7 @@ public class Player extends Pane {
 			 * Starts a new 'stack' after 'cardsPerRow' cards.
 			 */
 			int cardsPerRow = 12;
-			TranslateTransition tt;
+			//TranslateTransition tt;
 			if( event.getSource() == playerBtnPane.getResetBoardBtn() ) { 
 				int displacement = 0;
 				int laps = 0;
@@ -91,10 +91,14 @@ public class Player extends Pane {
 						displacement = 0;
 						laps++;
 					}
+					/*
 					tt = new TranslateTransition(Duration.millis(500), battlefieldCards.get(i));
 					tt.setToX(displacement * 10 + 200 * laps);
 					tt.setToY(displacement * 20);
 					tt.play();
+					*/
+					battlefieldCards.get(i).placeSmooth(
+							displacement*10 + 200*laps, displacement*20, 500);
 
 					displacement++;
 				}

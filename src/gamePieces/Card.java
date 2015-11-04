@@ -153,7 +153,7 @@ public class Card extends Pane {
 	 * Adds up all the mana costs
 	 * Automacicly asigns the output to 'convertedManaCost'
 	 */
-	private void calcConvMana() { // {{{
+	private void calcConvMana() {
 		convertedManaCost = 
 			manaCostBlack + 
 			manaCostBlue  + 
@@ -204,10 +204,9 @@ public class Card extends Pane {
 				this.getStyleClass().add("white");
 			break;
 		}
-	} // }}}
+	}
 
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
-
 
 		private double mouseInSceneX;
 		private double mouseInSceneY;
@@ -340,25 +339,82 @@ public class Card extends Pane {
 		currentCard.setId("has-focus");
 	}
 
+	/**
+	 * Smoothly slides the card along
+	 */
 	public void moveSmooth( double changeX, double changeY ) {
 		moveSmooth( changeX, changeY, 30 );
 	}
+	/**
+	 * Smoothly slides the card along
+	 */
 	public void moveSmooth( double changeX, double changeY, int moveSpeed ) {
 		TranslateTransition tt;
-		tt = new TranslateTransition( Duration.millis(50), this );
+		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
 
-		if( this.getTranslateY() + moveSpeed > Battlefield.HEIGHT - this.getHeight() ) {
-			tt.setByY( Battlefield.HEIGHT - this.getHeight() - this.getTranslateY() );
-		} else {
-			tt.setByY( moveSpeed );
+		if( changeX > 0 ) {
+			if( this.getTranslateX() + changeX > Battlefield.WIDTH - this.getHeight() ) {
+				tt.setByX( Battlefield.WIDTH - this.getHeight() - this.getTranslateX() );
+			} else {
+				tt.setByX( changeX );
+			}
 		}
+
+		if( changeY > 0 ) {
+			if( this.getTranslateY() + changeY > Battlefield.HEIGHT - this.getHeight() ) {
+				tt.setByY( Battlefield.HEIGHT - this.getHeight() - this.getTranslateY() );
+			} else {
+				tt.setByY( changeY );
+			}
+		}
+
+		if( changeX < 0 ) {
+			if( this.getTranslateX() - changeX < 0 ) {
+					tt.setByX( -this.getTranslateX() );
+			} else {
+					tt.setByX( -changeX );
+			}
+		}
+
+		if( changeY < 0 ) {
+			if( this.getTranslateY() - changeY < 0 ) {
+					tt.setByY( -this.getTranslateY() );
+			} else {
+					tt.setByY( -changeY );
+			}
+		}
+
 		tt.play();
 	}
 
+	/**
+	 * Smoothly moves the card to the set coordinate
+	 * If the coordinate is out of bounds then it's set to the bound
+	 */
 	public void placeSmooth( double posX, double posY ) {
 		placeSmooth( posX, posY, 200 );
 	}
+	/**
+	 * Smoothly moves the card to the set coordinate
+	 * If the coordinate is out of bounds then it's set to the bound
+	 */
 	public void placeSmooth( double posX, double posY, int transitionSpeed ) {
+		TranslateTransition tt;
+		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
+
+		if( posX > Battlefield.WIDTH - this.getWidth() ) {
+			tt.setToX( posX );
+		} else {
+			tt.setToX( Battlefield.WIDTH - this.getWidth() );
+		}
+
+		if( posY > Battlefield.HEIGHT - this.getHeight() ) {
+			tt.setToY( Battlefield.HEIGHT - this.getHeight() );
+		} else {
+			tt.setToY( posY );
+		}
+
+		tt.play();
 	}
 
 	public void modifyTranslateX(double change) {
