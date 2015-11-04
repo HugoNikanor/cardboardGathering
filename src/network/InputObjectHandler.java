@@ -1,5 +1,7 @@
 package network;
 
+import exceptions.CardNotFoundException;
+
 import gamePieces.Battlefield;
 
 import inputObjects.*;
@@ -14,6 +16,7 @@ public class InputObjectHandler {
 	public InputObjectHandler( Battlefield battlefield ) {
 		this.battlefield = battlefield;
 	}
+
 	public void handleObject( NetworkPacket data ) {
 		switch( data.getDataType() ) {
 			case INFO:
@@ -23,7 +26,11 @@ public class InputObjectHandler {
 			case CARDMOVE:
 				System.out.println( "Object is CARDMOVE" );
 				CardMoveObject cmo = (CardMoveObject) data.getData();
-				battlefield.getCards().getCard( cmo.getId() ).move( cmo.getChangeX(), cmo.getChangeY() );
+				try {
+					battlefield.getCards().getCard( cmo.getId() ).smoothMove( cmo.getChangeX(), cmo.getChangeY() );
+				} catch( CardNotFoundException e ) {
+					System.out.println( "no card with id: " + cmo.getId() );
+				}
 
 				break;
 			case CARDLIST:

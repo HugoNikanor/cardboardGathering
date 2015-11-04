@@ -68,11 +68,13 @@ public class GameLogic extends Application {
 
 		ownBattlefield = new Battlefield(
 				"cardlist1", cardPlayHandler, Battlefield.Populate.LOCAL );
-		otherBattlefield = new Battlefield( Battlefield.Populate.NETWORK );
+		otherBattlefield = new Battlefield(
+				"cardlist2", cardPlayHandler, Battlefield.Populate.LOCAL );
+		//otherBattlefield = new Battlefield( Battlefield.Populate.NETWORK );
 		otherBattlefield.setRotate(180d);
 
 		inputObjectHandler = new InputObjectHandler( otherBattlefield );
-		connection = new Connection( inputObjectHandler );
+		//connection = new Connection( inputObjectHandler );
 
 
 		// Adds the initial cards to the graphical display
@@ -277,7 +279,7 @@ public class GameLogic extends Application {
 		boolean spacePressedBefore;
 		Card tempCard;
 
-		int moveSpeed = 30;
+		double moveSpeed = 30;
 
 		@Override
 		public void run() {
@@ -301,22 +303,22 @@ public class GameLogic extends Application {
 					if( pressedKeys.contains(KeyCode.DOWN) ||
 					    pressedKeys.contains(KeyCode.J) ) {
 
-						tempCard.moveSmooth( 0, moveSpeed, 50 );
+						tempCard.smoothMove( 0, moveSpeed, 50 );
 					}
 					if( pressedKeys.contains(KeyCode.UP) ||
 					    pressedKeys.contains(KeyCode.K) ) {
 
-						tempCard.moveSmooth( 0, -moveSpeed, 50 );
+						tempCard.smoothMove( 0, -moveSpeed, 50 );
 					}
 					if( pressedKeys.contains(KeyCode.RIGHT) ||
 					    pressedKeys.contains(KeyCode.L) ) {
 
-						tempCard.moveSmooth( moveSpeed, 0, 50 );
+						tempCard.smoothMove( moveSpeed, 0, 50 );
 					}
 					if( pressedKeys.contains(KeyCode.LEFT) ||
 					    pressedKeys.contains(KeyCode.H) ) {
 
-						tempCard.moveSmooth( -moveSpeed, 0, 50 );
+						tempCard.smoothMove( -moveSpeed, 0, 50 );
 					}
 
 					// Rotate the card when space is released

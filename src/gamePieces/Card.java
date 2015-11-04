@@ -342,13 +342,13 @@ public class Card extends Pane {
 	/**
 	 * Smoothly slides the card along
 	 */
-	public void moveSmooth( double changeX, double changeY ) {
-		moveSmooth( changeX, changeY, 30 );
+	public void smoothMove( double changeX, double changeY ) {
+		smoothMove( changeX, changeY, 30 );
 	}
 	/**
 	 * Smoothly slides the card along
 	 */
-	public void moveSmooth( double changeX, double changeY, int moveSpeed ) {
+	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
 
@@ -391,14 +391,14 @@ public class Card extends Pane {
 	 * Smoothly moves the card to the set coordinate
 	 * If the coordinate is out of bounds then it's set to the bound
 	 */
-	public void placeSmooth( double posX, double posY ) {
-		placeSmooth( posX, posY, 200 );
+	public void smoothPlace( double posX, double posY ) {
+		smoothPlace( posX, posY, 200 );
 	}
 	/**
 	 * Smoothly moves the card to the set coordinate
 	 * If the coordinate is out of bounds then it's set to the bound
 	 */
-	public void placeSmooth( double posX, double posY, int transitionSpeed ) {
+	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
 

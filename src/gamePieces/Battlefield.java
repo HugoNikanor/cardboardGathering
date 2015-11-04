@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.stream.Stream;
 
 import graphicsObjects.DeckPane;
@@ -16,7 +15,6 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
-import network.Connection;
 public class Battlefield extends Pane {
 
 	private Player player;
@@ -36,17 +34,19 @@ public class Battlefield extends Pane {
 		NETWORK
 	};
 
-	private Connection connection;
-	
 	public Battlefield( Populate populationMethod ) {
-		connection = new Connection( this );
 	}
 
 	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Populate populationMethod) {
 		//System.out.println("Debug: start of Battlefield");
 		
 		this.cardListFile = cardListFile;
-		this.setupCardStream();
+		try {
+			cardStream = this.setupCardStream();
+		} catch (IOException e) {
+			System.out.println( "No file with that name" );
+			e.printStackTrace();
+		}
 
 		player = new Player( cardStream, mouseEventHandler );
 		cards = player.getBattlefieldCards();
@@ -76,22 +76,18 @@ public class Battlefield extends Pane {
 	public Stream<String> getStream() {
 		return cardStream;
 	}
-	private void setupCardStream() {
-		try {
-			Path filepath = Paths.get( "decks/" + cardListFile );
+	private Stream<String> setupCardStream() throws IOException {
+		Path filepath = Paths.get( "decks/" + cardListFile );
 
-			@SuppressWarnings("resource")
-			Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
+		@SuppressWarnings("resource")
+		Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
 
-			// DO NOT HAVE LEADING WHITESPACE!
-			cardStream = cardStream
-				.filter( u -> u.charAt(0) != '#' ) // '#' for comment
-				.sorted();                         // Alphabetical
+		// DO NOT HAVE LEADING WHITESPACE!
+		cardStream = cardStream
+			.filter( u -> u.charAt(0) != '#' ) // '#' for comment
+			.sorted();                         // Alphabetical
 
-		} catch( IOException e ) {
-			System.out.println( "No file with that name" );
-			e.printStackTrace();
-		}
+		return cardStream;
 	}
 
 	private class LifeCounterHandler implements EventHandler<ActionEvent> {

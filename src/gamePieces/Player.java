@@ -97,7 +97,7 @@ public class Player extends Pane {
 					tt.setToY(displacement * 20);
 					tt.play();
 					*/
-					battlefieldCards.get(i).placeSmooth(
+					battlefieldCards.get(i).smoothPlace(
 							displacement*10 + 200*laps, displacement*20, 500);
 
 					displacement++;
