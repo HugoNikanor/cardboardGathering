@@ -5,6 +5,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.layout.Pane;
@@ -13,6 +14,9 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 public class Card extends Pane {
+	private long cardId;
+	private static long UNIQE_ID = 0;
+
 	private String cardName;
 	private String type;
 	private String subtype;
@@ -81,6 +85,7 @@ public class Card extends Pane {
 		int manaCostBlank
 	) {
 		//System.out.println("debug: start of Card");
+		cardId = UNIQE_ID++;
 
 		this.cardName  = cardName;
 		this.type      = type;
@@ -335,6 +340,27 @@ public class Card extends Pane {
 		currentCard.setId("has-focus");
 	}
 
+	public void moveSmooth( double changeX, double changeY ) {
+		moveSmooth( changeX, changeY, 30 );
+	}
+	public void moveSmooth( double changeX, double changeY, int moveSpeed ) {
+		TranslateTransition tt;
+		tt = new TranslateTransition( Duration.millis(50), this );
+
+		if( this.getTranslateY() + moveSpeed > Battlefield.HEIGHT - this.getHeight() ) {
+			tt.setByY( Battlefield.HEIGHT - this.getHeight() - this.getTranslateY() );
+		} else {
+			tt.setByY( moveSpeed );
+		}
+		tt.play();
+	}
+
+	public void placeSmooth( double posX, double posY ) {
+		placeSmooth( posX, posY, 200 );
+	}
+	public void placeSmooth( double posX, double posY, int transitionSpeed ) {
+	}
+
 	public void modifyTranslateX(double change) {
 		this.setTranslateX(this.getTranslateX() + change);
 	}
@@ -403,7 +429,14 @@ public class Card extends Pane {
 		return returnString;
 	}
 	
-	 /**************************************
+	/**
+	* @return the cardId
+	*/
+	public long getCardId() {
+		return cardId;
+	}
+
+	/**************************************
 	 * Thread no futher, there is nothing 
 	 * here but the vilest of getters ahead.
 	 ***************************************/

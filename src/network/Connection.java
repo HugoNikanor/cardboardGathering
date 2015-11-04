@@ -13,18 +13,18 @@ public class Connection {
 	private ObjectInputStream objInStream;
 	private ObjectOutputStream objOutStream;
 
-	private InputObjectHandeler inObjHandeler;
+	private InputObjectHandler inObjHandler;
 
 	private boolean connected;
 
-	public Connection() {
-		this( 23732 );
+	public Connection( InputObjectHandler inputObjectHandler ) {
+		this( inputObjectHandler, 23732 );
 	}
 
-	public Connection( int port ) {
-		
-		connected = false;
+	public Connection( InputObjectHandler inputObjectHandler, int port ) {
+		this.inObjHandler = inputObjectHandler;
 
+		connected = false;
 		System.out.println( "Trying to connect to server at : " + ip + ":" + port );
 		while( !connected ) {
 			try {
@@ -41,8 +41,6 @@ public class Connection {
 			}
 		}
 		System.out.println( "Connected to server" );
-
-		inObjHandeler = new InputObjectHandeler();
 		
 		boolean streamsReady = false;
 		while( !streamsReady ) {
@@ -70,7 +68,7 @@ public class Connection {
 				//while( true ) {
 				try {
 					NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
-					inObjHandeler.handleObject( inPacket );
+					inObjHandler.handleObject( inPacket );
 				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 				}

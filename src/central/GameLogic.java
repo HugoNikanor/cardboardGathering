@@ -28,26 +28,35 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
+import network.Connection;
+import network.InputObjectHandler;
+
 public class GameLogic extends Application {
 
+	// Battlefields
 	private Battlefield ownBattlefield;
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
+	// Keyboard
 	private KeyEventHandler keyEventHandler;
 	private ArrayList<KeyCode> pressedKeys;
 
+	// JavaFX Objects
 	private Stage primaryStage;
 	private Scene gameScene;
-
 	private BorderPane rootGamePane;
 
+	// JavaFX variables
 	//private double defaultSceneWidth;
 	private double defaultSceneHeight;
-
 	private Scale scale;
 	private double scaleFactor;
 	private boolean isFullscreen;
+
+	// Network
+	private Connection connection;
+	private InputObjectHandler inputObjectHandler;
 
 	public GameLogic() {
 
@@ -61,6 +70,9 @@ public class GameLogic extends Application {
 				"cardlist1", cardPlayHandler, Battlefield.Populate.LOCAL );
 		otherBattlefield = new Battlefield( Battlefield.Populate.NETWORK );
 		otherBattlefield.setRotate(180d);
+
+		inputObjectHandler = new InputObjectHandler( otherBattlefield );
+		connection = new Connection( inputObjectHandler );
 
 
 		// Adds the initial cards to the graphical display

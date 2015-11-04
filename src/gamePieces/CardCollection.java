@@ -2,6 +2,7 @@ package gamePieces;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -113,5 +114,14 @@ public class CardCollection extends ArrayList<Card> {
 		}
 		Card returnCard = this.get(indexOfCard);
 		return returnCard;
+	}
+
+	public Card getCard( long id ) throws CardNotFoundException {
+		for( Card temp : this ) {
+			if( Objects.equals( temp.getId(), id ) ) {
+				return temp;
+			}
+		}
+		throw new CardNotFoundException("No card with that id");
 	}
 }

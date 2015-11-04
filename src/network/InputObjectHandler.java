@@ -1,0 +1,39 @@
+package network;
+
+import gamePieces.Battlefield;
+
+import inputObjects.*;
+
+/**
+ * Takes care of the objects recieved by network.Connection
+ */
+public class InputObjectHandler {
+	
+	private Battlefield battlefield;
+
+	public InputObjectHandler( Battlefield battlefield ) {
+		this.battlefield = battlefield;
+	}
+	public void handleObject( NetworkPacket data ) {
+		switch( data.getDataType() ) {
+			case INFO:
+				System.out.println( "Object is INFO" );
+
+				break;
+			case CARDMOVE:
+				System.out.println( "Object is CARDMOVE" );
+				CardMoveObject cmo = (CardMoveObject) data.getData();
+				battlefield.getCards().getCard( cmo.getId() ).move( cmo.getChangeX(), cmo.getChangeY() );
+
+				break;
+			case CARDLIST:
+				System.out.println( "Object is CARDLIST" );
+
+				break;
+			default:
+				System.err.println( "Somethin is wrong with the data:" );
+				System.err.println( data.toString() );
+				break;
+		}
+	}
+}
