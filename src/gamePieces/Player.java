@@ -38,6 +38,26 @@ public class Player extends Pane {
 	private PlayerBtnPane playerBtnPane;
 
 	/**
+	 * Use this for the local player
+	 */
+	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
+		this( cardListStream );
+
+		this.connection = connection;
+		shouldSend = true;
+
+		mouseEventHandler = new MouseEventHandler();
+
+		for( Card temp : deckCards ) {
+			temp.setOnMouseEntered( mouseEventHandler );
+			temp.setOnMouseExited ( mouseEventHandler );
+			temp.setOnMouseClicked( cardPlayHandler );
+			temp.setConnection( connection );
+		}
+
+	}
+
+	/**
 	 * Use this for the remote player
 	 */
 	public Player( Stream<String> cardListStream ) {
@@ -50,9 +70,9 @@ public class Player extends Pane {
 		poisonCounters = 0;
 
 		//Draws the starting hand
-		for( int i = 0; i < 7; i++ ) {
-			this.drawCard();
-		}
+		//for( int i = 0; i < 7; i++ ) {
+		//	this.drawCard();
+		//}
 		
 		//===============================//
 		//         JavaFX below          //
@@ -63,24 +83,6 @@ public class Player extends Pane {
 		this.getStyleClass().add("cards-in-hand-pane");
 
 		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
-	}
-
-	/**
-	 * Use this for the local player
-	 */
-	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
-		this( cardListStream );
-
-		this.connection = connection;
-
-		mouseEventHandler = new MouseEventHandler();
-
-		for( Card temp : deckCards ) {
-			temp.setOnMouseEntered( mouseEventHandler );
-			temp.setOnMouseExited ( mouseEventHandler );
-			temp.setOnMouseClicked( cardPlayHandler );
-			temp.setConnection( connection );
-		}
 	}
 
 	private class BtnPaneHandler implements EventHandler<ActionEvent> {
@@ -161,7 +163,7 @@ public class Player extends Pane {
 			tempCard.setTranslateY(handPopupValue);
 			double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
 			tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
-		this.getChildren().add(tempCard);
+			this.getChildren().add(tempCard);
 		} catch ( CardNotFoundException exception ) {
 			// This should trigger a player lost condition
 			// It's however a non fatal state for the program

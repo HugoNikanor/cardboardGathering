@@ -37,7 +37,7 @@ public class CardCollection extends ArrayList<Card> {
 			e.printStackTrace();
 		}
 
-		this.shuffleCards();
+		//this.shuffleCards();
 
 		//System.out.println("Debug: end of cardCollection");
 	}

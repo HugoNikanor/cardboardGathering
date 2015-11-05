@@ -5,9 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import central.GameLogic;
 import inputObjects.NetworkPacket;
 
 public class Connection {
+
+	//How many ms there should be between sending data to the server
+	public static int UPDATE_TIME = 1000;
 
 	private String ip = "127.0.0.1";
 
@@ -15,15 +19,15 @@ public class Connection {
 	private ObjectInputStream objInStream;
 	private ObjectOutputStream objOutStream;
 
-	private InputObjectHandler inObjHandler;
+	private GameLogic.InputObjectHandler inObjHandler;
 
 	private boolean connected;
 
-	public Connection( InputObjectHandler inputObjectHandler ) {
+	public Connection( GameLogic.InputObjectHandler inputObjectHandler ) {
 		this( inputObjectHandler, 23732 );
 	}
 
-	public Connection( InputObjectHandler inputObjectHandler, int port ) {
+	public Connection( GameLogic.InputObjectHandler inputObjectHandler, int port ) {
 		this.inObjHandler = inputObjectHandler;
 
 		connected = false;
@@ -67,22 +71,24 @@ public class Connection {
 		@Override
 		public void run() {
 			synchronized( this ) {
-				//while( true ) {
-				try {
-					NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
-					inObjHandler.handleObject( inPacket );
-					System.out.println( "object read" );
-				} catch (ClassNotFoundException | IOException e) {
-					e.printStackTrace();
+				boolean running = true;
+				while( running ) {
+					try {
+						NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
+						inObjHandler.handleObject( inPacket );
+						System.out.println( "object read" );
+					} catch (ClassNotFoundException | IOException e) {
+						e.printStackTrace();
+						running = false;
+					}
 				}
-
-				//}
 			}
 		}
 	}
 
 	public void sendPacket( NetworkPacket networkPacket ) {
 		try {
+			System.out.println( networkPacket );
 			objOutStream.writeObject( networkPacket );
 		} catch( IOException e ) {
 			e.printStackTrace();

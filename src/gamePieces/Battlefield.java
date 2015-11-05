@@ -16,7 +16,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import network.Connection;
-import network.InputObjectHandler;
 
 public class Battlefield extends Pane {
 
@@ -38,35 +37,14 @@ public class Battlefield extends Pane {
 	/**
 	 * This is for seting up the oponenets battlefield over the network
 	 */
-	public Battlefield( InputObjectHandler inputObjectHandler ) throws ClassNotFoundException {
+	public Battlefield() throws ClassNotFoundException {
 		// cardStream will be gotten over the network
 		// Both players MUST have all database files
 		// eventHandlers are exchanged for proper alternatives
 		// Connection is not used
 
-		int tryCounter = 0;
-		//Stream<String> cardStream;
-		/*
-		while( true ) {
-			cardStream = inputObjectHandler.getLatestCardList().getStream();
-			if( cardStream != null ) 
-				break;
-
-			if( tryCounter++ > 10 ) {
-				// TODO maybe have another exception type
-				throw new ClassNotFoundException( "Couldn't get cardStream from server" );
-			}
-
-			try {
-				System.out.println( "Couldn't get the cardStream from the network," );
-				System.out.println( "Trying again" );
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 		try {
+			//TODO change this by one gotten over the network
 			Stream<String> cardStream;
 			this.cardListFile = "cardlist1";
 			cardStream = this.setupCardStream();

@@ -34,7 +34,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import network.Connection;
-import network.InputObjectHandler;
+import inputObjects.NetworkPacket;
 
 public class GameLogic extends Application {
 
@@ -76,7 +76,7 @@ public class GameLogic extends Application {
 
 		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection );
 		try {
-			otherBattlefield = new Battlefield( inputObjectHandler );
+			otherBattlefield = new Battlefield();
 		} catch( ClassNotFoundException e ) {
 			Platform.exit();
 		}
@@ -169,282 +169,320 @@ public class GameLogic extends Application {
 		defaultSceneHeight = gameScene.getHeight();
 	}
 
-	private class InputObjectsThread implements Runnable {
-		private CardMoveObject   lcMove;
-		private CardPlaceObject  lcPlace;
-		private CardListObject   lcList;
-		private CardPlayedObject lcPlay;
-		@Override
-		public void run() {
-			while( true ) {
-				if( inputObjectHandler.isNewInfo() ) {
+	/**
+	 * Class which takes the info recieved over Connection and tells
+	 * the GameLogic, and all classes under it, what to do.
+	 */
+	public class InputObjectHandler {
+		
+		public InputObjectHandler() { 
+			System.out.println( "InputObjectHandler created" );
+		}
 
-					System.out.println("Handling, info");
-					inputObjectHandler.setNewInfo( false );
-				}
-				if( inputObjectHandler.isNewCardMove() ) {
-					System.out.println("Handling, card move");
-					lcMove = inputObjectHandler.getLatestCardMoveObj();
-					try {
-						otherBattlefield.getCards().getCard(lcMove.getId()).smoothMove(lcMove.getChangeX(), lcMove.getChangeY());
-					} catch( CardNotFoundException e ) {
-						e.printStackTrace();
-					}
+		public void handleObject( NetworkPacket data ) {
+			switch( data.getDataType() ) {
+				case INFO:
+					System.out.println( "Object is INFO" );
 
-					inputObjectHandler.setNewCardMove( false );
-				}
-				if( inputObjectHandler.isNewCardPlace() ) {
-					System.out.println("Handling, card place");
-					lcPlace = inputObjectHandler.getLatestCardPlaceObj();
-					try {
-						otherBattlefield.getCards().getCard(lcPlace.getId()).smoothPlace(lcPlace.getPosX(), lcPlace.getPosY());
-					} catch( CardNotFoundException e ) {
-						e.printStackTrace();
-					}
+					break;
+				case CARDMOVE:
+					System.out.println( "Object is CARDMOVE" );
 
-					inputObjectHandler.setNewCardPlace( false );
-				}
-				if( inputObjectHandler.isNewCardList() ) {
-					System.out.println("Handling, card list");
+					this.moveCard( (CardMoveObject) data.getData() );
 
-					inputObjectHandler.setNewCardList( false );
-				}
-				if( inputObjectHandler.isNewCardPlayed() ) {
-					System.out.println("Handling, card played");
-					lcPlay = inputObjectHandler.getLatestCardPlayed();
-					try {
-						otherBattlefield.getPlayer()
-								.playCard(otherBattlefield.getPlayer().getHandCards().getCard(lcPlay.getId()));
-					} catch (CardNotFoundException e) {
-						e.printStackTrace();
-					}
+					break;
+				case CARDPLACE:
+					System.out.println( "Object is CARDPLACE" );
+					this.placeCard( (CardPlaceObject) data.getData() );
 
-					inputObjectHandler.setNewCardPlayed( false );
-				}
+					break;
+				case CARDLIST:
+					System.out.println( "Object is CARDLIST" );
+					this.setCardList( (CardListObject) data.getData() );
 
+					break;
+				case CARDPLAYED:
+					System.out.println( "Object is CARDPLAYED" );
+					this.playCard( (CardPlayedObject) data.getData() );
+
+					break;
+				default:
+					System.err.println( "Somethin is wrong with the data:" );
+					System.err.println( data.toString() );
+					break;
 			}
 		}
-	}
 
-	/**
-	 * EventHandler for cards being played,
-	 *
-	 * This Handler is applied to the cards and is used when they are pressed
-	 * and in a players hand.
-	 */
-	private class CardPlayHandler implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent event) {
+		private void moveCard( CardMoveObject obj ) {
 			try {
-				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
-				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
-					/**
-					 * Moves the card upwards from the hand to the battlefield
-					 * Then jerk it back down only to have it moved by actually
-					 * placing it on the battlefield
-					 *
-					 * Only locks up its private 'thread'
-					 *
-					 *  TODO This should be changed so that it is first placed
-					 *  on the battlefield, and then glides up from the hand,
-					 *  This will allow the other player to see the transition. 
-					 */
-					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-						tempCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
+				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
+				System.out.println( "MoveCard, middle" );
+				temp.smoothMove( obj.getChangeX(), obj.getChangeY(), Connection.UPDATE_TIME );
+			} catch( CardNotFoundException e ) {
+				e.printStackTrace();
+			}
+		}
+		private void placeCard( CardPlaceObject obj ) {
+			try {
+				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
+				temp.smoothMove( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
+			} catch( CardNotFoundException e ) {
+				e.printStackTrace();
+			}
+		}
+		private void setCardList( CardListObject obj ) {
+		}
+		private void playCard( CardPlayedObject obj ) {
+			try {
+				System.out.println( "obj.getId(): " + obj.getId() );
+				Card tempCard = otherBattlefield.getPlayer().getHandCards().getCard( obj.getId() );
+				//otherBattlefield.getPlayer().playCard( tempCard );
 
-						double finalPosY = 25;
-						double moveDistance = ownBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
-						TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
-						tt.setByY( -1*moveDistance );
+				double finalPosY = 25;
+				double moveDistance = otherBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
+				TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
+				tt.setByY( -1*moveDistance );
 
-						ownBattlefield.getPlayer().playCard(tempCard);
+				otherBattlefield.getPlayer().playCard(tempCard);
 
-						tt.setOnFinished(new EventHandler<ActionEvent>() {
-							@Override
-							public void handle(ActionEvent event) {
-								tempCard.setTranslateY( finalPosY );
+				tt.setOnFinished(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						tempCard.setTranslateY( finalPosY );
 
-								ownBattlefield.getPlayer().getChildren().remove(tempCard);
-								ownBattlefield.getChildren().add(tempCard);
+						otherBattlefield.getPlayer().getChildren().remove(tempCard);
+						otherBattlefield.getChildren().add(tempCard);
 
-								tempCard.setTranslateY( finalPosY );
-							}
-						});
-
-						tt.play();
+						tempCard.setTranslateY( finalPosY );
 					}
-				}
-			} catch (CardNotFoundException e) {
-				//TODO this will fail when using a card on the battlefield.
-				//Be aware that it's the reason for not doing anything here
-				//e.printStackTrace();
+				});
+
+				tt.play();
+			} catch( CardNotFoundException e ) {
+				e.printStackTrace();
 			}
 		}
 	}
 
-	/**
-	 * Listens for window resizing,
-	 * If a resize is detected, the graphics will scale to match
-	 *
-	 * TODO Currently there is a problem with the background being slightly
-	 * darker when making the window smaller
-	 *
-	 * TODO The cards on hand have a tendancy to dissapear when making the 
-	 * window larger
-	 *
-	 * TODO The graphics only resize when the window is changed in the 'y'
-	 * direction
-	 */ 
-	private class WindowSizeListener implements ChangeListener<Number> {
-		final Timer timer = new Timer();
-		TimerTask task = null;
-		final long delayTime = 200;
+		/**
+		 * EventHandler for cards being played,
+		 *
+		 * This Handler is applied to the cards and is used when they are pressed
+		 * and in a players hand.
+		 */
+		private class CardPlayHandler implements EventHandler<MouseEvent> {
+			@Override
+			public void handle(MouseEvent event) {
+				try {
+					Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
+					if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
+						/**
+						 * Moves the card upwards from the hand to the battlefield
+						 * Then jerk it back down only to have it moved by actually
+						 * placing it on the battlefield
+						 *
+						 * Only locks up its private 'thread'
+						 *
+						 *  TODO This should be changed so that it is first placed
+						 *  on the battlefield, and then glides up from the hand,
+						 *  This will allow the other player to see the transition. 
+						 */
+						if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+							tempCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
 
-		@Override
-		public void changed(ObservableValue<? extends Number> observable, Number oldValue, final Number newValue) {
-			if( task != null ) {
-				task.cancel();
-			}
+							double finalPosY = 25;
+							double moveDistance = ownBattlefield.getHeight() - finalPosY + tempCard.getTranslateY();
+							TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
+							tt.setByY( -1*moveDistance );
 
-			task = new TimerTask() {
-				@Override
-				public void run() {
-					scaleFactor = (gameScene.getHeight() / defaultSceneHeight);
-					//System.out.println( "sf GL: " + scaleFactor);
-					
-					scale.setX(scaleFactor);
-					scale.setY(scaleFactor);
-					
-					ownBattlefield.updateScaleFactor(scaleFactor);
-				}
-			};
-			timer.schedule(task, delayTime);
-		}
-	}
+							ownBattlefield.getPlayer().playCard(tempCard);
 
-	/**
-	 * Registers all the keys being pressed
-	 */
-	public class KeyEventHandler implements EventHandler<KeyEvent> {
-		@Override
-		public void handle(KeyEvent event) {
-			if( event.getEventType() == KeyEvent.KEY_PRESSED) {
-				if( !(pressedKeys.contains(event.getCode())) ) {
-					pressedKeys.add(event.getCode());
-					//System.out.println("added: " + event.getCode());
-				}
-			}
-			if( event.getEventType() == KeyEvent.KEY_RELEASED) {
-				pressedKeys.remove(event.getCode());
-				//System.out.println("removed: " + event.getCode());
-			}
-		}
-	}
+							tt.setOnFinished(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									tempCard.setTranslateY( finalPosY );
 
-	/**
-	 * Takes all the keys currently pressed and performs the actions linked 
-	 * to them.
-	 */
-	private class KeyHandleThread implements Runnable {
-		boolean spacePressedBefore;
-		Card tempCard;
+									ownBattlefield.getPlayer().getChildren().remove(tempCard);
+									ownBattlefield.getChildren().add(tempCard);
 
-		double moveSpeed = 30;
+									tempCard.setTranslateY( finalPosY );
+								}
+							});
 
-		@Override
-		public void run() {
-			synchronized( this ) {
-				System.out.println("key thread started");
-				while( true ) {
-					// C-m to close the window
-					if(pressedKeys.contains(KeyCode.CONTROL) &&
-					   pressedKeys.contains(KeyCode.M) ) {
-						Platform.exit();
-						System.exit(0);
-					}
-
-					tempCard = Card.getCurrentCard();
-
-					/**
-					 * Use the arrow keys or 'hjkl' to move the card,
-					 * TODO This has the risk of crashing the program
-					 * TODO Why doesn't this use a switch statement
-					 */
-					if( pressedKeys.contains(KeyCode.DOWN) ||
-					    pressedKeys.contains(KeyCode.J) ) {
-
-						tempCard.smoothMove( 0, moveSpeed, 50 );
-					}
-					if( pressedKeys.contains(KeyCode.UP) ||
-					    pressedKeys.contains(KeyCode.K) ) {
-
-						tempCard.smoothMove( 0, -moveSpeed, 50 );
-					}
-					if( pressedKeys.contains(KeyCode.RIGHT) ||
-					    pressedKeys.contains(KeyCode.L) ) {
-
-						tempCard.smoothMove( moveSpeed, 0, 50 );
-					}
-					if( pressedKeys.contains(KeyCode.LEFT) ||
-					    pressedKeys.contains(KeyCode.H) ) {
-
-						tempCard.smoothMove( -moveSpeed, 0, 50 );
-					}
-
-					// Rotate the card when space is released
-					if( !pressedKeys.contains(KeyCode.SPACE) &&
-						spacePressedBefore ) {
-						System.out.println("space is down");
-						tempCard.smoothRotate(90d);
-					}
-					spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
-
-					/**
-					 * Cycles thrugh the cards on the battlefield when <tab> or
-					 * <S-tab> is pressed,
-					 * TODO This currently doesn't play nicely with the buttons
-					 * focus, the cards on the battlefield should be changed to
-					 * use proper focus instead of my own version.
-					 */ 
-					if( pressedKeys.contains(KeyCode.TAB) ) {
-						if( !pressedKeys.contains(KeyCode.SHIFT) ) {
-							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) + 1;
-							if( newCardIndex >= ownBattlefield.getCards().size() ) {
-								newCardIndex = 0;
-							}
-							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
-						} else {
-							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) - 1;
-							if( newCardIndex < 0 ) {
-								newCardIndex = ownBattlefield.getCards().size() - 1;
-							}
-							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
+							tt.play();
 						}
 					}
+				} catch (CardNotFoundException e) {
+					//TODO this will fail when using a card on the battlefield.
+					//Be aware that it's the reason for not doing anything here
+					//e.printStackTrace();
+				}
+			}
+		}
 
-					if( pressedKeys.contains(KeyCode.F11) ) {
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								if( isFullscreen ) {
-									isFullscreen = false;
-									primaryStage.setFullScreen( isFullscreen );
-								} else {
-									isFullscreen = true;
-									primaryStage.setFullScreen( isFullscreen );
-								}
-							}
-						});
+		/**
+		 * Listens for window resizing,
+		 * If a resize is detected, the graphics will scale to match
+		 *
+		 * TODO Currently there is a problem with the background being slightly
+		 * darker when making the window smaller
+		 *
+		 * TODO The cards on hand have a tendancy to dissapear when making the 
+		 * window larger
+		 *
+		 * TODO The graphics only resize when the window is changed in the 'y'
+		 * direction
+		 */ 
+		private class WindowSizeListener implements ChangeListener<Number> {
+			final Timer timer = new Timer();
+			TimerTask task = null;
+			final long delayTime = 200;
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, final Number newValue) {
+				if( task != null ) {
+					task.cancel();
+				}
+
+				task = new TimerTask() {
+					@Override
+					public void run() {
+						scaleFactor = (gameScene.getHeight() / defaultSceneHeight);
+						//System.out.println( "sf GL: " + scaleFactor);
+						
+						scale.setX(scaleFactor);
+						scale.setY(scaleFactor);
+						
+						ownBattlefield.updateScaleFactor(scaleFactor);
 					}
+				};
+				timer.schedule(task, delayTime);
+			}
+		}
 
-					try {
-						// Check for key inputs 20 times a secound
-						this.wait(50);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+		/**
+		 * Registers all the keys being pressed
+		 */
+		public class KeyEventHandler implements EventHandler<KeyEvent> {
+			@Override
+			public void handle(KeyEvent event) {
+				if( event.getEventType() == KeyEvent.KEY_PRESSED) {
+					if( !(pressedKeys.contains(event.getCode())) ) {
+						pressedKeys.add(event.getCode());
+						//System.out.println("added: " + event.getCode());
+					}
+				}
+				if( event.getEventType() == KeyEvent.KEY_RELEASED) {
+					pressedKeys.remove(event.getCode());
+					//System.out.println("removed: " + event.getCode());
+				}
+			}
+		}
+
+		/**
+		 * Takes all the keys currently pressed and performs the actions linked 
+		 * to them.
+		 */
+		private class KeyHandleThread implements Runnable {
+			boolean spacePressedBefore;
+			Card tempCard;
+
+			double moveSpeed = 30;
+
+			@Override
+			public void run() {
+				synchronized( this ) {
+					System.out.println("key thread started");
+					while( true ) {
+						// C-m to close the window
+						if(pressedKeys.contains(KeyCode.CONTROL) &&
+						   pressedKeys.contains(KeyCode.M) ) {
+							Platform.exit();
+							System.exit(0);
+						}
+
+						tempCard = Card.getCurrentCard();
+
+						/**
+						 * Use the arrow keys or 'hjkl' to move the card,
+						 * TODO This has the risk of crashing the program
+						 * TODO Why doesn't this use a switch statement
+						 */
+						if( pressedKeys.contains(KeyCode.DOWN) ||
+							pressedKeys.contains(KeyCode.J) ) {
+
+							tempCard.smoothMove( 0, moveSpeed, 50 );
+						}
+						if( pressedKeys.contains(KeyCode.UP) ||
+							pressedKeys.contains(KeyCode.K) ) {
+
+							tempCard.smoothMove( 0, -moveSpeed, 50 );
+						}
+						if( pressedKeys.contains(KeyCode.RIGHT) ||
+							pressedKeys.contains(KeyCode.L) ) {
+
+							tempCard.smoothMove( moveSpeed, 0, 50 );
+						}
+						if( pressedKeys.contains(KeyCode.LEFT) ||
+							pressedKeys.contains(KeyCode.H) ) {
+
+							tempCard.smoothMove( -moveSpeed, 0, 50 );
+						}
+
+						// Rotate the card when space is released
+						if( !pressedKeys.contains(KeyCode.SPACE) &&
+							spacePressedBefore ) {
+							System.out.println("space is down");
+							tempCard.smoothRotate(90d);
+						}
+						spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
+
+						/**
+						 * Cycles thrugh the cards on the battlefield when <tab> or
+						 * <S-tab> is pressed,
+						 * TODO This currently doesn't play nicely with the buttons
+						 * focus, the cards on the battlefield should be changed to
+						 * use proper focus instead of my own version.
+						 */ 
+						if( pressedKeys.contains(KeyCode.TAB) ) {
+							if( !pressedKeys.contains(KeyCode.SHIFT) ) {
+								int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) + 1;
+								if( newCardIndex >= ownBattlefield.getCards().size() ) {
+									newCardIndex = 0;
+								}
+								ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
+							} else {
+								int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) - 1;
+								if( newCardIndex < 0 ) {
+									newCardIndex = ownBattlefield.getCards().size() - 1;
+								}
+								ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
+							}
+						}
+
+						if( pressedKeys.contains(KeyCode.F11) ) {
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									if( isFullscreen ) {
+										isFullscreen = false;
+										primaryStage.setFullScreen( isFullscreen );
+									} else {
+										isFullscreen = true;
+										primaryStage.setFullScreen( isFullscreen );
+									}
+								}
+							});
+						}
+
+						try {
+							// Check for key inputs 20 times a secound
+							this.wait(50);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
 	}
-}

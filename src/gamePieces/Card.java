@@ -5,7 +5,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import inputObjects.CardMoveObject;
-import inputObjects.CardPlaceObject;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -73,7 +72,7 @@ public class Card extends Pane {
 	// the margins of two cards shouldn't overlap
 	private int preferdMargin;
 
-	private boolean shouldSend;
+	//private boolean shouldSend;
 	private Connection connection;
 
 	public Card(
@@ -94,7 +93,7 @@ public class Card extends Pane {
 	) {
 		//System.out.println("debug: start of Card");
 		cardId = UNIQE_ID++;
-		shouldSend = false;
+		//shouldSend = false;
 
 		this.cardName  = cardName;
 		this.type      = type;
@@ -215,6 +214,35 @@ public class Card extends Pane {
 		}
 	}
 
+	private class SendDataThread implements Runnable {
+		private double changeX;
+		private double changeY;
+		private double oldX;
+		private double oldY;
+
+		@Override
+		public void run() {
+			synchronized( this ) {
+				while( true ){
+					changeX = getTranslateX() - oldX;
+					changeY = getTranslateY() - oldY;
+
+					if( changeX != 0 ) {
+						connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+					}
+					oldX = getTranslateX();
+					oldY = getTranslateY();
+
+					try {
+						this.wait( Connection.UPDATE_TIME );
+					} catch( InterruptedException e ) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 
 		private double mouseInSceneX;
@@ -273,10 +301,9 @@ public class Card extends Pane {
 						setTranslateY(containerSizeY);
 					}
 
-					if( shouldSend ) {
-						connection.sendPacket( new CardMoveObject( cardId, xChange, yChange ) );
-						//connection.sendPacket( new NetworkPacket( NetworkPacket.DataTypes.INFO, new String("test")) );
-					}
+					//if( shouldSend ) {
+					//	connection.sendPacket( new CardMoveObject( cardId, xChange, yChange ) );
+					//}
 
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
@@ -367,9 +394,9 @@ public class Card extends Pane {
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
 
-		if( shouldSend ) {
-			connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
-		}
+		//if( shouldSend ) {
+		//	connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+		//}
 
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
@@ -422,9 +449,9 @@ public class Card extends Pane {
 	 */
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
 
-		if( shouldSend ) {
-			connection.sendPacket( new CardPlaceObject( cardId, posX, posY ) );
-		}
+		//if( shouldSend ) {
+		//	connection.sendPacket( new CardPlaceObject( cardId, posX, posY ) );
+		//}
 
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
@@ -496,7 +523,8 @@ public class Card extends Pane {
 	 * @param connection the connection to set
 	 */
 	public void setConnection(Connection connection) {
-		this.shouldSend = true;
+		//this.shouldSend = true;
+		new Thread( new SendDataThread() ).start();
 		this.connection = connection;
 	}
 
