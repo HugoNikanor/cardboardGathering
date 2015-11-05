@@ -10,6 +10,11 @@ import exceptions.CardNotFoundException;
 import gamePieces.Battlefield;
 import gamePieces.Card;
 
+import inputObjects.CardListObject;
+import inputObjects.CardMoveObject;
+import inputObjects.CardPlaceObject;
+import inputObjects.CardPlayedObject;
+
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -162,6 +167,63 @@ public class GameLogic extends Application {
 
 		//defaultSceneWidth = gameScene.getWidth();
 		defaultSceneHeight = gameScene.getHeight();
+	}
+
+	private class InputObjectsThread implements Runnable {
+		private CardMoveObject   lcMove;
+		private CardPlaceObject  lcPlace;
+		private CardListObject   lcList;
+		private CardPlayedObject lcPlay;
+		@Override
+		public void run() {
+			while( true ) {
+				if( inputObjectHandler.isNewInfo() ) {
+
+					System.out.println("Handling, info");
+					inputObjectHandler.setNewInfo( false );
+				}
+				if( inputObjectHandler.isNewCardMove() ) {
+					System.out.println("Handling, card move");
+					lcMove = inputObjectHandler.getLatestCardMoveObj();
+					try {
+						otherBattlefield.getCards().getCard(lcMove.getId()).smoothMove(lcMove.getChangeX(), lcMove.getChangeY());
+					} catch( CardNotFoundException e ) {
+						e.printStackTrace();
+					}
+
+					inputObjectHandler.setNewCardMove( false );
+				}
+				if( inputObjectHandler.isNewCardPlace() ) {
+					System.out.println("Handling, card place");
+					lcPlace = inputObjectHandler.getLatestCardPlaceObj();
+					try {
+						otherBattlefield.getCards().getCard(lcPlace.getId()).smoothPlace(lcPlace.getPosX(), lcPlace.getPosY());
+					} catch( CardNotFoundException e ) {
+						e.printStackTrace();
+					}
+
+					inputObjectHandler.setNewCardPlace( false );
+				}
+				if( inputObjectHandler.isNewCardList() ) {
+					System.out.println("Handling, card list");
+
+					inputObjectHandler.setNewCardList( false );
+				}
+				if( inputObjectHandler.isNewCardPlayed() ) {
+					System.out.println("Handling, card played");
+					lcPlay = inputObjectHandler.getLatestCardPlayed();
+					try {
+						otherBattlefield.getPlayer()
+								.playCard(otherBattlefield.getPlayer().getHandCards().getCard(lcPlay.getId()));
+					} catch (CardNotFoundException e) {
+						e.printStackTrace();
+					}
+
+					inputObjectHandler.setNewCardPlayed( false );
+				}
+
+			}
+		}
 	}
 
 	/**

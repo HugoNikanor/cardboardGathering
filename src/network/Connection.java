@@ -71,6 +71,7 @@ public class Connection {
 				try {
 					NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
 					inObjHandler.handleObject( inPacket );
+					System.out.println( "object read" );
 				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 				}
