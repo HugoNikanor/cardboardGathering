@@ -1,7 +1,9 @@
 package inputObjects;
 
-public class CardMoveObject {
+import network.NetworkPacket;
 
+public class CardMoveObject extends NetworkPacket {
+	private static final long serialVersionUID = -7680270814684327453L;
 	private long id;
 	private double changeX;
 	private double changeY;
@@ -10,6 +12,9 @@ public class CardMoveObject {
 		this.id = cardId;
 		this.changeX = changeX;
 		this.changeY = changeY;
+		
+		this.dataType = DataTypes.CARDMOVE;
+		this.data = this;
 	}
 
 

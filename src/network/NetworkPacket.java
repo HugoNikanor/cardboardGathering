@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * A class made for containing data to be sent over the network
+ * TODO this shoule maybe not be able to be used by itself...
  */
 public class NetworkPacket implements Serializable {
 	private static final long serialVersionUID = 7831538739600935223L;
@@ -14,9 +15,10 @@ public class NetworkPacket implements Serializable {
 		CARDLIST
 	}
 
-	private DataTypes dataType;
-	private Object data;
+	protected DataTypes dataType;
+	protected Object data;
 	
+	protected NetworkPacket() {}
 	public NetworkPacket( DataTypes dataType, Object data ) {
 		this.dataType = dataType;
 		this.data = data;

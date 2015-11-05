@@ -241,6 +241,9 @@ public class Card extends Pane {
 				}
 				*/
 
+				/**
+				 * Moves the card when it's draged by the mouse
+				 */
 				if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
 					double xChange = event.getSceneX() - this.mouseInSceneX;
 					double yChange = event.getSceneY() - this.mouseInSceneY;
