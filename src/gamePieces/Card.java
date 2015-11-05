@@ -353,8 +353,8 @@ public class Card extends Pane {
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
 
 		if( changeX > 0 ) {
-			if( this.getTranslateX() + changeX > Battlefield.WIDTH - this.getHeight() ) {
-				tt.setByX( Battlefield.WIDTH - this.getHeight() - this.getTranslateX() );
+			if( this.getTranslateX() + changeX > Battlefield.WIDTH - this.getWidth() ) {
+				tt.setByX( Battlefield.WIDTH - this.getWidth() - this.getTranslateX() );
 			} else {
 				tt.setByX( changeX );
 			}
@@ -369,18 +369,18 @@ public class Card extends Pane {
 		}
 
 		if( changeX < 0 ) {
-			if( this.getTranslateX() - changeX < 0 ) {
+			if( this.getTranslateX() + changeX < 0 ) {
 					tt.setByX( -this.getTranslateX() );
 			} else {
-					tt.setByX( -changeX );
+					tt.setByX( changeX );
 			}
 		}
 
 		if( changeY < 0 ) {
-			if( this.getTranslateY() - changeY < 0 ) {
+			if( this.getTranslateY() + changeY < 0 ) {
 					tt.setByY( -this.getTranslateY() );
 			} else {
-					tt.setByY( -changeY );
+					tt.setByY( changeY );
 			}
 		}
 
@@ -403,9 +403,9 @@ public class Card extends Pane {
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
 
 		if( posX > Battlefield.WIDTH - this.getWidth() ) {
-			tt.setToX( posX );
-		} else {
 			tt.setToX( Battlefield.WIDTH - this.getWidth() );
+		} else {
+			tt.setToX( posX );
 		}
 
 		if( posY > Battlefield.HEIGHT - this.getHeight() ) {
