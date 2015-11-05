@@ -13,6 +13,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import network.Connection;
+
 public class Player extends Pane {
 	private CardCollection deckCards;
 	private CardCollection handCards;
@@ -30,8 +32,9 @@ public class Player extends Pane {
 
 	private PlayerBtnPane playerBtnPane;
 
-	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler ) {
+	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
 		//System.out.println("Debug: start of Player");
+
 		deckCards        = new CardCollection( cardListStream );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
@@ -44,6 +47,8 @@ public class Player extends Pane {
 			temp.setOnMouseExited ( mouseEventHandler );
 
 			temp.setOnMouseClicked( cardPlayHandler );
+
+			temp.setConnection( connection );
 		}
 
 		health = 20;

@@ -33,6 +33,17 @@ public class InputObjectHandler {
 				}
 
 				break;
+			case CARDPLACE:
+				System.out.println( "Object is CARDPLACE" );
+				CardPlaceObject cpo = (CardPlaceObject) data.getData();
+				try {
+					battlefield.getCards().getCard( cpo.getId() ).smoothPlace( cpo.getPosX(), cpo.getPosY() );
+				} catch( CardNotFoundException e ) {
+					System.out.println( "no card with id: " + cpo.getId() );
+				}
+
+
+				break;
 			case CARDLIST:
 				System.out.println( "Object is CARDLIST" );
 

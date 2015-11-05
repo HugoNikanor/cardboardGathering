@@ -66,15 +66,14 @@ public class GameLogic extends Application {
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
-		ownBattlefield = new Battlefield(
-				"cardlist1", cardPlayHandler, Battlefield.Populate.LOCAL );
-		otherBattlefield = new Battlefield(
-				"cardlist2", cardPlayHandler, Battlefield.Populate.LOCAL );
+		otherBattlefield = new Battlefield();
 		//otherBattlefield = new Battlefield( Battlefield.Populate.NETWORK );
 		otherBattlefield.setRotate(180d);
 
 		inputObjectHandler = new InputObjectHandler( otherBattlefield );
-		//connection = new Connection( inputObjectHandler );
+		connection = new Connection( inputObjectHandler );
+
+		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection);
 
 
 		// Adds the initial cards to the graphical display

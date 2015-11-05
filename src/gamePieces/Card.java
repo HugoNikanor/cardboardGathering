@@ -4,6 +4,9 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+import inputObjects.CardMoveObject;
+import inputObjects.CardPlaceObject;
+
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
@@ -12,6 +15,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
+
+import network.Connection;
 
 public class Card extends Pane {
 	private long cardId;
@@ -67,6 +72,8 @@ public class Card extends Pane {
 	// Used for the margin on one side of the card
 	// the margins of two cards shouldn't overlap
 	private int preferdMargin;
+
+	private Connection connection;
 
 	public Card(
 		String cardName,
@@ -264,6 +271,8 @@ public class Card extends Pane {
 						setTranslateY(containerSizeY);
 					}
 
+					connection.sendPacket( new CardMoveObject( cardId, xChange, yChange ) );
+
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
 				}
@@ -352,6 +361,9 @@ public class Card extends Pane {
 	 * Smoothly slides the card along
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
+
+		connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
 
@@ -402,6 +414,9 @@ public class Card extends Pane {
 	 * If the coordinate is out of bounds then it's set to the bound
 	 */
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
+
+		connection.sendPacket( new CardPlaceObject( cardId, posX, posY ) );
+
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
 
@@ -468,6 +483,13 @@ public class Card extends Pane {
 		return preferdMargin;
 	}
 
+	/**
+	 * @param connection the connection to set
+	 */
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
 	@Override
 	public String toString() {
 		String returnString = 
@@ -495,7 +517,7 @@ public class Card extends Pane {
 		return cardId;
 	}
 
-	/**************************************
+	/* *************************************
 	 * Thread no futher, there is nothing 
 	 * here but the vilest of getters ahead.
 	 ***************************************/

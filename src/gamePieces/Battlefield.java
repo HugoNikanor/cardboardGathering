@@ -15,6 +15,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
+import network.Connection;
+
 public class Battlefield extends Pane {
 
 	private Player player;
@@ -29,15 +31,10 @@ public class Battlefield extends Pane {
 	private String cardListFile;
 	private Stream<String> cardStream;
 
-	public enum Populate {
-		LOCAL,
-		NETWORK
-	};
-
-	public Battlefield( Populate populationMethod ) {
+	public Battlefield() {
 	}
 
-	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Populate populationMethod) {
+	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Connection connection) {
 		//System.out.println("Debug: start of Battlefield");
 		
 		this.cardListFile = cardListFile;
@@ -48,7 +45,7 @@ public class Battlefield extends Pane {
 			e.printStackTrace();
 		}
 
-		player = new Player( cardStream, mouseEventHandler );
+		player = new Player( cardStream, mouseEventHandler, connection );
 		cards = player.getBattlefieldCards();
 
 		// JavaFX
