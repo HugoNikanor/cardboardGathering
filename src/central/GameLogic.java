@@ -66,15 +66,24 @@ public class GameLogic extends Application {
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
-		otherBattlefield = new Battlefield();
-		//otherBattlefield = new Battlefield( Battlefield.Populate.NETWORK );
-		otherBattlefield.setRotate(180d);
-
-		inputObjectHandler = new InputObjectHandler( otherBattlefield );
+		inputObjectHandler = new InputObjectHandler();
 		connection = new Connection( inputObjectHandler );
 
-		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection);
+		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection );
+		try {
+			otherBattlefield = new Battlefield( inputObjectHandler );
+		} catch( ClassNotFoundException e ) {
+			Platform.exit();
+		}
 
+		while( !otherBattlefield.isReady() ) {
+			System.out.println( "waiting for other battlefield to be ready" );
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 		// Adds the initial cards to the graphical display
 		for( Card ownTemp : ownBattlefield.getCards() ) {

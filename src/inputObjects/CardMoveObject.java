@@ -3,7 +3,7 @@ package inputObjects;
 import network.NetworkPacket;
 
 public class CardMoveObject extends NetworkPacket {
-	private static final long serialVersionUID = -7680270814684327453L;
+	private static final long serialVersionUID = 1L;
 	private long id;
 	private double changeX;
 	private double changeY;

@@ -1,9 +1,5 @@
 package network;
 
-import exceptions.CardNotFoundException;
-
-import gamePieces.Battlefield;
-
 import inputObjects.*;
 
 /**
@@ -11,11 +7,11 @@ import inputObjects.*;
  */
 public class InputObjectHandler {
 	
-	private Battlefield battlefield;
+	private CardMoveObject  latestCardMoveObj;
+	private CardPlaceObject latestCardPlaceObj;
+	private CardListObject  latestCardList;
 
-	public InputObjectHandler( Battlefield battlefield ) {
-		this.battlefield = battlefield;
-	}
+	public InputObjectHandler() { }
 
 	public void handleObject( NetworkPacket data ) {
 		switch( data.getDataType() ) {
@@ -25,27 +21,17 @@ public class InputObjectHandler {
 				break;
 			case CARDMOVE:
 				System.out.println( "Object is CARDMOVE" );
-				CardMoveObject cmo = (CardMoveObject) data.getData();
-				try {
-					battlefield.getCards().getCard( cmo.getId() ).smoothMove( cmo.getChangeX(), cmo.getChangeY() );
-				} catch( CardNotFoundException e ) {
-					System.out.println( "no card with id: " + cmo.getId() );
-				}
+				latestCardMoveObj = (CardMoveObject) data.getData();
 
 				break;
 			case CARDPLACE:
 				System.out.println( "Object is CARDPLACE" );
-				CardPlaceObject cpo = (CardPlaceObject) data.getData();
-				try {
-					battlefield.getCards().getCard( cpo.getId() ).smoothPlace( cpo.getPosX(), cpo.getPosY() );
-				} catch( CardNotFoundException e ) {
-					System.out.println( "no card with id: " + cpo.getId() );
-				}
-
+				latestCardPlaceObj = (CardPlaceObject) data.getData();
 
 				break;
 			case CARDLIST:
 				System.out.println( "Object is CARDLIST" );
+				latestCardList = (CardListObject) data.getData();
 
 				break;
 			default:
@@ -54,4 +40,26 @@ public class InputObjectHandler {
 				break;
 		}
 	}
+
+	/**
+	 * @return the latestCardMoveObj
+	 */
+	public CardMoveObject getLatestCardMoveObj() {
+		return latestCardMoveObj;
+	}
+
+	/**
+	 * @return the latestCardPlaceObj
+	 */
+	public CardPlaceObject getLatestCardPlaceObj() {
+		return latestCardPlaceObj;
+	}
+
+	/**
+	 * @return the latestCardList
+	 */
+	public CardListObject getLatestCardList() {
+		return latestCardList;
+	}
+
 }

@@ -32,24 +32,14 @@ public class Player extends Pane {
 
 	private PlayerBtnPane playerBtnPane;
 
-	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
-		//System.out.println("Debug: start of Player");
-
+	/**
+	 * Use this for the remote player
+	 */
+	public Player( Stream<String> cardListStream ) {
 		deckCards        = new CardCollection( cardListStream );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
 		graveyardCards   = new CardCollection();
-
-		mouseEventHandler = new MouseEventHandler();
-
-		for( Card temp : deckCards ) {
-			temp.setOnMouseEntered( mouseEventHandler );
-			temp.setOnMouseExited ( mouseEventHandler );
-
-			temp.setOnMouseClicked( cardPlayHandler );
-
-			temp.setConnection( connection );
-		}
 
 		health = 20;
 		poisonCounters = 0;
@@ -68,9 +58,22 @@ public class Player extends Pane {
 		this.getStyleClass().add("cards-in-hand-pane");
 
 		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
-		this.getChildren().add(playerBtnPane);
+	}
 
-		//System.out.println("Debug: end of Player");
+	/**
+	 * Use this for the local player
+	 */
+	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
+		this( cardListStream );
+
+		mouseEventHandler = new MouseEventHandler();
+
+		for( Card temp : deckCards ) {
+			temp.setOnMouseEntered( mouseEventHandler );
+			temp.setOnMouseExited ( mouseEventHandler );
+			temp.setOnMouseClicked( cardPlayHandler );
+			temp.setConnection( connection );
+		}
 	}
 
 	private class BtnPaneHandler implements EventHandler<ActionEvent> {
@@ -110,6 +113,7 @@ public class Player extends Pane {
 			}
 		}
 	}
+
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {

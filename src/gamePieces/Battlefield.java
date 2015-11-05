@@ -10,12 +10,15 @@ import java.util.stream.Stream;
 import graphicsObjects.DeckPane;
 import graphicsObjects.LifeCounter;
 
+import inputObjects.CardListObject;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import network.Connection;
+import network.InputObjectHandler;
 
 public class Battlefield extends Pane {
 
@@ -29,25 +32,86 @@ public class Battlefield extends Pane {
 	public static final double HEIGHT = 474;//395;
 
 	private String cardListFile;
-	private Stream<String> cardStream;
+	private Connection connection;
+	//private Stream<String> cardStream;
 
-	public Battlefield() {
+	private boolean isReady;
+
+	/**
+	 * This is for seting up the oponenets battlefield over the network
+	 */
+	public Battlefield( InputObjectHandler inputObjectHandler ) throws ClassNotFoundException {
+		// cardStream will be gotten over the network
+		// Both players MUST have all database files
+		// eventHandlers are exchanged for proper alternatives
+		// Connection is not used
+
+		int tryCounter = 0;
+		Stream<String> cardStream;
+		/*
+		while( true ) {
+			cardStream = inputObjectHandler.getLatestCardList().getStream();
+			if( cardStream != null ) 
+				break;
+
+			if( tryCounter++ > 10 ) {
+				// TODO maybe have another exception type
+				throw new ClassNotFoundException( "Couldn't get cardStream from server" );
+			}
+
+			try {
+				System.out.println( "Couldn't get the cardStream from the network," );
+				System.out.println( "Trying again" );
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		*/
+		try {
+			this.cardListFile = "cardlist1";
+			cardStream = this.setupCardStream();
+			player = new Player( cardStream );
+			cards = player.getBattlefieldCards();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		this.initialSetup();
+		this.setRotate(180d);
 	}
 
+	/**
+	 * This is for creating the local battlefield
+	 */
 	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Connection connection) {
 		//System.out.println("Debug: start of Battlefield");
+
+		this.connection = connection;
 		
 		this.cardListFile = cardListFile;
+		Stream<String> cardStream;
 		try {
 			cardStream = this.setupCardStream();
+			player = new Player( cardStream, mouseEventHandler, connection );
+			cards = player.getBattlefieldCards();
 		} catch (IOException e) {
 			System.out.println( "No file with that name" );
 			e.printStackTrace();
 		}
 
-		player = new Player( cardStream, mouseEventHandler, connection );
-		cards = player.getBattlefieldCards();
+		this.initialSetup();
 
+		//System.out.println("Debug: end of Battlefield");
+	}
+
+	/**
+	 * The parts of the constructor that are the same between the local and
+	 * remote instance of the class
+	 */
+	private void initialSetup() {
 		// JavaFX
 		this.getStyleClass().add( "battlefield" );
 		this.setWidth(WIDTH);
@@ -67,12 +131,9 @@ public class Battlefield extends Pane {
 		lifeCounter = new LifeCounter( new LifeCounterHandler() );
 		this.getChildren().add( lifeCounter );
 
-		//System.out.println("Debug: end of Battlefield");
+		this.isReady = true;
 	}
 
-	public Stream<String> getStream() {
-		return cardStream;
-	}
 	private Stream<String> setupCardStream() throws IOException {
 		Path filepath = Paths.get( "decks/" + cardListFile );
 
@@ -84,7 +145,15 @@ public class Battlefield extends Pane {
 			.filter( u -> u.charAt(0) != '#' ) // '#' for comment
 			.sorted();                         // Alphabetical
 
+		//connection.sendPacket( new CardListObject(cardStream) );
 		return cardStream;
+	}
+
+	/**
+	 * @return the isReady
+	 */
+	public boolean isReady() {
+		return isReady;
 	}
 
 	private class LifeCounterHandler implements EventHandler<ActionEvent> {
