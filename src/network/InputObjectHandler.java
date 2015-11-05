@@ -1,15 +1,20 @@
 package network;
 
-import inputObjects.*;
+import inputObjects.CardListObject;
+import inputObjects.CardMoveObject;
+import inputObjects.CardPlaceObject;
+import inputObjects.CardPlayedObject;
+import inputObjects.NetworkPacket;
 
 /**
  * Takes care of the objects recieved by network.Connection
  */
 public class InputObjectHandler {
 	
-	private CardMoveObject  latestCardMoveObj;
-	private CardPlaceObject latestCardPlaceObj;
-	private CardListObject  latestCardList;
+	private CardMoveObject   latestCardMoveObj;
+	private CardPlaceObject  latestCardPlaceObj;
+	private CardListObject   latestCardList;
+	private CardPlayedObject latestCardPlayed;
 
 	public InputObjectHandler() { }
 
@@ -32,6 +37,11 @@ public class InputObjectHandler {
 			case CARDLIST:
 				System.out.println( "Object is CARDLIST" );
 				latestCardList = (CardListObject) data.getData();
+
+				break;
+			case CARDPLAYED:
+				System.out.println( "Object is CARDPLAYED" );
+				latestCardPlayed = (CardPlayedObject) data.getData();
 
 				break;
 			default:
@@ -60,6 +70,13 @@ public class InputObjectHandler {
 	 */
 	public CardListObject getLatestCardList() {
 		return latestCardList;
+	}
+
+	/**
+	 * @return the latestCardPlayed
+	 */
+	public CardPlayedObject getLatestCardPlayed() {
+		return latestCardPlayed;
 	}
 
 }

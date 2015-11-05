@@ -6,6 +6,8 @@ import exceptions.CardNotFoundException;
 
 import graphicsObjects.PlayerBtnPane;
 
+import inputObjects.CardPlayedObject;
+
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,6 +31,9 @@ public class Player extends Pane {
 	// How far a card should pop up when you hoover over it
 	private int handPopupValue = 20;
 	private static final int HEIGHT = 132;//110;
+
+	private Connection connection;
+	private boolean shouldSend;
 
 	private PlayerBtnPane playerBtnPane;
 
@@ -65,6 +70,8 @@ public class Player extends Pane {
 	 */
 	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
 		this( cardListStream );
+
+		this.connection = connection;
 
 		mouseEventHandler = new MouseEventHandler();
 
@@ -205,6 +212,10 @@ public class Player extends Pane {
 			whatCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
 			whatCard.giveThisFocus();
+
+			if( shouldSend ) {
+				connection.sendPacket( new CardPlayedObject( whatCard.getCardId(), whatCard.getTranslateX(), whatCard.getTranslateY() ) );
+			}
 
 			this.rearangeCards();
 		} catch (CardNotFoundException e) {

@@ -275,6 +275,7 @@ public class Card extends Pane {
 
 					if( shouldSend ) {
 						connection.sendPacket( new CardMoveObject( cardId, xChange, yChange ) );
+						//connection.sendPacket( new NetworkPacket( NetworkPacket.DataTypes.INFO, new String("test")) );
 					}
 
 					this.mouseInSceneX = event.getSceneX();

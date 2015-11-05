@@ -10,8 +10,6 @@ import java.util.stream.Stream;
 import graphicsObjects.DeckPane;
 import graphicsObjects.LifeCounter;
 
-import inputObjects.CardListObject;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -47,7 +45,7 @@ public class Battlefield extends Pane {
 		// Connection is not used
 
 		int tryCounter = 0;
-		Stream<String> cardStream;
+		//Stream<String> cardStream;
 		/*
 		while( true ) {
 			cardStream = inputObjectHandler.getLatestCardList().getStream();
@@ -69,6 +67,7 @@ public class Battlefield extends Pane {
 		}
 		*/
 		try {
+			Stream<String> cardStream;
 			this.cardListFile = "cardlist1";
 			cardStream = this.setupCardStream();
 			player = new Player( cardStream );

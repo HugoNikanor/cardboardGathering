@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import inputObjects.NetworkPacket;
+
 public class Connection {
 
 	private String ip = "127.0.0.1";

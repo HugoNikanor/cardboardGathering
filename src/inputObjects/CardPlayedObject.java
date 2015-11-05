@@ -1,20 +1,20 @@
 package inputObjects;
 
-public class CardPlaceObject extends NetworkPacket {
+public class CardPlayedObject extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
+
 	private long id;
 	private double posX;
 	private double posY;
 
-	public CardPlaceObject( long cardId, double posX, double posY ) {
+	public CardPlayedObject( long cardId, double posX, double posY ) {
 		this.id = cardId;
 		this.posX = posX;
 		this.posY = posY;
-		
-		this.dataType = DataTypes.CARDPLACE;
+
+		this.dataType = DataTypes.CARDPLAYED;
 		this.data = this;
 	}
-
 
 	/**
 	 * @return the id
@@ -36,5 +36,4 @@ public class CardPlaceObject extends NetworkPacket {
 	public double getPosY() {
 		return posY;
 	}
-
 }

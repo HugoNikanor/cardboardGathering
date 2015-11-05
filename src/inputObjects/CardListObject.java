@@ -1,6 +1,5 @@
 package inputObjects;
 
-import network.NetworkPacket;
 import java.util.stream.Stream;
 
 public class CardListObject extends NetworkPacket {
