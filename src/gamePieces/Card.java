@@ -286,8 +286,6 @@ public class Card extends Pane {
 	}
 
 	private class SendDataThread implements Runnable {
-		private double changeX;
-		private double changeY;
 		private double oldX;
 		private double oldY;
 
@@ -295,10 +293,10 @@ public class Card extends Pane {
 		public void run() {
 			synchronized( this ) {
 				while( true ){
-					changeX = getTranslateX() - oldX;
-					changeY = getTranslateY() - oldY;
+					double changeX = getTranslateX() - oldX;
+					double changeY = getTranslateY() - oldY;
 
-					if( changeX != 0 ) {
+					if( changeX != 0 || changeY != 0 ) {
 						connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
 					}
 					oldX = getTranslateX();
@@ -498,9 +496,9 @@ public class Card extends Pane {
 
 		if( changeY < 0 ) {
 			if( this.getTranslateY() + changeY < 0 ) {
-					tt.setByY( -this.getTranslateY() );
+				tt.setByY( -this.getTranslateY() );
 			} else {
-					tt.setByY( changeY );
+				tt.setByY( changeY );
 			}
 		}
 

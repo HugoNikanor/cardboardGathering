@@ -133,9 +133,7 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 	public Card getCard( long id ) throws CardNotFoundException {
-		System.out.println( "getCard( long id ):");
 		for( Card temp : this ) {
-			System.out.println( temp.getCardId() );
 			if( Objects.equals( temp.getCardId(), id ) ) {
 				return temp;
 			}

@@ -11,7 +11,7 @@ import inputObjects.NetworkPacket;
 public class Connection {
 
 	//How many ms there should be between sending data to the server
-	public static int UPDATE_TIME = 1000;
+	public static int UPDATE_TIME = 100;
 
 	private String ip = "127.0.0.1";
 
@@ -52,9 +52,7 @@ public class Connection {
 		while( !streamsReady ) {
 			try {
 				objOutStream = new ObjectOutputStream( socket.getOutputStream() );
-				//System.out.println( "check 1" );
 				objInStream = new ObjectInputStream( socket.getInputStream() );
-				//System.out.println( "check 2" );
 				streamsReady = true;
 			} catch( IOException ie ) {
 				ie.printStackTrace();
