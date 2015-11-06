@@ -10,6 +10,7 @@ import exceptions.CardNotFoundException;
 import gamePieces.Battlefield;
 import gamePieces.Card;
 
+import inputObjects.CardDrawObject;
 import inputObjects.CardListObject;
 import inputObjects.CardMoveObject;
 import inputObjects.CardPlaceObject;
@@ -34,6 +35,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import network.Connection;
+
 import inputObjects.NetworkPacket;
 
 public class GameLogic extends Application {
@@ -74,7 +76,8 @@ public class GameLogic extends Application {
 		inputObjectHandler = new InputObjectHandler();
 		connection = new Connection( inputObjectHandler );
 
-		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection );
+		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection);
+		//ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler );
 		try {
 			otherBattlefield = new Battlefield();
 		} catch( ClassNotFoundException e ) {
@@ -206,6 +209,11 @@ public class GameLogic extends Application {
 					this.playCard( (CardPlayedObject) data.getData() );
 
 					break;
+				case CARDDRAW:
+					System.out.println( "Object is CARDDRAW" );
+					this.drawCard( (CardDrawObject) data.getData() );
+
+					break;
 				default:
 					System.err.println( "Somethin is wrong with the data:" );
 					System.err.println( data.toString() );
@@ -261,6 +269,14 @@ public class GameLogic extends Application {
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
 			}
+		}
+		private void drawCard( CardDrawObject obj ) {
+			try {
+				otherBattlefield.getPlayer().drawCard(obj.getId());
+			} catch (CardNotFoundException e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 
@@ -394,9 +410,9 @@ public class GameLogic extends Application {
 				synchronized( this ) {
 					System.out.println("key thread started");
 					while( true ) {
-						// C-m to close the window
+						// <C-c> to close the window
 						if(pressedKeys.contains(KeyCode.CONTROL) &&
-						   pressedKeys.contains(KeyCode.M) ) {
+						   pressedKeys.contains(KeyCode.C) ) {
 							Platform.exit();
 							System.exit(0);
 						}

@@ -156,6 +156,77 @@ public class Card extends Pane {
 		//System.out.println("debug: end of Card");
 	}
 
+	/**
+	 * Used to allow for copying a card
+	 */
+	public Card( Card cardToCopy ) {
+		//System.out.println("debug: start of Card");
+		//cardId = UNIQE_ID++;
+		//shouldSend = false;
+		
+		cardId = cardToCopy.getCardId();
+
+		this.cardName  = cardToCopy.getCardName();
+		this.type      = cardToCopy.getType();
+		this.subtype   = cardToCopy.getSubtype();
+		this.ability   = cardToCopy.getAbility();
+		this.flavour   = cardToCopy.getFlavour();
+		this.power     = cardToCopy.getPower();
+		this.toughness = cardToCopy.getToughness();
+		this.loyalty   = cardToCopy.getLoyalty();
+
+        this.manaCostBlack = cardToCopy.getManaCostBlack();
+        this.manaCostBlue  = cardToCopy.getManaCostBlue();
+        this.manaCostGreen = cardToCopy.getManaCostGreen();
+		this.manaCostRed   = cardToCopy.getManaCostRed();
+        this.manaCostWhite = cardToCopy.getManaCostWhite();
+		this.manaCostBlank = cardToCopy.getManaCostBlank();
+
+		this.calcConvMana();
+
+		currentLocation = cardToCopy.getCurrentLocation();
+
+		this.preferdMargin = 25;
+
+		//===============================//
+		//         JavaFX below          //
+		//===============================//
+		
+		this.getStyleClass().add("card");
+
+		this.setHeight(Card.HEIGHT);
+		this.setWidth(Card.WIDTH);
+		this.setMinSize(this.getWidth(), this.getHeight());
+		this.setPrefSize(this.getWidth(), this.getHeight());
+
+		Text cardNameText = new Text(cardName);
+		cardNameText.setWrappingWidth(95);
+		cardNameText.setTranslateY(15);
+		cardNameText.setTranslateX(5);
+
+		this.getChildren().add(cardNameText);
+
+		this.setCursor(Cursor.HAND);
+
+		currentCard = this;
+
+		MouseEventHandler mouseEventHandler = new MouseEventHandler();
+
+		this.setOnMouseDragged ( mouseEventHandler );
+		this.setOnMousePressed ( mouseEventHandler );
+		this.setOnMouseReleased( mouseEventHandler );
+
+		this.setOnScroll( new ScrollEventHandler() );
+
+		this.scaleFactor = 1;
+
+		// if there is a better way to do this, tell me
+		containerSizeX = Battlefield.WIDTH - this.getWidth();
+		containerSizeY = Battlefield.HEIGHT - this.getHeight();
+
+		//System.out.println("debug: end of Card");
+	}
+
 
 	/**
 	 * Adds up all the mana costs

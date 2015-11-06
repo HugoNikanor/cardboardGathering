@@ -14,7 +14,8 @@ public class NetworkPacket implements Serializable {
 		CARDMOVE,
 		CARDPLACE,
 		CARDLIST,
-		CARDPLAYED
+		CARDPLAYED,
+		CARDDRAW
 	}
 
 	protected DataTypes dataType;

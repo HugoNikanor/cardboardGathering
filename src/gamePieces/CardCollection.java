@@ -106,7 +106,7 @@ public class CardCollection extends ArrayList<Card> {
 		return returnCard;
 	}
 
-	public Card getCard(Card card) throws CardNotFoundException {
+	public Card getCard( Card card ) throws CardNotFoundException {
 		int indexOfCard = this.indexOf(card);
 		// ArrayList.indexOf returns '-1' if there is no such element
 		if( indexOfCard == -1 ) {
@@ -122,6 +122,6 @@ public class CardCollection extends ArrayList<Card> {
 				return temp;
 			}
 		}
-		throw new CardNotFoundException("No card with that id");
+		throw new CardNotFoundException("No card with that id " + id);
 	}
 }

@@ -216,7 +216,8 @@ public class JSONCardReader {
 	public Card get( String cardName ) throws CardNotFoundException {
 		for( Card returnCard : cards ) {
 			if( Objects.equals( returnCard.getCardName(), cardName ) ) {
-				return returnCard;
+				// returns a copy of returnCard
+				return new Card( returnCard );
 			}
 		}
 		throw new CardNotFoundException("No such card in cardlist (" + cardName + ")");

@@ -29,7 +29,7 @@ public class Battlefield extends Pane {
 	public static final double HEIGHT = 474;//395;
 
 	private String cardListFile;
-	private Connection connection;
+	//private Connection connection;
 	//private Stream<String> cardStream;
 
 	private boolean isReady;
@@ -63,10 +63,10 @@ public class Battlefield extends Pane {
 	/**
 	 * This is for creating the local battlefield
 	 */
-	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler, Connection connection) {
+	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler , Connection connection ) {
 		//System.out.println("Debug: start of Battlefield");
 
-		this.connection = connection;
+		//this.connection = connection;
 		
 		this.cardListFile = cardListFile;
 		Stream<String> cardStream;
@@ -109,6 +109,13 @@ public class Battlefield extends Pane {
 		this.getChildren().add( lifeCounter );
 
 		this.isReady = true;
+
+		// Debug
+		System.out.println(" === CARDS === ");
+		for( Card tempCard : player.getDeckCards() ) {
+			System.out.println( tempCard.getCardId() + ": " + tempCard.getCardName() );
+		}
+		System.out.println(" ============= ");
 	}
 
 	private Stream<String> setupCardStream() throws IOException {

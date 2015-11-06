@@ -6,6 +6,7 @@ import exceptions.CardNotFoundException;
 
 import graphicsObjects.PlayerBtnPane;
 
+import inputObjects.CardDrawObject;
 import inputObjects.CardPlayedObject;
 
 import javafx.animation.TranslateTransition;
@@ -68,6 +69,8 @@ public class Player extends Pane {
 
 		health = 20;
 		poisonCounters = 0;
+
+		shouldSend = false;
 
 		//Draws the starting hand
 		//for( int i = 0; i < 7; i++ ) {
@@ -160,6 +163,13 @@ public class Player extends Pane {
 			tempCard.setCurrentLocation(Card.CardLocation.HAND);
 			handCards.add(tempCard);
 
+			if( shouldSend ) {
+				System.out.println( "Sending " + tempCard.getCardId() );
+				CardDrawObject tempCDraw = new CardDrawObject( tempCard.getCardId() );
+				connection.sendPacket( tempCDraw );
+
+			}
+
 			tempCard.setTranslateY(handPopupValue);
 			double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
 			tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
@@ -173,6 +183,22 @@ public class Player extends Pane {
 				"): trying to draw card with no cards left in deckn ===="
 			);
 		}
+	}
+
+	public void drawCard( long cardId ) throws CardNotFoundException {
+		Card tempCard = deckCards.getCard( cardId );
+		tempCard.setCurrentLocation(Card.CardLocation.HAND);
+		handCards.add(tempCard);
+
+		if( shouldSend ) {
+			System.out.println( "Sending " + tempCard.getCardId() );
+			connection.sendPacket( new CardDrawObject( tempCard.getCardId() ) );
+		}
+
+		tempCard.setTranslateY(handPopupValue);
+		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
+		tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+		this.getChildren().add(tempCard);
 	}
 
 	public void updateScaleFactor(double newScaleFactor) {

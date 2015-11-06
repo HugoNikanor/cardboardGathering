@@ -74,6 +74,8 @@ public class Connection {
 				boolean running = true;
 				while( running ) {
 					try {
+						// TODO This crashes if to much is sent at the same time
+						// java.io.StreamCorruptedException
 						NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
 						inObjHandler.handleObject( inPacket );
 						System.out.println( "object read" );
