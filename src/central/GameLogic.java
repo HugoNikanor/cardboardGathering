@@ -181,8 +181,30 @@ public class GameLogic extends Application {
 	 */
 	public class InputObjectHandler {
 		
+		private ArrayList<CardMoveObject> pendingMoves;
+		
 		public InputObjectHandler() { 
 			System.out.println( "InputObjectHandler created" );
+
+			pendingMoves = new ArrayList<CardMoveObject>();
+			new Thread() {
+				@Override
+				public void run() {
+					synchronized( this ) {
+						while( true ) {
+							while( pendingMoves.size() > 0 ) {
+								moveCard( pendingMoves.get(0) );
+								pendingMoves.remove(0);
+							}
+							try {
+								this.wait(Connection.UPDATE_TIME);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}.start();
 		}
 
 		public void handleObject( NetworkPacket data ) {
@@ -194,7 +216,8 @@ public class GameLogic extends Application {
 				case CARDMOVE:
 					System.out.println( "Object is CARDMOVE" );
 
-					this.moveCard( (CardMoveObject) data.getData() );
+					//this.moveCard( (CardMoveObject) data.getData() );
+					pendingMoves.add( (CardMoveObject) data.getData() );
 
 					break;
 				case CARDPLACE:
@@ -227,7 +250,6 @@ public class GameLogic extends Application {
 		private void moveCard( CardMoveObject obj ) {
 			try {
 				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
-				System.out.println( "MoveCard, middle" );
 				temp.smoothMove( obj.getChangeX(), obj.getChangeY(), Connection.UPDATE_TIME );
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
@@ -285,7 +307,7 @@ public class GameLogic extends Application {
 		}
 		private void drawCard( CardDrawObject obj ) {
 			try {
-				otherBattlefield.getPlayer().drawCard(obj.getId());
+				otherBattlefield.getPlayer().drawCard( obj.getId() );
 			} catch (CardNotFoundException e) {
 				e.printStackTrace();
 			}
