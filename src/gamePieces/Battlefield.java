@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import database.JSONCardReader;
 import graphicsObjects.DeckPane;
 import graphicsObjects.LifeCounter;
 
@@ -37,23 +38,14 @@ public class Battlefield extends Pane {
 	/**
 	 * This is for seting up the oponenets battlefield over the network
 	 */
-	public Battlefield() throws ClassNotFoundException {
+	public Battlefield( JSONCardReader jCardReader ) throws ClassNotFoundException {
 		// cardStream will be gotten over the network
 		// Both players MUST have all database files
 		// eventHandlers are exchanged for proper alternatives
 		// Connection is not used
 
-		try {
-			//TODO change this by one gotten over the network
-			Stream<String> cardStream;
-			this.cardListFile = "cardlist1";
-			cardStream = this.setupCardStream();
-			player = new Player( cardStream );
-			cards = player.getBattlefieldCards();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		player = new Player( jCardReader );
+		cards = player.getBattlefieldCards();
 
 
 		this.initialSetup();
@@ -63,11 +55,12 @@ public class Battlefield extends Pane {
 	/**
 	 * This is for creating the local battlefield
 	 */
-	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler , Connection connection ) {
+	public Battlefield(String cardListFile, EventHandler<MouseEvent> mouseEventHandler , Connection connection, JSONCardReader jCardReader ) {
 		//System.out.println("Debug: start of Battlefield");
 
 		//this.connection = connection;
 		
+		/*
 		this.cardListFile = cardListFile;
 		Stream<String> cardStream;
 		try {
@@ -78,6 +71,9 @@ public class Battlefield extends Pane {
 			System.out.println( "No file with that name" );
 			e.printStackTrace();
 		}
+		*/
+		player = new Player( jCardReader, mouseEventHandler, connection );
+		cards = player.getBattlefieldCards();
 
 		this.initialSetup();
 

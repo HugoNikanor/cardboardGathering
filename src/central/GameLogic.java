@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
 import gamePieces.Battlefield;
@@ -76,10 +77,12 @@ public class GameLogic extends Application {
 		inputObjectHandler = new InputObjectHandler();
 		connection = new Connection( inputObjectHandler );
 
-		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection);
+		JSONCardReader jCardReader = new JSONCardReader();
+
+		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection, jCardReader );
 		//ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler );
 		try {
-			otherBattlefield = new Battlefield();
+			otherBattlefield = new Battlefield( jCardReader );
 		} catch( ClassNotFoundException e ) {
 			Platform.exit();
 		}

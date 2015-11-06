@@ -1,6 +1,10 @@
 package gamePieces;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -21,12 +25,24 @@ public class CardCollection extends ArrayList<Card> {
 	 * file containing a list of all cards desired. This shold be sent to the 
 	 * card fectcher, which gets them from the database
 	 */
-	public CardCollection( Stream<String> cardListStream ) {
+	//public CardCollection( Stream<String> cardListStream ) {
+	public CardCollection( JSONCardReader jCardReader ) {
 		//System.out.println("Debug: start of cardCollection");
 
 		try {
-			CardChooser cardChooser = new CardChooser( cardListStream );
-			JSONCardReader jCardReader = new JSONCardReader();
+			//TODO change this by one gotten over the network
+				Path filepath = Paths.get( "decks/" + "cardlist1" );
+
+				@SuppressWarnings("resource")
+				Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
+
+				// DO NOT HAVE LEADING WHITESPACE!
+				cardStream = cardStream
+					.filter( u -> u.charAt(0) != '#' ) // '#' for comment
+					.sorted();                         // Alphabetical
+
+			CardChooser cardChooser = new CardChooser( cardStream );
+			//JSONCardReader jCardReader = new JSONCardReader();
 
 			while( cardChooser.hasNext() ) {
 				this.add( jCardReader.get( cardChooser.next() ) );
@@ -117,8 +133,10 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 	public Card getCard( long id ) throws CardNotFoundException {
+		System.out.println( "getCard( long id ):");
 		for( Card temp : this ) {
-			if( Objects.equals( temp.getId(), id ) ) {
+			System.out.println( temp.getCardId() );
+			if( Objects.equals( temp.getCardId(), id ) ) {
 				return temp;
 			}
 		}

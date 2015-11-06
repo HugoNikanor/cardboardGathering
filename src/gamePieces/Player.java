@@ -1,7 +1,8 @@
 package gamePieces;
 
-import java.util.stream.Stream;
+//import java.util.stream.Stream;
 
+import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
 import graphicsObjects.PlayerBtnPane;
@@ -41,8 +42,10 @@ public class Player extends Pane {
 	/**
 	 * Use this for the local player
 	 */
-	public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
-		this( cardListStream );
+	//public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
+	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
+		//this( cardListStream );
+		this( jCardReader );
 
 		this.connection = connection;
 		shouldSend = true;
@@ -61,8 +64,10 @@ public class Player extends Pane {
 	/**
 	 * Use this for the remote player
 	 */
-	public Player( Stream<String> cardListStream ) {
-		deckCards        = new CardCollection( cardListStream );
+	//public Player( Stream<String> cardListStream ) {
+	public Player( JSONCardReader jCardReader ) {
+		//deckCards        = new CardCollection( cardListStream );
+		deckCards        = new CardCollection( jCardReader );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
 		graveyardCards   = new CardCollection();
