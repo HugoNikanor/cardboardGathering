@@ -80,7 +80,9 @@ public class GameLogic extends Application {
 		JSONCardReader jCardReader = new JSONCardReader();
 
 		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection, jCardReader );
-		//ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler );
+
+		Card.resetCardIdCounter();
+
 		try {
 			otherBattlefield = new Battlefield( jCardReader );
 		} catch( ClassNotFoundException e ) {

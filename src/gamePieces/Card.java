@@ -19,7 +19,8 @@ import network.Connection;
 
 public class Card extends Pane {
 	private long cardId;
-	private static long UNIQE_ID = 0;
+	private static long CARD_ID_COUNTER_NEW = 0;
+	private static long CARD_ID_COUNTER_COPY = 0;
 
 	private String cardName;
 	private String type;
@@ -72,7 +73,6 @@ public class Card extends Pane {
 	// the margins of two cards shouldn't overlap
 	private int preferdMargin;
 
-	//private boolean shouldSend;
 	private Connection connection;
 
 	public Card(
@@ -92,8 +92,7 @@ public class Card extends Pane {
 		int manaCostBlank
 	) {
 		//System.out.println("debug: start of Card");
-		cardId = UNIQE_ID++;
-		//shouldSend = false;
+		cardId = CARD_ID_COUNTER_NEW++;
 
 		this.cardName  = cardName;
 		this.type      = type;
@@ -161,10 +160,9 @@ public class Card extends Pane {
 	 */
 	public Card( Card cardToCopy ) {
 		//System.out.println("debug: start of Card");
-		//cardId = UNIQE_ID++;
-		//shouldSend = false;
+		cardId = CARD_ID_COUNTER_COPY++;
 		
-		cardId = cardToCopy.getCardId();
+		//cardId = cardToCopy.getCardId();
 
 		this.cardName  = cardToCopy.getCardName();
 		this.type      = cardToCopy.getType();
@@ -225,6 +223,10 @@ public class Card extends Pane {
 		containerSizeY = Battlefield.HEIGHT - this.getHeight();
 
 		//System.out.println("debug: end of Card");
+	}
+
+	public static void resetCardIdCounter() {
+		CARD_ID_COUNTER_COPY = 0;
 	}
 
 
@@ -370,10 +372,6 @@ public class Card extends Pane {
 						setTranslateY(containerSizeY);
 					}
 
-					//if( shouldSend ) {
-					//	connection.sendPacket( new CardMoveObject( cardId, xChange, yChange ) );
-					//}
-
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
 				}
@@ -463,10 +461,6 @@ public class Card extends Pane {
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
 
-		//if( shouldSend ) {
-		//	connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
-		//}
-
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
 
@@ -517,10 +511,6 @@ public class Card extends Pane {
 	 * If the coordinate is out of bounds then it's set to the bound
 	 */
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
-
-		//if( shouldSend ) {
-		//	connection.sendPacket( new CardPlaceObject( cardId, posX, posY ) );
-		//}
 
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
@@ -592,7 +582,6 @@ public class Card extends Pane {
 	 * @param connection the connection to set
 	 */
 	public void setConnection(Connection connection) {
-		//this.shouldSend = true;
 		new Thread( new SendDataThread() ).start();
 		this.connection = connection;
 	}

@@ -28,7 +28,6 @@ public class CardCollection extends ArrayList<Card> {
 	//public CardCollection( Stream<String> cardListStream ) {
 	public CardCollection( JSONCardReader jCardReader ) {
 		//System.out.println("Debug: start of cardCollection");
-
 		try {
 			//TODO change this by one gotten over the network
 				Path filepath = Paths.get( "decks/" + "cardlist1" );
@@ -53,7 +52,8 @@ public class CardCollection extends ArrayList<Card> {
 			e.printStackTrace();
 		}
 
-		//this.shuffleCards();
+		//TODO should this be set here?
+		this.shuffleCards();
 
 		//System.out.println("Debug: end of cardCollection");
 	}

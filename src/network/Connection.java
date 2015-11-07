@@ -3,9 +3,12 @@ package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 
 import central.GameLogic;
+
 import inputObjects.NetworkPacket;
 
 public class Connection {
@@ -77,7 +80,17 @@ public class Connection {
 						NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
 						inObjHandler.handleObject( inPacket );
 						System.out.println( "object read" );
-					} catch (ClassNotFoundException | IOException e) {
+					} catch( StreamCorruptedException e ) { 
+						e.printStackTrace();
+					} catch( ClassCastException e ) {
+						e.printStackTrace();
+					} catch( OptionalDataException e ) {
+						e.printStackTrace();
+					} catch( ClassNotFoundException e ) {
+						System.out.println( "Get your classes in order!" );
+						e.printStackTrace();
+						running = false;
+					} catch( IOException e ) {
 						e.printStackTrace();
 						running = false;
 					}
