@@ -1,3 +1,8 @@
 Card rotation
 	if starting in rotated mode, and clicked about twice every second
 	after maybe 15s of clicking the rotating mechanism will be bricked
+
+Card move network
+	Card move data sent over the network have LARGE syncing
+	problems. This can probably be changed by sending real
+	coordinates instead of changes in coordinates
