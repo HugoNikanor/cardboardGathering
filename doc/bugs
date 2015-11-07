@@ -6,3 +6,8 @@ Card move network
 	Card move data sent over the network have LARGE syncing
 	problems. This can probably be changed by sending real
 	coordinates instead of changes in coordinates
+
+Design
+	cards on the oponent battlefield are transparent
+	probably caused by a missmatch between the two
+	constructors for card

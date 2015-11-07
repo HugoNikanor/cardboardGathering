@@ -1,6 +1,7 @@
 package gamePieces;
 
 import javafx.scene.Cursor;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
@@ -12,14 +13,16 @@ import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import network.Connection;
 
-public class Card extends Pane {
+public class Card extends VBox {
 	private long cardId;
 	private static long CARD_ID_COUNTER_NEW = 0;
 	private static long CARD_ID_COUNTER_COPY = 0;
@@ -136,6 +139,8 @@ public class Card extends Pane {
 
 		this.getChildren().add(cardNameText);
 
+
+
 		this.setCursor(Cursor.HAND);
 
 		currentCard = this;
@@ -199,12 +204,60 @@ public class Card extends Pane {
 		this.setMinSize(this.getWidth(), this.getHeight());
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
-		Text cardNameText = new Text(cardName);
-		cardNameText.setWrappingWidth(95);
-		cardNameText.setTranslateY(15);
-		cardNameText.setTranslateX(5);
+		HBox nameLine = new HBox();
+		nameLine.setMaxWidth( 116 );
+		Label cardNameLabel = new Label( cardName );
+		cardNameLabel.setWrapText( true );
+		//cardNameLabel.setFont( new Font("Arial", 8) );
+		Label manaBlankLabel = new Label( Integer.toString(manaCostBlank) );
+		manaBlankLabel.setWrapText( true );
+		//manaBlankLabel.setFont( new Font("Arial", 8) );
+		nameLine.getChildren().add( cardNameLabel );
+		nameLine.getChildren().add( manaBlankLabel );
 
-		this.getChildren().add(cardNameText);
+		HBox typeLine = new HBox();
+		typeLine.setMaxWidth( 116 );
+		Label typeLabel = new Label( type );
+		typeLabel.setWrapText( true );
+		typeLabel.setFont( new Font("Arial", 8) );
+		Label dashLabel = new Label( "― " );
+		dashLabel.setWrapText( true );
+		dashLabel.setFont( new Font("Arial", 8) );
+		Label subtypeLabel = new Label( subtype );
+		subtypeLabel.setWrapText( true );
+		subtypeLabel.setFont( new Font("Arial", 8) );
+		typeLine.getChildren().add( typeLabel );
+		typeLine.getChildren().add( dashLabel );
+		typeLine.getChildren().add( subtypeLabel );
+
+		VBox infoBox = new VBox();
+		infoBox.setMaxWidth( 116 );
+		Label abilityLabel = new Label( ability );
+		abilityLabel.setWrapText( true );
+		abilityLabel.setFont( new Font("Arial", 8) );
+		Label flavourLabel = new Label( flavour );
+		flavourLabel.setWrapText( true );
+		flavourLabel.setFont( new Font("Arial", 8) );
+		infoBox.getChildren().add( abilityLabel );
+		infoBox.getChildren().add( flavourLabel );
+
+		HBox statLine = new HBox();
+		statLine.setMaxWidth( 116 );
+		Label powerLabel = new Label( Integer.toString(power) );
+		powerLabel.setWrapText( true );
+		Label slashLabel = new Label( "/" );
+		slashLabel.setWrapText( true );
+		Label toughnessLabel = new Label( Integer.toString(toughness) );
+		toughnessLabel.setWrapText( true );
+		// Note that loyalty is completely forgotten here
+		statLine.getChildren().add( powerLabel );
+		statLine.getChildren().add( slashLabel );
+		statLine.getChildren().add( toughnessLabel );
+
+		this.getChildren().add( nameLine );
+		this.getChildren().add( typeLine );
+		this.getChildren().add( infoBox );
+		this.getChildren().add( statLine );
 
 		this.setCursor(Cursor.HAND);
 
@@ -223,6 +276,8 @@ public class Card extends Pane {
 		// if there is a better way to do this, tell me
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
 		containerSizeY = Battlefield.HEIGHT - this.getHeight();
+
+		//System.out.println( this );
 
 		//System.out.println("debug: end of Card");
 	}

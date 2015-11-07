@@ -103,8 +103,9 @@ public class JSONCardReader {
 				try {
 					JSONArray typeArray = tempObject.getJSONArray("types");
 					type = new String("");
-					for( int i = 0; i > typeArray.length(); i++ ) {
-						type.concat(typeArray.getString(i));
+					for( int i = 0; i < typeArray.length(); i++ ) {
+						type = type.concat(typeArray.getString(i));
+						type = type.concat(" ");
 					}
 				} catch (JSONException e) {
 					type = "Default type";
@@ -112,8 +113,9 @@ public class JSONCardReader {
 				try {
 					JSONArray typeArray = tempObject.getJSONArray("subtypes");
 					subtype = new String("");
-					for( int i = 0; i > typeArray.length(); i++ ) {
-						subtype.concat(typeArray.getString(i));
+					for( int i = 0; i < typeArray.length(); i++ ) {
+						subtype = subtype.concat(typeArray.getString(i));
+						subtype = subtype.concat(" ");
 					}
 				} catch (JSONException e) {
 					subtype = "";
