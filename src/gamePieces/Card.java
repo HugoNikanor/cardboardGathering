@@ -4,6 +4,8 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+import java.util.Objects;
+
 import inputObjects.CardMoveObject;
 
 import javafx.animation.RotateTransition;
@@ -295,15 +297,16 @@ public class Card extends Pane {
 		public void run() {
 			synchronized( this ) {
 				while( true ){
-					double changeX = getTranslateX() - oldX;
-					double changeY = getTranslateY() - oldY;
+					if( Objects.equals( Card.this.currentLocation, Card.CardLocation.BATTLEFIELD ) ) {
+						double changeX = getTranslateX() - oldX;
+						double changeY = getTranslateY() - oldY;
 
-					if( changeX != 0 || changeY != 0 ) {
-						connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+						if( changeX != 0 || changeY != 0 ) {
+							connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+						}
+						oldX = getTranslateX();
+						oldY = getTranslateY();
 					}
-					oldX = getTranslateX();
-					oldY = getTranslateY();
-
 					try {
 						this.wait( Connection.UPDATE_TIME );
 					} catch( InterruptedException e ) {

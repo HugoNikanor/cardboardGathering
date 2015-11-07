@@ -132,21 +132,23 @@ public class Player extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			TranslateTransition tt;
+			//TranslateTransition tt;
 
 			try {
 				Card tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
-				tt = new TranslateTransition(Duration.millis(200), tempCard);
+				//tt = new TranslateTransition(Duration.millis(200), tempCard);
 
 				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
 					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-						tt.setToY(-3*handPopupValue);
-						tt.play();
+						tempCard.smoothPlace( tempCard.getTranslateX(), -3*handPopupValue, 200 );
+						//tt.setToY(-3*handPopupValue);
+						//tt.play();
 					}
 
 					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-						tt.setToY(handPopupValue);
-						tt.play();
+						//tt.setToY(handPopupValue);
+						//tt.play();
+						tempCard.smoothPlace( tempCard.getTranslateX(), handPopupValue, 200 );
 					}
 				}
 			} catch (CardNotFoundException e1) {
