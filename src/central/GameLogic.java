@@ -12,7 +12,6 @@ import gamePieces.Battlefield;
 import gamePieces.Card;
 
 import inputObjects.CardDrawObject;
-import inputObjects.CardListObject;
 import inputObjects.CardMoveObject;
 import inputObjects.CardPlaceObject;
 import inputObjects.CardPlayedObject;
@@ -183,70 +182,58 @@ public class GameLogic extends Application {
 	 */
 	public class InputObjectHandler {
 		
-		private ArrayList<CardMoveObject> pendingMoves;
+		private ArrayList<NetworkPacket> pendingPackets;
 		
 		public InputObjectHandler() { 
 			System.out.println( "InputObjectHandler created" );
 
-			pendingMoves = new ArrayList<CardMoveObject>();
+			pendingPackets = new ArrayList<NetworkPacket>();
 			new Thread() {
 				@Override
 				public void run() {
-					synchronized( this ) {
-						while( true ) {
-							while( pendingMoves.size() > 0 ) {
-								moveCard( pendingMoves.get(0) );
-								pendingMoves.remove(0);
-							}
-							try {
-								this.wait(Connection.UPDATE_TIME);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
+				synchronized( this ) {
+				while( true ) {
+					while( pendingPackets.size() > 0 ) {
+						switch( pendingPackets.get(0).getDataType() ) {
+						case INFO:
+							System.out.println( "INFO" + System.currentTimeMillis() );
+							break;
+						case CARDMOVE:
+							System.out.println( "CARDMOVE" + System.currentTimeMillis() );
+							moveCard( (CardMoveObject) pendingPackets.get(0).getData() );
+							break;
+						case CARDPLACE:
+							System.out.println( "CARDPLACE" + System.currentTimeMillis());
+							placeCard( (CardPlaceObject) pendingPackets.get(0).getData() );
+							break;
+						case CARDPLAYED:
+							System.out.println( "CARDPLAYED" + System.currentTimeMillis());
+							playCard( (CardPlayedObject) pendingPackets.get(0).getData() );
+							break;
+						case CARDDRAW:
+							System.out.println( "CARDDRAW" + System.currentTimeMillis() );
+							drawCard( (CardDrawObject) pendingPackets.get(0).getData() );
+							break;
+						default:
+							System.err.println( "Somethin is wrong with the data:" );
+							System.err.println( pendingPackets.get(0).toString() );
+							break;
 						}
+						pendingPackets.remove(0);
 					}
+					try {
+						this.wait(Connection.UPDATE_TIME);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				}
 				}
 			}.start();
 		}
 
 		public void handleObject( NetworkPacket data ) {
-			switch( data.getDataType() ) {
-				case INFO:
-					System.out.println( "Object is INFO" );
-
-					break;
-				case CARDMOVE:
-					System.out.println( "Object is CARDMOVE" );
-
-					//this.moveCard( (CardMoveObject) data.getData() );
-					pendingMoves.add( (CardMoveObject) data.getData() );
-
-					break;
-				case CARDPLACE:
-					System.out.println( "Object is CARDPLACE" );
-					this.placeCard( (CardPlaceObject) data.getData() );
-
-					break;
-				case CARDLIST:
-					System.out.println( "Object is CARDLIST" );
-					this.setCardList( (CardListObject) data.getData() );
-
-					break;
-				case CARDPLAYED:
-					System.out.println( "Object is CARDPLAYED" );
-					this.playCard( (CardPlayedObject) data.getData() );
-
-					break;
-				case CARDDRAW:
-					System.out.println( "Object is CARDDRAW" );
-					this.drawCard( (CardDrawObject) data.getData() );
-
-					break;
-				default:
-					System.err.println( "Somethin is wrong with the data:" );
-					System.err.println( data.toString() );
-					break;
-			}
+			pendingPackets.add( data );
 		}
 
 		private void moveCard( CardMoveObject obj ) {
@@ -264,8 +251,6 @@ public class GameLogic extends Application {
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
 			}
-		}
-		private void setCardList( CardListObject obj ) {
 		}
 		private void playCard( CardPlayedObject obj ) {
 			try {

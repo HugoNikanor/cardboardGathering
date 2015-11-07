@@ -297,6 +297,7 @@ public class Card extends Pane {
 		public void run() {
 			synchronized( this ) {
 				while( true ){
+					// Only send move data if it's sencible to do so
 					if( Objects.equals( Card.this.currentLocation, Card.CardLocation.BATTLEFIELD ) ) {
 						double changeX = getTranslateX() - oldX;
 						double changeY = getTranslateY() - oldY;

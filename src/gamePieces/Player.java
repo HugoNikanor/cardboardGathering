@@ -40,7 +40,6 @@ public class Player extends Pane {
 	/**
 	 * Use this for the local player
 	 */
-	//public Player( Stream<String> cardListStream, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
 	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
 		//this( cardListStream );
 		this( jCardReader );
@@ -57,14 +56,24 @@ public class Player extends Pane {
 			temp.setConnection( connection );
 		}
 
+		//===============================//
+		//         JavaFX below          //
+		//===============================//
+		this.setPrefWidth(Battlefield.WIDTH);
+		this.setPrefHeight(HEIGHT);
+		this.getStyleClass().add("cards-in-hand-pane");
+
+		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
+		//this.getChildren().add(new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler()));
+		this.getChildren().add(playerBtnPane);
+
 	}
 
 	/**
-	 * Use this for the remote player
+	 * Use this directly for the remote player
+	 * Be aware that this doen't initiate any of the JavaFX functions
 	 */
-	//public Player( Stream<String> cardListStream ) {
 	public Player( JSONCardReader jCardReader ) {
-		//deckCards        = new CardCollection( cardListStream );
 		deckCards        = new CardCollection( jCardReader );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
@@ -80,15 +89,6 @@ public class Player extends Pane {
 		//	this.drawCard();
 		//}
 		
-		//===============================//
-		//         JavaFX below          //
-		//===============================//
-
-		this.setPrefWidth(Battlefield.WIDTH);
-		this.setPrefHeight(HEIGHT);
-		this.getStyleClass().add("cards-in-hand-pane");
-
-		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
 	}
 
 	private class BtnPaneHandler implements EventHandler<ActionEvent> {
@@ -105,7 +105,6 @@ public class Player extends Pane {
 			 * Starts a new 'stack' after 'cardsPerRow' cards.
 			 */
 			int cardsPerRow = 12;
-			//TranslateTransition tt;
 			if( event.getSource() == playerBtnPane.getResetBoardBtn() ) { 
 				int displacement = 0;
 				int laps = 0;
@@ -114,12 +113,6 @@ public class Player extends Pane {
 						displacement = 0;
 						laps++;
 					}
-					/*
-					tt = new TranslateTransition(Duration.millis(500), battlefieldCards.get(i));
-					tt.setToX(displacement * 10 + 200 * laps);
-					tt.setToY(displacement * 20);
-					tt.play();
-					*/
 					battlefieldCards.get(i).smoothPlace(
 							displacement*10 + 200*laps, displacement*20, 500);
 
@@ -211,18 +204,18 @@ public class Player extends Pane {
 		}
 	}
 
-	public void updateScaleFactor(double newScaleFactor) {
+	public void updateScaleFactor( double newScaleFactor ) {
 		for( Card tch : handCards ) {
-			tch.setScaleFactor(newScaleFactor);
+			tch.setScaleFactor( newScaleFactor );
 		}
 		for( Card tcd : deckCards ) {
-			tcd.setScaleFactor(newScaleFactor);
+			tcd.setScaleFactor( newScaleFactor );
 		}
 		for( Card tcg : graveyardCards ) {
-			tcg.setScaleFactor(newScaleFactor);
+			tcg.setScaleFactor( newScaleFactor );
 		}
 		for( Card tcb : battlefieldCards ) {
-			tcb.setScaleFactor(newScaleFactor);
+			tcb.setScaleFactor( newScaleFactor );
 		}
 	}
 

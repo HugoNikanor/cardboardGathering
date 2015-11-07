@@ -1,5 +1,0 @@
-Card is a JavaFX pane. 
-
-Battlefield is a large JavaFX pane, which should include a lot of Card Panes.
-
-Currently, the spacebar does't work due to the shuffle btn taking focus. It can be found in player

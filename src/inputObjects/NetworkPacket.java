@@ -13,7 +13,6 @@ public class NetworkPacket implements Serializable {
 		INFO,
 		CARDMOVE,
 		CARDPLACE,
-		CARDLIST,
 		CARDPLAYED,
 		CARDDRAW
 	}

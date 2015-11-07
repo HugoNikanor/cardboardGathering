@@ -76,13 +76,11 @@ public class Connection {
 				boolean running = true;
 				while( running ) {
 					try {
-						// TODO This crashes if to much is sent at the same time
-						// java.io.StreamCorruptedException
 						NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
 						inObjHandler.handleObject( inPacket );
-						System.out.println( "object read" );
 					} catch( StreamCorruptedException e ) { 
 						e.printStackTrace();
+						running = false;
 					} catch( ClassCastException e ) {
 						e.printStackTrace();
 					} catch( OptionalDataException e ) {
@@ -100,7 +98,10 @@ public class Connection {
 		}
 	}
 
-	public void sendPacket( NetworkPacket networkPacket ) {
+	public synchronized void sendPacket( NetworkPacket networkPacket ) {
+		// Synchronized makes sure that only one object can be sent at a time.
+		// This is important since only one object can be read at a time in
+		// network.Connection$NetworkObjectInputThread
 		try {
 			System.out.println( networkPacket );
 			objOutStream.writeObject( networkPacket );
