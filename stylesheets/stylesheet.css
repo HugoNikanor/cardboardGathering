@@ -4,6 +4,9 @@
 .deck {
 	-fx-background-color: brown;
 }
+.graveyard {
+	-fx-background-color: darkslategray;
+}
 .cards-in-hand-pane {
 
 }

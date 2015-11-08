@@ -5,6 +5,7 @@ import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
 import graphicsObjects.DeckPane;
+import graphicsObjects.GraveyardPane;
 import graphicsObjects.LifeCounter;
 
 import javafx.event.ActionEvent;
@@ -20,6 +21,7 @@ public class Battlefield extends Pane {
 	private CardCollection cards;
 
 	private DeckPane deckPane;
+	private GraveyardPane graveyardPane;
 	private LifeCounter lifeCounter;
 
 	public static final double WIDTH = 1920;//1600;
@@ -95,6 +97,10 @@ public class Battlefield extends Pane {
 		deckPane = new DeckPane( deckString, Card.WIDTH, Card.HEIGHT, this.getWidth(), this.getHeight() );
 		deckPane.setOnMouseClicked( new MouseEventHandler() );
 		this.getChildren().add( deckPane );
+
+		// Graveyard
+		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, this.getWidth(), 10 ); 
+		this.getChildren().add( graveyardPane );
 
 		// Life counter
 		lifeCounter = new LifeCounter( new LifeCounterHandler() );
