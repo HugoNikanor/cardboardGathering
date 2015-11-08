@@ -65,6 +65,7 @@ public class Battlefield extends Pane {
 	 *            Get's the card data from there
 	 */
 	public Battlefield( EventHandler<MouseEvent> mouseEventHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
+
 		player = new Player( jCardReader, mouseEventHandler, connection, cardList );
 		cards = player.getBattlefieldCards();
 

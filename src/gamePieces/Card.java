@@ -27,7 +27,7 @@ import network.Connection;
 public class Card extends VBox {
 	private long cardId;
 	private static long CARD_ID_COUNTER_NEW = 0;
-	private static long CARD_ID_COUNTER_COPY = 0;
+	//private static long CARD_ID_COUNTER_COPY = 0;
 
 	private String cardName;
 	private String type;
@@ -175,9 +175,10 @@ public class Card extends VBox {
 	/**
 	 * Used to allow for copying a card
 	 */
-	public Card( Card cardToCopy ) {
+	public Card( Card cardToCopy, Integer cardId ) {
 		//System.out.println("debug: start of Card");
-		cardId = CARD_ID_COUNTER_COPY++;
+		//cardId = CARD_ID_COUNTER_COPY++;
+		this.cardId = cardId;
 		
 		//cardId = cardToCopy.getCardId();
 
@@ -296,9 +297,9 @@ public class Card extends VBox {
 		//System.out.println("debug: end of Card");
 	}
 
-	public static void resetCardIdCounter() {
-		CARD_ID_COUNTER_COPY = 0;
-	}
+	//public static void resetCardIdCounter() {
+	//	CARD_ID_COUNTER_COPY = 0;
+	//}
 
 
 	/**

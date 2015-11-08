@@ -26,7 +26,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * Create a collection with cards in it to start
 	 * @param jCardReader where the cards should be read from
 	 */
-	public CardCollection( JSONCardReader jCardReader, String[] cardList ) {
+	public CardCollection( JSONCardReader jCardReader, Integer cardIdCounter, String[] cardList ) {
 		//System.out.println("Debug: start of cardCollection");
 		try {
 
@@ -34,7 +34,7 @@ public class CardCollection extends ArrayList<Card> {
 			//JSONCardReader jCardReader = new JSONCardReader();
 
 			while( cardChooser.hasNext() ) {
-				this.add( jCardReader.get( cardChooser.next() ) );
+				this.add( jCardReader.get( cardChooser.next(), cardIdCounter ) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

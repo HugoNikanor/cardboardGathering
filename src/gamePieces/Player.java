@@ -40,6 +40,12 @@ public class Player extends Pane {
 	private PlayerBtnPane playerBtnPane;
 
 	/**
+	 * used by JSONCardReader to make every card have a uniqe id
+	 * id's local per player
+	 */
+	private int cardIdCounter;
+
+	/**
 	 * Use this for the local player
 	 */
 	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
@@ -76,7 +82,8 @@ public class Player extends Pane {
 	 * Be aware that this doen't initiate any of the JavaFX functions
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
-		deckCards        = new CardCollection( jCardReader, cardList );
+		cardIdCounter = new Integer(0);
+		deckCards        = new CardCollection( jCardReader, cardIdCounter, cardList );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
 		graveyardCards   = new CardCollection();

@@ -18,8 +18,8 @@ import gamePieces.Card;
 
 public class JSONCardReader {
 
-	ArrayList<Card> cards;
-	ArrayList<JSONObject> cardBufferList;
+	private ArrayList<Card> cards;
+	//private ArrayList<JSONObject> cardBufferList;
 
 	/**
 	 * Loads all possible cards into memory,
@@ -214,12 +214,15 @@ public class JSONCardReader {
 
 	/**
 	 * @return the card with the desired name
+	 * @param cardName get the card with said name from the json files
+	 * @param cardId what id the returned card sholud have
+	 * @throws cardNotFoundException if there is no card with cardName in the json files
 	 */
-	public Card get( String cardName ) throws CardNotFoundException {
+	public Card get( String cardName, Integer cardId ) throws CardNotFoundException {
 		for( Card returnCard : cards ) {
 			if( Objects.equals( returnCard.getCardName(), cardName ) ) {
 				// returns a copy of returnCard
-				return new Card( returnCard );
+				return new Card( returnCard, cardId++ );
 			}
 		}
 		throw new CardNotFoundException("No such card in cardlist (" + cardName + ")");

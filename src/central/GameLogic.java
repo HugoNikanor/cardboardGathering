@@ -119,7 +119,7 @@ public class GameLogic extends Application {
 		}
 
 		ownBattlefield = new Battlefield( cardPlayHandler, connection, jCardReader, cardList );
-		Card.resetCardIdCounter();
+		//Card.resetCardIdCounter();
 		//otherBattlefield = new Battlefield( jCardReader, cardList );
 
 
