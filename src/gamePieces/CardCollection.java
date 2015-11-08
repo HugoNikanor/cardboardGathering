@@ -1,14 +1,9 @@
 package gamePieces;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Stream;
 
 import database.CardChooser;
 import database.JSONCardReader;
@@ -34,19 +29,8 @@ public class CardCollection extends ArrayList<Card> {
 	public CardCollection( JSONCardReader jCardReader, String[] cardList ) {
 		//System.out.println("Debug: start of cardCollection");
 		try {
-			//TODO change this by one gotten over the network
-			Path filepath = Paths.get( "decks/" + "cardlist1" );
 
-			@SuppressWarnings("resource")
-			Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
-
-			// DO NOT HAVE LEADING WHITESPACE!
-			cardStream = cardStream
-				.filter( u -> u.charAt(0) != '#' ) // '#' for comment
-				.sorted();                         // Alphabetical
-
-
-			CardChooser cardChooser = new CardChooser( cardStream );
+			CardChooser cardChooser = new CardChooser( cardList );
 			//JSONCardReader jCardReader = new JSONCardReader();
 
 			while( cardChooser.hasNext() ) {

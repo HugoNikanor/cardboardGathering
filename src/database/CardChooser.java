@@ -1,32 +1,28 @@
 package database;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.stream.Stream;
 
 /**
- * class that converts a Stream<String> into an Iterator<String>
- *
- * This class should maybe be removed
+ * Allows for a String[] to behave like a bad iterrator
+ * @param cardList the String[] that should behave a bit like an iterrator
  */
 public class CardChooser {
 
-	private Iterator<String> it;
-	private Stream<String> cardListStream;
+	private String[] cardList;
+	private int position;
 
-	public CardChooser( Stream<String> cardListStream ) throws IOException {
-		this.cardListStream = cardListStream;
-		it = cardListStream.iterator();
+	public CardChooser( String[] cardList ) throws IOException {
+		this.cardList = cardList;
+		position = 0;
 	}
 	public String next() {
-		if( it.hasNext() ) {
-			return it.next();
+		if( position < cardList.length ) {
+			return cardList[position++];
 		} else {
-			cardListStream.close();
 			return "0";
 		}
 	}
 	public boolean hasNext() {
-		return it.hasNext();
+		return position < cardList.length;
 	}
 }
