@@ -12,8 +12,10 @@ import gamePieces.Battlefield;
 import gamePieces.Card;
 
 import inputObjects.CardDrawObject;
-import inputObjects.CardPlaceObject;
+import inputObjects.CardFocusObject;
+import inputObjects.CardMoveObject;
 import inputObjects.CardPlayedObject;
+import inputObjects.HealthSetObject;
 
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -36,6 +38,7 @@ import javafx.util.Duration;
 import network.Connection;
 
 import inputObjects.NetworkPacket;
+import inputObjects.PoisonSetObject;
 
 public class GameLogic extends Application {
 
@@ -106,7 +109,7 @@ public class GameLogic extends Application {
 
 		//Give a proper card focus
 		try {
-			ownBattlefield.getCards().getCard(0).giveThisFocus();
+			ownBattlefield.getCards().getCard(0).giveFocus();
 		} catch (CardNotFoundException e1) {
 			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
 			//e1.printStackTrace();
@@ -197,9 +200,9 @@ public class GameLogic extends Application {
 						case INFO:
 							System.out.println( "INFO" + System.currentTimeMillis() );
 							break;
-						case CARDPLACE:
-							System.out.println( "CARDPLACE" + System.currentTimeMillis());
-							placeCard( (CardPlaceObject) pendingPackets.get(0).getData() );
+						case CARDMOVE:
+							System.out.println( "CARDMOVE" + System.currentTimeMillis());
+							cardMove( (CardMoveObject) pendingPackets.get(0).getData() );
 							break;
 						case CARDPLAYED:
 							System.out.println( "CARDPLAYED" + System.currentTimeMillis());
@@ -208,6 +211,18 @@ public class GameLogic extends Application {
 						case CARDDRAW:
 							System.out.println( "CARDDRAW" + System.currentTimeMillis() );
 							drawCard( (CardDrawObject) pendingPackets.get(0).getData() );
+							break;
+						case CARDFOCUS:
+							System.out.println( "CARDFOCUS" + System.currentTimeMillis() );
+							focusCard( (CardFocusObject) pendingPackets.get(0).getData() );
+							break;
+						case HEALTHSET:
+							System.out.println( "HEALTHSET" + System.currentTimeMillis() );
+							setHealth( (HealthSetObject) pendingPackets.get(0).getData() );
+							break;
+						case POISONSET:
+							System.out.println( "POISONSET" + System.currentTimeMillis() );
+							setPoison( (PoisonSetObject) pendingPackets.get(0).getData() );
 							break;
 						default:
 							System.err.println( "Somethin is wrong with the data:" );
@@ -231,10 +246,17 @@ public class GameLogic extends Application {
 			pendingPackets.add( data );
 		}
 
-		private void placeCard( CardPlaceObject obj ) {
+		private void cardMove( CardMoveObject obj ) {
 			try {
 				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
-				temp.smoothPlace( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
+				Platform.runLater( new Runnable() {
+					@Override
+					public void run() {
+						temp.smoothPlace( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
+						temp.smoothSetRotate( obj.getRotate(), Connection.UPDATE_TIME );
+						//temp.giveFocus();
+					}
+				});
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
 			}
@@ -282,10 +304,31 @@ public class GameLogic extends Application {
 		private void drawCard( CardDrawObject obj ) {
 			try {
 				otherBattlefield.getPlayer().drawCard( obj.getId() );
+				otherBattlefield.getDeckPane().updateText(Integer.toString(otherBattlefield.getPlayer().getDeckCards().size()));
 			} catch (CardNotFoundException e) {
 				e.printStackTrace();
 			}
 
+		}
+		private void focusCard( CardFocusObject obj ) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						otherBattlefield.getCards().getCard( obj.getId() ).giveFocus();
+					} catch( CardNotFoundException e ){
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		private void setHealth( HealthSetObject obj ) {
+			otherBattlefield.getPlayer().setHealth( obj.getHealth() );
+			otherBattlefield.getLifeCounter().setHealthValue(otherBattlefield.getPlayer().getHealth());
+		}
+		private void setPoison( PoisonSetObject obj ) {
+			otherBattlefield.getPlayer().setPoison( obj.getPoison() );
+			otherBattlefield.getLifeCounter().setPoisonValue(otherBattlefield.getPlayer().getPoison());
 		}
 	}
 
@@ -462,7 +505,11 @@ public class GameLogic extends Application {
 					if( !pressedKeys.contains(KeyCode.SPACE) &&
 						spacePressedBefore ) {
 						System.out.println("space is down");
-						tempCard.smoothRotate(90d);
+							if( tempCard.getRotate() == 0 ) {
+								tempCard.smoothSetRotate( 90d, 500 );
+							} else {
+								tempCard.smoothSetRotate( 0d, 500 );
+							}
 					}
 					spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
 
@@ -479,13 +526,13 @@ public class GameLogic extends Application {
 							if( newCardIndex >= ownBattlefield.getCards().size() ) {
 								newCardIndex = 0;
 							}
-							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
+							ownBattlefield.getCards().get(newCardIndex).giveFocus();
 						} else {
 							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) - 1;
 							if( newCardIndex < 0 ) {
 								newCardIndex = ownBattlefield.getCards().size() - 1;
 							}
-							ownBattlefield.getCards().get(newCardIndex).giveThisFocus();
+							ownBattlefield.getCards().get(newCardIndex).giveFocus();
 						}
 					}
 

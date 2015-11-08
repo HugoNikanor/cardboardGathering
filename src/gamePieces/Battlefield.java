@@ -1,13 +1,9 @@
 package gamePieces;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
-
 import database.JSONCardReader;
+
+import exceptions.CardNotFoundException;
+
 import graphicsObjects.DeckPane;
 import graphicsObjects.LifeCounter;
 
@@ -29,7 +25,7 @@ public class Battlefield extends Pane {
 	public static final double WIDTH = 1920;//1600;
 	public static final double HEIGHT = 474;//395;
 
-	private String cardListFile;
+	//private String cardListFile;
 	//private Connection connection;
 	//private Stream<String> cardStream;
 
@@ -114,6 +110,8 @@ public class Battlefield extends Pane {
 		System.out.println(" ============= ");
 	}
 
+	// This is moved further down the tree
+	/*
 	private Stream<String> setupCardStream() throws IOException {
 		Path filepath = Paths.get( "decks/" + cardListFile );
 
@@ -128,6 +126,21 @@ public class Battlefield extends Pane {
 		//connection.sendPacket( new CardListObject(cardStream) );
 		return cardStream;
 	}
+	*/
+
+	/**
+	 * @return the deckPane
+	 */
+	public DeckPane getDeckPane() {
+		return deckPane;
+	}
+
+	/**
+	 * @return the lifeCounter
+	 */
+	public LifeCounter getLifeCounter() {
+		return lifeCounter;
+	}
 
 	/**
 	 * @return the isReady
@@ -141,26 +154,26 @@ public class Battlefield extends Pane {
 		public void handle(ActionEvent event) {
 			if( event.getSource() == lifeCounter.getHpUpBtn() ) {
 				getPlayer().changeHealth( 1 );
-				lifeCounter.setLifeValue(getPlayer().getHealth());
+				lifeCounter.setHealthValue(getPlayer().getHealth());
 			}
 			if( event.getSource() == lifeCounter.getHpDownBtn() ) {
 				getPlayer().changeHealth( -1 );
-				lifeCounter.setLifeValue(getPlayer().getHealth());
+				lifeCounter.setHealthValue(getPlayer().getHealth());
 			}
 			if( event.getSource() == lifeCounter.getPoisonUpBtn() ) {
-				getPlayer().changePoisonCounters( 1 );
-				lifeCounter.setPoisonValue(getPlayer().getPoisonCounters());
+				getPlayer().changePoison( 1 );
+				lifeCounter.setPoisonValue(getPlayer().getPoison());
 			}
 			if( event.getSource() == lifeCounter.getPoisonDownBtn() ) {
-				getPlayer().changePoisonCounters( -1 );
-				lifeCounter.setPoisonValue(getPlayer().getPoisonCounters());
+				getPlayer().changePoison( -1 );
+				lifeCounter.setPoisonValue(getPlayer().getPoison());
 			}
 			if( event.getSource() == lifeCounter.getResetBtn() ) {
 				getPlayer().setHealth( 20 );
-				getPlayer().setPoisonCounters( 0 );
+				getPlayer().setPoison( 0 );
 
-				lifeCounter.setLifeValue(getPlayer().getHealth());
-				lifeCounter.setPoisonValue(getPlayer().getPoisonCounters());
+				lifeCounter.setHealthValue(getPlayer().getHealth());
+				lifeCounter.setPoisonValue(getPlayer().getPoison());
 			}
 		}
 	}
@@ -168,7 +181,11 @@ public class Battlefield extends Pane {
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			getPlayer().drawCard();
+			try {
+				getPlayer().drawCard();
+			} catch( CardNotFoundException e ) {
+				System.out.println( "Player " + getPlayer() + " trying to draw cards with an empty deck" );
+			}
 			deckPane.updateText(Integer.toString(getPlayer().getDeckCards().size()));
 		}
 	}

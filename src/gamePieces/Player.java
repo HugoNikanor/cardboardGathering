@@ -7,6 +7,8 @@ import graphicsObjects.PlayerBtnPane;
 
 import inputObjects.CardDrawObject;
 import inputObjects.CardPlayedObject;
+import inputObjects.HealthSetObject;
+import inputObjects.PoisonSetObject;
 
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
@@ -113,8 +115,13 @@ public class Player extends Pane {
 						displacement = 0;
 						laps++;
 					}
-					battlefieldCards.get(i).smoothPlace(
+					Card tempCard = battlefieldCards.get(i);
+
+					tempCard.smoothPlace(
 							displacement*10 + 200*laps, displacement*20, 500);
+					tempCard.smoothSetScale(1.0, 500);
+					tempCard.giveFocus();
+
 
 					displacement++;
 				}
@@ -153,25 +160,30 @@ public class Player extends Pane {
 
 	/**
 	 * Moves a card from the deck to the hand
+	 * The exception is probably non fatal
 	 * @throws CardNotFoundException
 	 */
-	public void drawCard() {
-		try {
-			Card tempCard = deckCards.takeNextCard();
-			tempCard.setCurrentLocation(Card.CardLocation.HAND);
-			handCards.add(tempCard);
+	public void drawCard() throws CardNotFoundException {
+		drawCard( deckCards.getNextCard().getCardId() );
+		//try {
+		/*
+		Card tempCard = deckCards.getNextCard();
+		tempCard.setCurrentLocation(Card.CardLocation.HAND);
+		handCards.add(tempCard);
 
-			if( shouldSend ) {
-				System.out.println( "Sending " + tempCard.getCardId() );
-				CardDrawObject tempCDraw = new CardDrawObject( tempCard.getCardId() );
-				connection.sendPacket( tempCDraw );
+		if( shouldSend ) {
+			System.out.println( "Sending " + tempCard.getCardId() );
+			CardDrawObject tempCDraw = new CardDrawObject( tempCard.getCardId() );
+			connection.sendPacket( tempCDraw );
 
-			}
+		}
 
-			tempCard.setTranslateY(handPopupValue);
-			double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
-			tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
-			this.getChildren().add(tempCard);
+		tempCard.setTranslateY(handPopupValue);
+		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
+		tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+		this.getChildren().add(tempCard);
+		*/
+		/*
 		} catch ( CardNotFoundException exception ) {
 			// This should trigger a player lost condition
 			// It's however a non fatal state for the program
@@ -181,10 +193,11 @@ public class Player extends Pane {
 				"): trying to draw card with no cards left in deckn ===="
 			);
 		}
+		*/
 	}
 
 	public void drawCard( long cardId ) throws CardNotFoundException {
-		Card tempCard = deckCards.getCard( cardId );
+		Card tempCard = deckCards.takeCard( cardId );
 		tempCard.setCurrentLocation(Card.CardLocation.HAND);
 		handCards.add(tempCard);
 
@@ -242,11 +255,13 @@ public class Player extends Pane {
 			// This is also set before the code reaches thes point
 			whatCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
 			battlefieldCards.add(handCards.takeCard(whatCard));
-			whatCard.giveThisFocus();
+			//whatCard.giveFocus();
 
 			if( shouldSend ) {
 				connection.sendPacket( new CardPlayedObject( whatCard.getCardId(), whatCard.getTranslateX(), whatCard.getTranslateY() ) );
 			}
+
+			whatCard.setOnMouseEntered( whatCard.getMouseEventHandler() );
 
 			this.rearangeCards();
 		} catch (CardNotFoundException e) {
@@ -320,18 +335,30 @@ public class Player extends Pane {
 	 * Change 'Health' and 'poison count'
 	 */
 	public void setHealth(int health) {
+		if( shouldSend ) {
+			connection.sendPacket( new HealthSetObject( health ) );
+		}
 		this.health = health;
 	}
 
 	public void changeHealth(int change) {
+		if( shouldSend ) {
+			connection.sendPacket( new HealthSetObject( getHealth() + change ) );
+		}
 		this.health += change;
 	}
 
-	public void setPoisonCounters(int poisonCounters) {
+	public void setPoison(int poisonCounters) {
+		if( shouldSend ) {
+			connection.sendPacket( new PoisonSetObject( poisonCounters ) );
+		}
 		this.poisonCounters = poisonCounters;
 	}
 	
-	public void changePoisonCounters(int change) {
+	public void changePoison(int change) {
+		if( shouldSend ) {
+			connection.sendPacket( new PoisonSetObject( getPoison() + change ) );
+		}
 		this.poisonCounters += change;
 	}
 
@@ -380,7 +407,7 @@ public class Player extends Pane {
 	/**
 	 * @return the poisonCounters
 	 */
-	public int getPoisonCounters() {
+	public int getPoison() {
 		return poisonCounters;
 	}
 

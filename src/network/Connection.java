@@ -1,5 +1,6 @@
 package network;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -78,6 +79,9 @@ public class Connection {
 					try {
 						NetworkPacket inPacket = (NetworkPacket) objInStream.readObject();
 						inObjHandler.handleObject( inPacket );
+					} catch( EOFException e ) {
+						System.out.println("other client closed connection");
+						running = false;
 					} catch( StreamCorruptedException e ) { 
 						e.printStackTrace();
 						running = false;

@@ -7,9 +7,11 @@ import javafx.scene.input.ScrollEvent;
 
 import java.util.Objects;
 
-import inputObjects.CardPlaceObject;
+import inputObjects.CardFocusObject;
+import inputObjects.CardMoveObject;
 
 import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -79,6 +81,10 @@ public class Card extends VBox {
 	private int preferdMargin;
 
 	private Connection connection;
+	private boolean shouldSend;
+
+	private MouseEventHandler mouseEventHandler;
+
 
 	public Card(
 		String cardName,
@@ -143,13 +149,15 @@ public class Card extends VBox {
 
 		this.setCursor(Cursor.HAND);
 
-		currentCard = this;
+		//currentCard = this;
+		//this.giveFocus();
 
-		MouseEventHandler mouseEventHandler = new MouseEventHandler();
+		mouseEventHandler = new MouseEventHandler();
 
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
+		//this.setOnMouseEntered ( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
 
@@ -158,6 +166,8 @@ public class Card extends VBox {
 		// if there is a better way to do this, tell me
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
 		containerSizeY = Battlefield.HEIGHT - this.getHeight();
+
+		this.setFocusTraversable( true );
 
 		//System.out.println("debug: end of Card");
 	}
@@ -261,13 +271,15 @@ public class Card extends VBox {
 
 		this.setCursor(Cursor.HAND);
 
-		currentCard = this;
+		//currentCard = this;
+		//this.giveFocus();
 
-		MouseEventHandler mouseEventHandler = new MouseEventHandler();
+		mouseEventHandler = new MouseEventHandler();
 
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
+		//this.setOnMouseEntered ( mouseEventHandler );
 
 		this.setOnScroll( new ScrollEventHandler() );
 
@@ -276,6 +288,8 @@ public class Card extends VBox {
 		// if there is a better way to do this, tell me
 		containerSizeX = Battlefield.WIDTH - this.getWidth();
 		containerSizeY = Battlefield.HEIGHT - this.getHeight();
+
+		this.setFocusTraversable( true );
 
 		//System.out.println( this );
 
@@ -347,6 +361,7 @@ public class Card extends VBox {
 	private class SendDataThread implements Runnable {
 		private double oldX;
 		private double oldY;
+		private double oldRotate;
 
 		@Override
 		public void run() {
@@ -356,13 +371,15 @@ public class Card extends VBox {
 					if( Objects.equals( Card.this.currentLocation, Card.CardLocation.BATTLEFIELD ) ) {
 						double newX = getTranslateX();
 						double newY = getTranslateY();
+						double newRotate = getRotate();
 
-						if( newX != oldX || newY != oldY ) {
+						if( newX != oldX || newY != oldY || newRotate != oldRotate ) {
 							//connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
-							connection.sendPacket( new CardPlaceObject( cardId, newX, newY ) );
+							connection.sendPacket( new CardMoveObject( cardId, newX, newY, newRotate ) );
 						}
 						oldX = getTranslateX();
 						oldY = getTranslateY();
+						oldRotate = getRotate();
 					}
 					try {
 						this.wait( Connection.UPDATE_TIME );
@@ -374,7 +391,7 @@ public class Card extends VBox {
 		}
 	}
 
-	private class MouseEventHandler implements EventHandler<MouseEvent> {
+	public class MouseEventHandler implements EventHandler<MouseEvent> {
 
 		private double mouseInSceneX;
 		private double mouseInSceneY;
@@ -383,8 +400,12 @@ public class Card extends VBox {
 		@Override
 		public void handle(MouseEvent event) {
 			if( currentLocation == CardLocation.BATTLEFIELD ) {
+				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+					System.out.println( "Giving focus" );
+					Card.this.giveFocus();
+				}
 				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-					Card.this.giveThisFocus();
+					//Card.this.giveFocus();
 
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
@@ -399,8 +420,11 @@ public class Card extends VBox {
 				// Rotates the card if it's clicked and not draged
 				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
 					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
-					Card.this.smoothRotate(90d);
-					//Card.this.smoothFlip(-180d);
+					if( getRotate() == 0 ) {
+						smoothSetRotate( 90d, 500 );
+					} else {
+						smoothSetRotate( 0d, 500 );
+					}
 				}
 
 				/*
@@ -445,21 +469,23 @@ public class Card extends VBox {
 	private class ScrollEventHandler implements EventHandler<ScrollEvent> {
 		@Override
 		public void handle(ScrollEvent event) {
-			Card.this.giveThisFocus();
+			//Card.this.giveFocus();
 			/**
 			 * Scales card by a factor 2 when scrolling over it,
 			 * please be avare that if you make the card to small then it 
 			 * dissapears.
 			 *
-			 * TODO This should have a fancy animation,
-			 * It also should have a locked max and min size 
+			 * TODO It also should have a locked max and min size 
 			 */
+
 			if( event.getDeltaY() > 0 ) {
-				setScaleX(getScaleX() * (event.getDeltaY() / 20));
-				setScaleY(getScaleY() * (event.getDeltaY() / 20));
+				//setScaleX(getScaleX() * (event.getDeltaY() / 20));
+				//setScaleY(getScaleY() * (event.getDeltaY() / 20));
+				smoothSetScale( getScaleY() * (event.getDeltaY() / 40), 50 );
 			} else {
-				setScaleX(getScaleX() * (1 / (-1 * event.getDeltaY() / 20)));
-				setScaleY(getScaleY() * (1 / (-1 * event.getDeltaY() / 20)));
+				//setScaleX(getScaleX() * (1 / (-1 * event.getDeltaY() / 20)));
+				//setScaleY(getScaleY() * (1 / (-1 * event.getDeltaY() / 20)));
+				smoothSetScale(getScaleY() * (1 / (-1 * event.getDeltaY() / 40)), 50 );
 			}
 		}
 	}
@@ -467,25 +493,39 @@ public class Card extends VBox {
 	/********************************************
 	 * Functions for manipulating the physical  *
 	 * represontation of the card               *
-	 ********************************************/
+	 ********************************************/ 
 
-	/**
-	 * Rotates the card to 'rotation' if the rotation is 0
-	 * if the rotation isn't 0 the change it to zero
-	 */
-	public void smoothRotate( double rotation ) {
-		RotateTransition rt;
-		if( Card.this.getRotate() == 0 ) {
-			rt = new RotateTransition(Duration.millis(500), Card.this);
-			rt.setByAngle(rotation);
-			rt.play();
-		} else {
-			rt = new RotateTransition(Duration.millis(500), Card.this);
-			rt.setByAngle( -1 * Card.this.getRotate() );
-			rt.play();
-		}
+	public void smoothSetScale( double scale ) {
+		smoothSetScale( scale, 50 );
 	}
+
+	public void smoothSetScale( double scale, double duration ) {
+		ScaleTransition st = new ScaleTransition( Duration.millis(duration), this );
+
+		System.out.println( scale );
+		st.setToX( scale );
+		st.setToY( scale );
+
+		st.play();
+	}
+
+	public void smoothSetRotate( double rotation ) {
+		smoothSetRotate( rotation, 500 );
+	}
+	public void smoothSetRotate( double rotation, int duration ) {
+
+		//this.giveFocus();
+
+		RotateTransition rt;
+		rt = new RotateTransition(Duration.millis(duration), Card.this);
+		rt.setToAngle(rotation);
+		rt.play();
+	}
+	// TODO rewrite this to work as the other smoothMove methods
 	public void smoothFlip( double rotation ) {
+
+		//this.giveFocus();
+
 		RotateTransition rt;
 		if( Card.this.getRotate() == 0 ) {
 			// Rotates the card by 90 degrees
@@ -504,10 +544,21 @@ public class Card extends VBox {
 		}
 	}
 
-	public void giveThisFocus() {
-		currentCard.setId(null);
-		currentCard = this;
-		currentCard.setId("has-focus");
+	public void giveFocus() {
+		if( shouldSend ) {
+			try {
+				currentCard.setId( null );
+			} catch( NullPointerException e ) {
+				// On the first go round nothing have been
+				// asigned to currentCard yet
+			}
+			currentCard = this;
+
+			connection.sendPacket( new CardFocusObject(this.getCardId()) );
+			this.requestFocus();
+			this.setId( "has-focus" );
+		}
+		this.toFront();
 	}
 
 	/**
@@ -520,6 +571,8 @@ public class Card extends VBox {
 	 * Smoothly slides the card along
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
+
+		//this.giveFocus();
 
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
@@ -571,6 +624,8 @@ public class Card extends VBox {
 	 * If the coordinate is out of bounds then it's set to the bound
 	 */
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
+
+		//this.giveFocus();
 
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
@@ -643,7 +698,15 @@ public class Card extends VBox {
 	 */
 	public void setConnection(Connection connection) {
 		new Thread( new SendDataThread() ).start();
+		this.shouldSend = true;
 		this.connection = connection;
+	}
+
+	/**
+	 * @return the mouseEventHandler
+	 */
+	public MouseEventHandler getMouseEventHandler() {
+		return mouseEventHandler;
 	}
 
 	@Override

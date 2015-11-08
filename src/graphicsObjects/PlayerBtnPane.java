@@ -23,6 +23,7 @@ public class PlayerBtnPane extends VBox{
 
 		resetBoardBtn = new ResetBoardBtn(handler);
 		this.getChildren().add(resetBoardBtn);
+
 	}
 
 	/**

@@ -1,17 +1,23 @@
 package inputObjects;
 
-public class CardPlaceObject extends NetworkPacket {
+public class CardMoveObject extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private double posX;
 	private double posY;
+	// rotate is in degrees
+	private double rotate;
 
-	public CardPlaceObject( long cardId, double posX, double posY ) {
+	/**
+	 * This is for sending any form of movement the card has done
+	 */
+	public CardMoveObject( long cardId, double posX, double posY, double rotate ) {
 		this.id = cardId;
 		this.posX = posX;
 		this.posY = posY;
+		this.rotate = rotate;
 		
-		this.dataType = DataTypes.CARDPLACE;
+		this.dataType = DataTypes.CARDMOVE;
 		this.data = this;
 	}
 
@@ -37,4 +43,10 @@ public class CardPlaceObject extends NetworkPacket {
 		return posY;
 	}
 
+	/**
+	 * @return the rotate
+	 */
+	public double getRotate() {
+		return rotate;
+	}
 }

@@ -106,6 +106,16 @@ public class CardCollection extends ArrayList<Card> {
 		return returnCard;
 	}
 
+	public Card takeCard( long id ) throws CardNotFoundException {
+		for( Card temp : this ) {
+			if( Objects.equals( temp.getCardId(), id ) ) {
+				this.remove( temp );
+				return temp;
+			}
+		}
+		throw new CardNotFoundException("No card with that id " + id);
+	}
+
 	public Card getNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
@@ -140,4 +150,5 @@ public class CardCollection extends ArrayList<Card> {
 		}
 		throw new CardNotFoundException("No card with that id " + id);
 	}
+
 }

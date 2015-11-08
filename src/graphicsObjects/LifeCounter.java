@@ -80,9 +80,11 @@ public class LifeCounter extends GridPane {
 		this.setTranslateX(10);
 		// 90 is due to the 3 nodes in the pane all being 30px high
 		this.setTranslateY( Battlefield.HEIGHT - 90 - 10 );
+
+		this.setFocusTraversable( false );
 	}
 
-	public void setLifeValue(int lifeValue) {
+	public void setHealthValue(int lifeValue) {
 		this.lifeText.setText(Integer.toString(lifeValue));
 	}
 

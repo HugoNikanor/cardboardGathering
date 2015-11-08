@@ -11,3 +11,9 @@ Design
 	cards on the oponent battlefield are transparent
 	probably caused by a missmatch between the two
 	constructors for card
+
+Card move
+	When holding down a movement key and taking focus away from the window
+	the card gets stuck in the movement statte
+	Could free it by "shaking" it.
+	Testet with Left-arrow key
