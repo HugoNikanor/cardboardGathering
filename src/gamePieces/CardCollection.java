@@ -26,15 +26,13 @@ public class CardCollection extends ArrayList<Card> {
 	 * Create a collection with cards in it to start
 	 * @param jCardReader where the cards should be read from
 	 */
-	public CardCollection( JSONCardReader jCardReader, Integer cardIdCounter, String[] cardList ) {
-		//System.out.println("Debug: start of cardCollection");
+	public CardCollection( JSONCardReader jCardReader, int cardIdCounter, String[] cardList ) {
 		try {
-
 			CardChooser cardChooser = new CardChooser( cardList );
-			//JSONCardReader jCardReader = new JSONCardReader();
 
 			while( cardChooser.hasNext() ) {
-				this.add( jCardReader.get( cardChooser.next(), cardIdCounter ) );
+				System.out.println("cardId = " + cardIdCounter);
+				this.add( jCardReader.get( cardChooser.next(), cardIdCounter++ ) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

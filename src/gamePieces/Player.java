@@ -82,7 +82,7 @@ public class Player extends Pane {
 	 * Be aware that this doen't initiate any of the JavaFX functions
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
-		cardIdCounter = new Integer(0);
+		cardIdCounter = 0;
 		deckCards        = new CardCollection( jCardReader, cardIdCounter, cardList );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();

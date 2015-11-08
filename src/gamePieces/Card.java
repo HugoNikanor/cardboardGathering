@@ -175,7 +175,7 @@ public class Card extends VBox {
 	/**
 	 * Used to allow for copying a card
 	 */
-	public Card( Card cardToCopy, Integer cardId ) {
+	public Card( Card cardToCopy, int cardId ) {
 		//System.out.println("debug: start of Card");
 		//cardId = CARD_ID_COUNTER_COPY++;
 		this.cardId = cardId;
