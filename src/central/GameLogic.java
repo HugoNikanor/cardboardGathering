@@ -12,7 +12,6 @@ import gamePieces.Battlefield;
 import gamePieces.Card;
 
 import inputObjects.CardDrawObject;
-import inputObjects.CardMoveObject;
 import inputObjects.CardPlaceObject;
 import inputObjects.CardPlayedObject;
 
@@ -198,10 +197,6 @@ public class GameLogic extends Application {
 						case INFO:
 							System.out.println( "INFO" + System.currentTimeMillis() );
 							break;
-						case CARDMOVE:
-							System.out.println( "CARDMOVE" + System.currentTimeMillis() );
-							moveCard( (CardMoveObject) pendingPackets.get(0).getData() );
-							break;
 						case CARDPLACE:
 							System.out.println( "CARDPLACE" + System.currentTimeMillis());
 							placeCard( (CardPlaceObject) pendingPackets.get(0).getData() );
@@ -236,18 +231,10 @@ public class GameLogic extends Application {
 			pendingPackets.add( data );
 		}
 
-		private void moveCard( CardMoveObject obj ) {
-			try {
-				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
-				temp.smoothMove( obj.getChangeX(), obj.getChangeY(), Connection.UPDATE_TIME );
-			} catch( CardNotFoundException e ) {
-				e.printStackTrace();
-			}
-		}
 		private void placeCard( CardPlaceObject obj ) {
 			try {
 				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
-				temp.smoothMove( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
+				temp.smoothPlace( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
 			}

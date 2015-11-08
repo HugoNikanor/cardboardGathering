@@ -7,7 +7,7 @@ import javafx.scene.input.ScrollEvent;
 
 import java.util.Objects;
 
-import inputObjects.CardMoveObject;
+import inputObjects.CardPlaceObject;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -354,11 +354,12 @@ public class Card extends VBox {
 				while( true ){
 					// Only send move data if it's sencible to do so
 					if( Objects.equals( Card.this.currentLocation, Card.CardLocation.BATTLEFIELD ) ) {
-						double changeX = getTranslateX() - oldX;
-						double changeY = getTranslateY() - oldY;
+						double newX = getTranslateX();
+						double newY = getTranslateY();
 
-						if( changeX != 0 || changeY != 0 ) {
-							connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+						if( newX != oldX || newY != oldY ) {
+							//connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
+							connection.sendPacket( new CardPlaceObject( cardId, newX, newY ) );
 						}
 						oldX = getTranslateX();
 						oldY = getTranslateY();
