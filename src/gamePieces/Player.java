@@ -4,12 +4,6 @@ import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
 import graphicsObjects.PlayerBtnPane;
-
-import inputObjects.CardDrawObject;
-import inputObjects.CardPlayedObject;
-import inputObjects.HealthSetObject;
-import inputObjects.PoisonSetObject;
-
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +12,10 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import network.Connection;
+import serverPackets.CardDrawPacket;
+import serverPackets.CardPlayedPacket;
+import serverPackets.HealthSetPacket;
+import serverPackets.PoisonSetPacket;
 
 public class Player extends Pane {
 	private CardCollection deckCards;
@@ -72,7 +70,6 @@ public class Player extends Pane {
 		this.getStyleClass().add("cards-in-hand-pane");
 
 		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
-		//this.getChildren().add(new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler()));
 		this.getChildren().add(playerBtnPane);
 
 	}
@@ -210,7 +207,7 @@ public class Player extends Pane {
 
 		if( shouldSend ) {
 			System.out.println( "Sending " + tempCard.getCardId() );
-			connection.sendPacket( new CardDrawObject( tempCard.getCardId() ) );
+			connection.sendPacket( new CardDrawPacket( tempCard.getCardId() ) );
 		}
 
 		tempCard.setTranslateY(handPopupValue);
@@ -265,7 +262,7 @@ public class Player extends Pane {
 			//whatCard.giveFocus();
 
 			if( shouldSend ) {
-				connection.sendPacket( new CardPlayedObject( whatCard.getCardId(), whatCard.getTranslateX(), whatCard.getTranslateY() ) );
+				connection.sendPacket( new CardPlayedPacket( whatCard.getCardId(), whatCard.getTranslateX(), whatCard.getTranslateY() ) );
 			}
 
 			whatCard.setOnMouseEntered( whatCard.getMouseEventHandler() );
@@ -343,28 +340,28 @@ public class Player extends Pane {
 	 */
 	public void setHealth(int health) {
 		if( shouldSend ) {
-			connection.sendPacket( new HealthSetObject( health ) );
+			connection.sendPacket( new HealthSetPacket( health ) );
 		}
 		this.health = health;
 	}
 
 	public void changeHealth(int change) {
 		if( shouldSend ) {
-			connection.sendPacket( new HealthSetObject( getHealth() + change ) );
+			connection.sendPacket( new HealthSetPacket( getHealth() + change ) );
 		}
 		this.health += change;
 	}
 
 	public void setPoison(int poisonCounters) {
 		if( shouldSend ) {
-			connection.sendPacket( new PoisonSetObject( poisonCounters ) );
+			connection.sendPacket( new PoisonSetPacket( poisonCounters ) );
 		}
 		this.poisonCounters = poisonCounters;
 	}
 	
 	public void changePoison(int change) {
 		if( shouldSend ) {
-			connection.sendPacket( new PoisonSetObject( getPoison() + change ) );
+			connection.sendPacket( new PoisonSetPacket( getPoison() + change ) );
 		}
 		this.poisonCounters += change;
 	}

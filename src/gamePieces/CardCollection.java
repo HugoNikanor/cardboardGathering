@@ -13,6 +13,7 @@ import exceptions.CardNotFoundException;
 /**
  * A collection of cards
  * Can hold about any number of cards
+ * extends ArrayList
  */
 public class CardCollection extends ArrayList<Card> {
 	private static final long serialVersionUID = 1L;
@@ -25,13 +26,15 @@ public class CardCollection extends ArrayList<Card> {
 	/**
 	 * Create a collection with cards in it to start
 	 * @param jCardReader where the cards should be read from
+	 * @param cardIdCounter what id the next created card should have, make sure to incarment every time it is used
+	 * @param cardList String[] sent to the cardChooser to allow it to be read as a bad iterrator
 	 */
 	public CardCollection( JSONCardReader jCardReader, int cardIdCounter, String[] cardList ) {
 		try {
 			CardChooser cardChooser = new CardChooser( cardList );
 
+			// Get all cards from the jCardChooser
 			while( cardChooser.hasNext() ) {
-				System.out.println(this.hashCode() + "cardId = " + cardIdCounter);
 				this.add( jCardReader.get( cardChooser.next(), cardIdCounter++ ) );
 			}
 		} catch (IOException e) {
@@ -40,12 +43,13 @@ public class CardCollection extends ArrayList<Card> {
 			e.printStackTrace();
 		}
 
-		//TODO should this be set here?
+		//TODO should this be done here?
 		this.shuffleCards();
-
-		//System.out.println("Debug: end of cardCollection");
 	}
 
+	/**
+	 * Places the cards in the collection in a random order
+	 */
 	public void shuffleCards() {
 		Random rand = new Random();
 		Card tempCard;
@@ -60,8 +64,10 @@ public class CardCollection extends ArrayList<Card> {
 	}
 
 	/**
-	 * the 'Take' methods removes the card from the collection,
-	 * the 'Get' are comparable to ArrayList.get, except with a different error
+	 * Take (get and remove) the next card in the collection
+	 * @return the next card in the collection
+	 * @throws CardNotFoundException if there are no more cards in the collection
+	 * @see getNextCard()
 	 */
 	public Card takeNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
@@ -72,6 +78,13 @@ public class CardCollection extends ArrayList<Card> {
 		return returnCard;
 	}
 
+	/**
+	 * Take (get and remove) the card at cardIndex
+	 * @return the card it index cardIndex
+	 * @param cardIndex position of card to take
+	 * @throws CardNotFoundException if there is no card with that index
+	 * @see getCard(int cardIndex)
+	 */
 	public Card takeCard(int cardIndex) throws CardNotFoundException {
 		Card returnCard;
 		try {
@@ -83,27 +96,45 @@ public class CardCollection extends ArrayList<Card> {
 		return returnCard;
 	}
 
+	/**
+	 * Take (get and remove) the chosen card
+	 * @return The card given as indata, but it is also removed from the collection
+	 * @param card what card to take
+	 * @throws CardNotFoundException if the card is not in the collection
+	 */
 	public Card takeCard(Card card) throws CardNotFoundException {
-		int indexOfCard = this.indexOf(card);
+		int cardIndex = this.indexOf(card);
 		// ArrayList.indexOf returns '-1' if there is no such element
-		if( indexOfCard == -1 ) {
+		if( cardIndex == -1 ) {
 			throw new CardNotFoundException("No such card in collection");
 		}
-		Card returnCard = this.get(indexOfCard);
+		Card returnCard = this.get(cardIndex);
 		this.remove(this.indexOf(card));
 		return returnCard;
 	}
 
-	public Card takeCard( long id ) throws CardNotFoundException {
+	/**
+	 * Take (get and remove) the card with the set cardId
+	 * @return the card with the choosen cardId
+	 * @param cardId the id of the card, note that the id is gotten by Card.getCardId() and not Card.getId()
+	 * @throws CardNotFoundException if there is no card with that id
+	 * @see getCard(long cardId)
+	 */
+	public Card takeCard( long cardId ) throws CardNotFoundException {
 		for( Card temp : this ) {
-			if( Objects.equals( temp.getCardId(), id ) ) {
+			if( Objects.equals( temp.getCardId(), cardId ) ) {
 				this.remove( temp );
 				return temp;
 			}
 		}
-		throw new CardNotFoundException("No card with that id " + id);
+		throw new CardNotFoundException("No card with that id " + cardId);
 	}
 
+	/**
+	 * @return The next card in the collection
+	 * @throws CardNotFoundException if there are no more cards in the collection
+	 * @see takeNextCard()
+	 */
 	public Card getNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
@@ -112,24 +143,42 @@ public class CardCollection extends ArrayList<Card> {
 		return returnCard;
 	}
 
-	public Card getCard(int indexOfCard) throws CardNotFoundException {
-		if( indexOfCard < 0 || indexOfCard >= this.size() ) {
+	/**
+	 * @return the card it index cardIndex
+	 * @param cardIndex position of card to take
+	 * @throws CardNotFoundException if there is no card with that index
+	 * @see getCard(int cardIndex)
+	 */
+	public Card getCard(int cardIndex) throws CardNotFoundException {
+		if( cardIndex < 0 || cardIndex >= this.size() ) {
 			throw new CardNotFoundException("Index out of bounds");
 		}
-		Card returnCard = this.get(indexOfCard);
+		Card returnCard = this.get(cardIndex);
 		return returnCard;
 	}
 
+	/**
+	 * Checks if the card is present in the collection
+	 * @return the card entered
+	 * @param card card to check if it's in the collection
+	 * @throws CardNotFoundException if the card is not in the collection
+	 * @see takeCard(Card card)
+	 */
 	public Card getCard( Card card ) throws CardNotFoundException {
-		int indexOfCard = this.indexOf(card);
-		// ArrayList.indexOf returns '-1' if there is no such element
-		if( indexOfCard == -1 ) {
+		int cardIndex = this.indexOf(card);
+		if( cardIndex == -1 ) {
 			throw new CardNotFoundException("No such card in collection");
 		}
-		Card returnCard = this.get(indexOfCard);
+		Card returnCard = this.get(cardIndex);
 		return returnCard;
 	}
 
+	/**
+	 * @return the card with the choosen cardId
+	 * @param cardId the id of the card, note that the id is gotten by Card.getCardId() and not Card.getId()
+	 * @throws CardNotFoundException if there is no card with that id
+	 * @see takeCard(long cardId)
+	 */
 	public Card getCard( long id ) throws CardNotFoundException {
 		for( Card temp : this ) {
 			if( Objects.equals( temp.getCardId(), id ) ) {

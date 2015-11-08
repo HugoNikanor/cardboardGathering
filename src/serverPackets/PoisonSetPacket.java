@@ -1,11 +1,11 @@
-package inputObjects;
+package serverPackets;
 
-public class PoisonSetObject extends NetworkPacket {
+public class PoisonSetPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 
 	private int poison;
 
-	public PoisonSetObject( int poison ) {
+	public PoisonSetPacket( int poison ) {
 		this.poison = poison;
 
 		this.dataType = DataTypes.POISONSET;

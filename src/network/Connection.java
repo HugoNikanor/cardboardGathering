@@ -9,16 +9,19 @@ import java.io.StreamCorruptedException;
 import java.net.Socket;
 
 import central.GameLogic;
+import serverPackets.NetworkPacket;
 
-import inputObjects.NetworkPacket;
-
+/**
+ * "Talks" to the network
+ * Both responsible for sending and receiving data
+ * but doesn't do anything with that data more than passing it along
+ */
 public class Connection {
 
-	//How many ms there should be between sending data to the server
+	/**
+	 * How many milliseconds there should be between packets
+	 */
 	public static int UPDATE_TIME = 100;
-
-	//private String ip = "127.0.0.1";
-	private String ip = "83.252.142.146";
 
 	private Socket socket;
 	private ObjectInputStream objInStream;
@@ -26,13 +29,29 @@ public class Connection {
 
 	private GameLogic.InputObjectHandler inObjHandler;
 
+	/**
+	 * If the client is connected to the server
+	 * used to check if the client should close
+	 */
 	private boolean connected;
 
-	public Connection( GameLogic.InputObjectHandler inputObjectHandler ) {
-		this( inputObjectHandler, 23732 );
+	/**
+	 * Initiate the connection on the default port
+	 * @param inputObjectHandler the class that takes care of the inputs
+	 * @param ip the ip address of the server
+	 */
+	public Connection( GameLogic.InputObjectHandler inputObjectHandler, String ip ) {
+		this( inputObjectHandler, ip, 23732 );
 	}
 
-	public Connection( GameLogic.InputObjectHandler inputObjectHandler, int port ) {
+	/**
+	 * Initiates the connection
+	 * Sets up a few threads and make sure that the other client answers
+	 * @param inputObjectHandler the class that takes care of the packets gotten over the network
+	 * @param ip the servers ip address
+	 * @param port the port that the server is on
+	 */
+	public Connection( GameLogic.InputObjectHandler inputObjectHandler, String ip, int port ) {
 		this.inObjHandler = inputObjectHandler;
 
 		connected = false;
@@ -70,6 +89,10 @@ public class Connection {
 
 	}
 
+
+	/**
+	 * Treads which listens for incoming packets over the network
+	 */
 	private class NetworkObjectInputThread implements Runnable {
 		@Override
 		public void run() {
@@ -102,10 +125,15 @@ public class Connection {
 		}
 	}
 
+	/**
+	 * Send a packet over the network is synchronized since only one packet can
+	 * be handled at the other side at a time
+	 *
+	 * @param networkPacket
+	 *            what should be sent over the network
+	 * @see serverPackets.NetworkPacket
+	 */
 	public synchronized void sendPacket( NetworkPacket networkPacket ) {
-		// Synchronized makes sure that only one object can be sent at a time.
-		// This is important since only one object can be read at a time in
-		// network.Connection$NetworkObjectInputThread
 		try {
 			System.out.println( networkPacket );
 			objOutStream.writeObject( networkPacket );

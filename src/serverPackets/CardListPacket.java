@@ -1,11 +1,11 @@
-package inputObjects;
+package serverPackets;
 
-public class CardListObject extends NetworkPacket {
+public class CardListPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 
 	private String[] cardList;
 
-	public CardListObject( String[] cardList ) {
+	public CardListPacket( String[] cardList ) {
 		this.cardList = cardList;
 
 		this.dataType = DataTypes.CARDLIST;

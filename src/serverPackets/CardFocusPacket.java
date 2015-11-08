@@ -1,10 +1,10 @@
-package inputObjects;
+package serverPackets;
 
-public class CardFocusObject extends NetworkPacket {
+public class CardFocusPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 	private long id;
 
-	public CardFocusObject( long id ) {
+	public CardFocusPacket( long id ) {
 		this.id = id;
 
 		this.dataType = DataTypes.CARDFOCUS;

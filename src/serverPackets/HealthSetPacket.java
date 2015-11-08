@@ -1,11 +1,11 @@
-package inputObjects;
+package serverPackets;
 
-public class HealthSetObject extends NetworkPacket {
+public class HealthSetPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 
 	private int health;
 
-	public HealthSetObject( int health ) {
+	public HealthSetPacket( int health ) {
 		this.health = health;
 
 		this.dataType = DataTypes.HEALTHSET;

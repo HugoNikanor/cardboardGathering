@@ -1,6 +1,6 @@
-package inputObjects;
+package serverPackets;
 
-public class CardMoveObject extends NetworkPacket {
+public class CardMovePacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private double posX;
@@ -11,7 +11,7 @@ public class CardMoveObject extends NetworkPacket {
 	/**
 	 * This is for sending any form of movement the card has done
 	 */
-	public CardMoveObject( long cardId, double posX, double posY, double rotate ) {
+	public CardMovePacket( long cardId, double posX, double posY, double rotate ) {
 		this.id = cardId;
 		this.posX = posX;
 		this.posY = posY;

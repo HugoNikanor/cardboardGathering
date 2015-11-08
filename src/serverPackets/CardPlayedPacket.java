@@ -1,13 +1,13 @@
-package inputObjects;
+package serverPackets;
 
-public class CardPlayedObject extends NetworkPacket {
+public class CardPlayedPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 
 	private long id;
 	private double posX;
 	private double posY;
 
-	public CardPlayedObject( long cardId, double posX, double posY ) {
+	public CardPlayedPacket( long cardId, double posX, double posY ) {
 		this.id = cardId;
 		this.posX = posX;
 		this.posY = posY;

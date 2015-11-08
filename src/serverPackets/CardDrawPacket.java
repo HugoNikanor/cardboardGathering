@@ -1,11 +1,11 @@
-package inputObjects;
+package serverPackets;
 
-public class CardDrawObject extends NetworkPacket {
+public class CardDrawPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 
 	private long id;
 	
-	public CardDrawObject( long cardId ) {
+	public CardDrawPacket( long cardId ) {
 		this.id = cardId;
 		this.dataType = DataTypes.CARDDRAW;
 		this.data = this;

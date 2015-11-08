@@ -16,14 +16,22 @@ import exceptions.CardNotFoundException;
 
 import gamePieces.Card;
 
+/**
+ * TODO see if some form of CardFactory could work better
+ * A class for reading the JSon files
+ * and writing their data to card obects
+ * @see gamePieces.Card
+ */
 public class JSONCardReader {
 
+	/**
+	 * A list of all cards
+	 * used as a template to copy the cards to use of of
+	 */
 	private ArrayList<Card> cards;
-	//private ArrayList<JSONObject> cardBufferList;
 
 	/**
-	 * Loads all possible cards into memory,
-	 * the other method allows to access the data
+	 * Loads all possible cards into memory
 	 */
 	public JSONCardReader() {
 		cards = new ArrayList<Card>();
@@ -63,6 +71,7 @@ public class JSONCardReader {
 					System.out.println(tokenerList.get(i).toString());
 				}
 			}
+
 			/*
 			 * Puts the card objects into a regular arraylist
 			 */
@@ -214,7 +223,7 @@ public class JSONCardReader {
 
 	/**
 	 * @return the card with the desired name
-	 * @param cardName get the card with said name from the json files
+	 * @param cardName get a usable version of the wanted card
 	 * @param cardId what id the returned card sholud have, make sure to incrament the value when calling the method
 	 * @throws cardNotFoundException if there is no card with cardName in the json files
 	 */
