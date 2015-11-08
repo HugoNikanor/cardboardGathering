@@ -113,14 +113,14 @@ public class GameLogic extends Application {
 			cardStream.close();
 
 
-			//connection.sendPacket( new CardListObject( cardList ) );
+			connection.sendPacket( new CardListObject( cardList ) );
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
 
 		ownBattlefield = new Battlefield( cardPlayHandler, connection, jCardReader, cardList );
 		Card.resetCardIdCounter();
-		otherBattlefield = new Battlefield( jCardReader, cardList );
+		//otherBattlefield = new Battlefield( jCardReader, cardList );
 
 
 		/*
@@ -135,7 +135,6 @@ public class GameLogic extends Application {
 		*/
 
 		// Waits for the other battlefield to get ready
-		/*
 		while( true ) {
 			try {
 				if( otherBattlefield.isReady() ) {
@@ -150,7 +149,6 @@ public class GameLogic extends Application {
 				}
 			} 
 		}
-		*/
 
 		// Adds the initial cards to the graphical display
 		for( Card ownTemp : ownBattlefield.getCards() ) {
