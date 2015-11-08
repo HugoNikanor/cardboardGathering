@@ -42,9 +42,9 @@ public class Player extends Pane {
 	/**
 	 * Use this for the local player
 	 */
-	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection ) {
+	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
 		//this( cardListStream );
-		this( jCardReader );
+		this( jCardReader, cardList );
 
 		this.connection = connection;
 		shouldSend = true;
@@ -75,8 +75,8 @@ public class Player extends Pane {
 	 * Use this directly for the remote player
 	 * Be aware that this doen't initiate any of the JavaFX functions
 	 */
-	public Player( JSONCardReader jCardReader ) {
-		deckCards        = new CardCollection( jCardReader );
+	public Player( JSONCardReader jCardReader, String[] cardList ) {
+		deckCards        = new CardCollection( jCardReader, cardList );
 		handCards        = new CardCollection();
 		battlefieldCards = new CardCollection();
 		graveyardCards   = new CardCollection();

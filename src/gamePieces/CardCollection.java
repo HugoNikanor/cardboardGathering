@@ -15,30 +15,36 @@ import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
+/**
+ * A collection of cards
+ * Can hold about any number of cards
+ */
 public class CardCollection extends ArrayList<Card> {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Create an empty collection
+	 */
 	public CardCollection() { }
 
-	/*
-	 * cardList should be a string pointing to the name of a preprepared text 
-	 * file containing a list of all cards desired. This shold be sent to the 
-	 * card fectcher, which gets them from the database
+	/**
+	 * Create a collection with cards in it to start
+	 * @param jCardReader where the cards should be read from
 	 */
-	//public CardCollection( Stream<String> cardListStream ) {
-	public CardCollection( JSONCardReader jCardReader ) {
+	public CardCollection( JSONCardReader jCardReader, String[] cardList ) {
 		//System.out.println("Debug: start of cardCollection");
 		try {
 			//TODO change this by one gotten over the network
-				Path filepath = Paths.get( "decks/" + "cardlist1" );
+			Path filepath = Paths.get( "decks/" + "cardlist1" );
 
-				@SuppressWarnings("resource")
-				Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
+			@SuppressWarnings("resource")
+			Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
 
-				// DO NOT HAVE LEADING WHITESPACE!
-				cardStream = cardStream
-					.filter( u -> u.charAt(0) != '#' ) // '#' for comment
-					.sorted();                         // Alphabetical
+			// DO NOT HAVE LEADING WHITESPACE!
+			cardStream = cardStream
+				.filter( u -> u.charAt(0) != '#' ) // '#' for comment
+				.sorted();                         // Alphabetical
+
 
 			CardChooser cardChooser = new CardChooser( cardStream );
 			//JSONCardReader jCardReader = new JSONCardReader();

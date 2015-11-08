@@ -1,11 +1,20 @@
 package central;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Stream;
 
 import database.JSONCardReader;
+
 import exceptions.CardNotFoundException;
 
 import gamePieces.Battlefield;
@@ -13,6 +22,7 @@ import gamePieces.Card;
 
 import inputObjects.CardDrawObject;
 import inputObjects.CardFocusObject;
+import inputObjects.CardListObject;
 import inputObjects.CardMoveObject;
 import inputObjects.CardPlayedObject;
 import inputObjects.HealthSetObject;
@@ -67,6 +77,8 @@ public class GameLogic extends Application {
 	private Connection connection;
 	private InputObjectHandler inputObjectHandler;
 
+	private JSONCardReader jCardReader;
+
 	public GameLogic() {
 
 		// Initiates the eventHandlers
@@ -78,18 +90,40 @@ public class GameLogic extends Application {
 		inputObjectHandler = new InputObjectHandler();
 		connection = new Connection( inputObjectHandler );
 
-		JSONCardReader jCardReader = new JSONCardReader();
+		jCardReader = new JSONCardReader();
 
-		ownBattlefield = new Battlefield( "cardlist1", cardPlayHandler, connection, jCardReader );
-
-		Card.resetCardIdCounter();
-
+		Properties prop = new Properties();
 		try {
-			otherBattlefield = new Battlefield( jCardReader );
-		} catch( ClassNotFoundException e ) {
-			Platform.exit();
+			FileInputStream propInStream = new FileInputStream("settings/settings.properties");
+			prop.load(propInStream);
+		} catch( IOException ioe ) {
+			ioe.printStackTrace();
+		}
+		String cardListFile = prop.getProperty("cardlist", "DefaultCardlist");
+
+		Path filepath = Paths.get( "decks/" + cardListFile );
+		String[] cardList = {};
+		try {
+			// DO NOT HAVE LEADING WHITESPACE!
+			Stream<String> cardStream = Files.lines(filepath, StandardCharsets.UTF_8);
+			cardList = cardStream
+				.filter( u -> u.charAt(0) != '#' ) // '#' for comment
+				.sorted()                          // Alphabetical
+				.toArray(String[]::new);           // Make it an array
+			cardStream.close();
+
+
+			//connection.sendPacket( new CardListObject( cardList ) );
+		} catch (IOException e2) {
+			e2.printStackTrace();
 		}
 
+		ownBattlefield = new Battlefield( cardPlayHandler, connection, jCardReader, cardList );
+		Card.resetCardIdCounter();
+		otherBattlefield = new Battlefield( jCardReader, cardList );
+
+
+		/*
 		while( !otherBattlefield.isReady() ) {
 			System.out.println( "waiting for other battlefield to be ready" );
 			try {
@@ -98,6 +132,25 @@ public class GameLogic extends Application {
 				e.printStackTrace();
 			}
 		}
+		*/
+
+		// Waits for the other battlefield to get ready
+		/*
+		while( true ) {
+			try {
+				if( otherBattlefield.isReady() ) {
+					break;
+				}
+			} catch( NullPointerException npe ) {
+				System.out.println( "not ready yet..." );
+				try {
+					Thread.sleep( 2000 );
+				} catch( InterruptedException ie ) {
+					ie.printStackTrace();
+				}
+			} 
+		}
+		*/
 
 		// Adds the initial cards to the graphical display
 		for( Card ownTemp : ownBattlefield.getCards() ) {
@@ -224,6 +277,10 @@ public class GameLogic extends Application {
 							System.out.println( "POISONSET" + System.currentTimeMillis() );
 							setPoison( (PoisonSetObject) pendingPackets.get(0).getData() );
 							break;
+						case CARDLIST:
+							System.out.println( "CARDLIST" + System.currentTimeMillis() );
+							setCardList( (CardListObject) pendingPackets.get(0).getData() );
+							break;
 						default:
 							System.err.println( "Somethin is wrong with the data:" );
 							System.err.println( pendingPackets.get(0).toString() );
@@ -329,6 +386,9 @@ public class GameLogic extends Application {
 		private void setPoison( PoisonSetObject obj ) {
 			otherBattlefield.getPlayer().setPoison( obj.getPoison() );
 			otherBattlefield.getLifeCounter().setPoisonValue(otherBattlefield.getPlayer().getPoison());
+		}
+		private void setCardList( CardListObject obj ) {
+			otherBattlefield = new Battlefield( jCardReader, obj.getCardList() );
 		}
 	}
 

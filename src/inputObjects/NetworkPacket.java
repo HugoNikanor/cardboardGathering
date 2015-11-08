@@ -16,7 +16,8 @@ public class NetworkPacket implements Serializable {
 		CARDDRAW,
 		CARDFOCUS,
 		HEALTHSET,
-		POISONSET
+		POISONSET,
+		CARDLIST
 	}
 
 	protected DataTypes dataType;

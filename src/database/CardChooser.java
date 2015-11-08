@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+/**
+ * class that converts a Stream<String> into an Iterator<String>
+ *
+ * This class should maybe be removed
+ */
 public class CardChooser {
 
 	private Iterator<String> it;
