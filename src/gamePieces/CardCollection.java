@@ -31,7 +31,7 @@ public class CardCollection extends ArrayList<Card> {
 			CardChooser cardChooser = new CardChooser( cardList );
 
 			while( cardChooser.hasNext() ) {
-				System.out.println("cardId = " + cardIdCounter);
+				System.out.println(this.hashCode() + "cardId = " + cardIdCounter);
 				this.add( jCardReader.get( cardChooser.next(), cardIdCounter++ ) );
 			}
 		} catch (IOException e) {
