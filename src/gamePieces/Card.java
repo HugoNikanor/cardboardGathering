@@ -289,21 +289,21 @@ public class Card extends StackPane {
 		@Override
 		public void handle(MouseEvent event) {
 			if( currentLocation == CardLocation.BATTLEFIELD ) {
+
+				// Give focus on hover
 				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-					System.out.println( "Giving focus" );
 					Card.this.giveFocus();
 				}
-				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-					//Card.this.giveFocus();
 
+				// Used to get a difference in mouse position
+				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
-
-					Card.this.setCursor(Cursor.MOVE);
 				}
 
-				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-					Card.this.setCursor(Cursor.HAND);
+				// Set the cursor back to normal when not draging any more
+				if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+					Card.this.setCursor( Cursor.HAND );
 				}
 
 				// Rotates the card if it's clicked and not draged
@@ -316,16 +316,9 @@ public class Card extends StackPane {
 					}
 				}
 
-				/*
-				if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-					Card.this.setCursor(Cursor.HAND);
-				}
-				*/
-
-				/**
-				 * Moves the card when it's draged by the mouse
-				 */
+				// Moves the card when it's draged by the mouse
 				if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
+					Card.this.setCursor(Cursor.MOVE);
 					double xChange = event.getSceneX() - this.mouseInSceneX;
 					double yChange = event.getSceneY() - this.mouseInSceneY;
 
@@ -348,41 +341,30 @@ public class Card extends StackPane {
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
 				}
-
 				this.lastEvent = event.getEventType();
-			} // end of BATTLEFIELD listeners
-
-		}
-	}
-
-	private class ScrollEventHandler implements EventHandler<ScrollEvent> {
-		@Override
-		public void handle(ScrollEvent event) {
-			//Card.this.giveFocus();
-			/**
-			 * Scales card by a factor 2 when scrolling over it,
-			 * please be avare that if you make the card to small then it 
-			 * dissapears.
-			 *
-			 * TODO It also should have a locked max and min size 
-			 */
-
-			if( event.getDeltaY() > 0 ) {
-				//setScaleX(getScaleX() * (event.getDeltaY() / 20));
-				//setScaleY(getScaleY() * (event.getDeltaY() / 20));
-				smoothSetScale( getScaleY() * (event.getDeltaY() / 40), 50 );
-			} else {
-				//setScaleX(getScaleX() * (1 / (-1 * event.getDeltaY() / 20)));
-				//setScaleY(getScaleY() * (1 / (-1 * event.getDeltaY() / 20)));
-				smoothSetScale(getScaleY() * (1 / (-1 * event.getDeltaY() / 40)), 50 );
 			}
 		}
 	}
 
-	/********************************************
-	 * Functions for manipulating the physical  *
-	 * represontation of the card               *
-	 ********************************************/ 
+	/**
+	 * Zooms the card between two levels when the card is scrolled
+	 * over
+	 */
+	private class ScrollEventHandler implements EventHandler<ScrollEvent> {
+
+		@Override
+		public void handle(ScrollEvent event) {
+			if( event.getDeltaY() > 0 )
+				smoothSetScale( 2.5, 50 );
+			else
+				smoothSetScale( 1, 50 );
+		}
+	}
+
+	/*
+	 * Functions for manipulating the physical
+	 * represontation of the card
+	 */
 
 	public void smoothSetScale( double scale ) {
 		smoothSetScale( scale, 50 );
@@ -402,9 +384,6 @@ public class Card extends StackPane {
 		smoothSetRotate( rotation, 500 );
 	}
 	public void smoothSetRotate( double rotation, int duration ) {
-
-		//this.giveFocus();
-
 		RotateTransition rt;
 		rt = new RotateTransition(Duration.millis(duration), Card.this);
 		rt.setToAngle(rotation);
@@ -412,9 +391,6 @@ public class Card extends StackPane {
 	}
 	// TODO rewrite this to work as the other smoothMove methods
 	public void smoothFlip( double rotation ) {
-
-		//this.giveFocus();
-
 		RotateTransition rt;
 		if( Card.this.getRotate() == 0 ) {
 			// Rotates the card by 90 degrees
@@ -460,9 +436,6 @@ public class Card extends StackPane {
 	 * Smoothly slides the card along
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
-
-		//this.giveFocus();
-
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
 
@@ -508,14 +481,12 @@ public class Card extends StackPane {
 	public void smoothPlace( double posX, double posY ) {
 		smoothPlace( posX, posY, 200 );
 	}
+
 	/**
 	 * Smoothly moves the card to the set coordinate
 	 * If the coordinate is out of bounds then it's set to the bound
 	 */
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
-
-		//this.giveFocus();
-
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
 
