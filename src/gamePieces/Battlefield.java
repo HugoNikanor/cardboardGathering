@@ -2,13 +2,6 @@ package gamePieces;
 
 import database.JSONCardReader;
 
-import exceptions.CardNotFoundException;
-
-import graphicsObjects.DeckPane;
-import graphicsObjects.GraveyardPane;
-import graphicsObjects.LifeCounter;
-
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -22,10 +15,6 @@ public class Battlefield extends Pane {
 
 	private Player player;
 	private CardCollection cards;
-
-	private DeckPane deckPane;
-	private GraveyardPane graveyardPane;
-	private LifeCounter lifeCounter;
 
 	public static final double WIDTH = 1920;// 1600;
 	public static final double HEIGHT = 474;// 395;
@@ -87,20 +76,26 @@ public class Battlefield extends Pane {
 		this.setMinSize(this.getWidth(), this.getHeight());
 
 		// Deck
-		String deckString = Integer.toString(getPlayer().getDeckCards().size());
-		deckPane = new DeckPane(deckString, Card.WIDTH, Card.HEIGHT, this.getWidth(), this.getHeight());
-		deckPane.setOnMouseClicked(new DeckPaneHandler());
-		this.getChildren().add(deckPane);
+		this.getChildren().add( player.getDeckPane() );
 
 		// Graveyard
-		graveyardPane = new GraveyardPane(Card.WIDTH, Card.HEIGHT, this.getWidth(), 10);
-		this.getChildren().add(graveyardPane);
+		this.getChildren().add( player.getGraveyardPane() );
 
 		// Life counter
-		lifeCounter = new LifeCounter(new LifeCounterHandler());
-		this.getChildren().add(lifeCounter);
+		this.getChildren().add( player.getLifeCounter() );
 
+		// used when sending the battlefield to the other player
 		this.isReady = true;
+	}
+
+	/**
+	 * Update which scale the window is in Used by card to know how far to move
+	 *
+	 * @param newScaleFactor
+	 *            the scalefactor that should be used from this point on
+	 */
+	public void updateScaleFactor(double newScaleFactor) {
+		player.updateScaleFactor(newScaleFactor);
 	}
 
 	/**
@@ -118,82 +113,11 @@ public class Battlefield extends Pane {
 	}
 
 	/**
-	 * @return the deckPane
-	 */
-	public DeckPane getDeckPane() {
-		return deckPane;
-	}
-
-	/**
-	 * @return the lifeCounter
-	 */
-	public LifeCounter getLifeCounter() {
-		return lifeCounter;
-	}
-
-	/**
 	 * @return the isReady
 	 */
 	public boolean isReady() {
 		return isReady;
 	}
 
-	/**
-	 * Takes care of the button inputs on the lifecounter Updates the players
-	 * stats and the counters display
-	 */
-	private class LifeCounterHandler implements EventHandler<ActionEvent> {
-		@Override
-		public void handle(ActionEvent event) {
-			if (event.getSource() == lifeCounter.getHpUpBtn()) {
-				getPlayer().changeHealth(1);
-				lifeCounter.setHealthValue(getPlayer().getHealth());
-			}
-			if (event.getSource() == lifeCounter.getHpDownBtn()) {
-				getPlayer().changeHealth(-1);
-				lifeCounter.setHealthValue(getPlayer().getHealth());
-			}
-			if (event.getSource() == lifeCounter.getPoisonUpBtn()) {
-				getPlayer().changePoison(1);
-				lifeCounter.setPoisonValue(getPlayer().getPoison());
-			}
-			if (event.getSource() == lifeCounter.getPoisonDownBtn()) {
-				getPlayer().changePoison(-1);
-				lifeCounter.setPoisonValue(getPlayer().getPoison());
-			}
-			if (event.getSource() == lifeCounter.getResetBtn()) {
-				getPlayer().setHealth(20);
-				getPlayer().setPoison(0);
-
-				lifeCounter.setHealthValue(getPlayer().getHealth());
-				lifeCounter.setPoisonValue(getPlayer().getPoison());
-			}
-		}
-	}
-
-	/**
-	 * Sends the drawCard to player when the deck is pressed
-	 */
-	private class DeckPaneHandler implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent event) {
-			try {
-				getPlayer().drawCard();
-			} catch (CardNotFoundException e) {
-				System.out.println("Player " + getPlayer() + " trying to draw cards with an empty deck");
-			}
-			deckPane.updateText(Integer.toString(getPlayer().getDeckCards().size()));
-		}
-	}
-
-	/**
-	 * Update which scale the window is in Used by card to know how far to move
-	 *
-	 * @param newScaleFactor
-	 *            the scalefactor that should be used from this point on
-	 */
-	public void updateScaleFactor(double newScaleFactor) {
-		player.updateScaleFactor(newScaleFactor);
-	}
 
 }

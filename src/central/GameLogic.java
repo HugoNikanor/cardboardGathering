@@ -19,12 +19,10 @@ import exceptions.CardNotFoundException;
 
 import gamePieces.Battlefield;
 import gamePieces.Card;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -35,7 +33,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
 
 import network.Connection;
 import serverPackets.CardDrawPacket;
@@ -191,7 +188,7 @@ public class GameLogic extends Application {
 	@Override
 	public void start(Stage inStage) throws Exception {
 		/**
-		 * Makes the Stage avalible to the whole class,
+		 * Makes the Stage avalible to the whole class, <br>
 		 * Used to be able to close the window via an event.
 		 */
 		primaryStage = inStage;
@@ -209,6 +206,7 @@ public class GameLogic extends Application {
 		primaryStage.widthProperty().addListener(windowSizeListener);
 		primaryStage.heightProperty().addListener(windowSizeListener);
 
+		// TODO maybe bind exit fullsceen keys properly
 		primaryStage.setFullScreenExitHint("There is no escape! except for escape and F11...");
 		primaryStage.setScene(gameScene);
 		primaryStage.show();
@@ -308,38 +306,13 @@ public class GameLogic extends Application {
 			try {
 				System.out.println( "obj.getId(): " + obj.getId() );
 				Card tempCard = otherBattlefield.getPlayer().getHandCards().getCard( obj.getId() );
-				//otherBattlefield.getPlayer().playCard( tempCard );
-
-
-				// Does this really have to be here?
-				tempCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
-
-				double finalPosY = 25;
-				double startY = tempCard.getTranslateY();
 
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						otherBattlefield.getPlayer().getChildren().remove(tempCard);
-						otherBattlefield.getChildren().add(tempCard);
+						otherBattlefield.getPlayer().playCard( tempCard, otherBattlefield );
 					}
 				});
-
-				tempCard.setTranslateY( Battlefield.HEIGHT + startY );
-
-				double moveDistance = Battlefield.HEIGHT - finalPosY + startY;
-				TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
-				tt.setByY( -moveDistance );
-
-
-				tt.setOnFinished( new EventHandler<ActionEvent>() {
-					@Override
-					public void handle( ActionEvent event ) {
-						otherBattlefield.getPlayer().playCard( tempCard );
-					}
-				});
-
-				tt.play();
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
 			}
@@ -347,7 +320,6 @@ public class GameLogic extends Application {
 		private void drawCard( CardDrawPacket obj ) {
 			try {
 				otherBattlefield.getPlayer().drawCard( obj.getId() );
-				otherBattlefield.getDeckPane().updateText(Integer.toString(otherBattlefield.getPlayer().getDeckCards().size()));
 			} catch (CardNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -367,11 +339,9 @@ public class GameLogic extends Application {
 		}
 		private void setHealth( HealthSetPacket obj ) {
 			otherBattlefield.getPlayer().setHealth( obj.getHealth() );
-			otherBattlefield.getLifeCounter().setHealthValue(otherBattlefield.getPlayer().getHealth());
 		}
 		private void setPoison( PoisonSetPacket obj ) {
 			otherBattlefield.getPlayer().setPoison( obj.getPoison() );
-			otherBattlefield.getLifeCounter().setPoisonValue(otherBattlefield.getPlayer().getPoison());
 		}
 		private void setCardList( CardListPacket obj ) {
 			otherBattlefield = new Battlefield( jCardReader, obj.getCardList() );
@@ -379,10 +349,12 @@ public class GameLogic extends Application {
 	}
 
 	/**
-	 * EventHandler for cards being played,
+	 * EventHandler for cards being played, <br>
 	 *
 	 * This Handler is applied to the cards and is used when they are pressed
-	 * and in a players hand.
+	 * and in a players hand. <br>
+	 *
+	 * TODO check if this can be placed further down the project
 	 */
 	private class CardPlayHandler implements EventHandler<MouseEvent> {
 		@Override
@@ -390,49 +362,20 @@ public class GameLogic extends Application {
 			try {
 				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
 				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
-					/**
+					/*
 					 * Moves the card upwards from the hand to the battlefield
 					 * Then jerk it back down only to have it moved by actually
 					 * placing it on the battlefield
 					 *
 					 * Only locks up its private 'thread'
-					 *
-					 *  TODO This should be changed so that it is first placed
-					 *  on the battlefield, and then glides up from the hand,
-					 *  This will allow the other player to see the transition. 
 					 */
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-
-						// Does this really have to be here?
-						tempCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
-
-						double finalPosY = 25;
-						double startY = tempCard.getTranslateY();
-
-						ownBattlefield.getPlayer().getChildren().remove(tempCard);
-						ownBattlefield.getChildren().add(tempCard);
-
-						tempCard.setTranslateY( Battlefield.HEIGHT + startY );
-
-						double moveDistance = Battlefield.HEIGHT - finalPosY + startY;
-						TranslateTransition tt = new TranslateTransition( Duration.millis(500), tempCard );
-						tt.setByY( -moveDistance );
-
-
-						tt.setOnFinished( new EventHandler<ActionEvent>() {
-							@Override
-							public void handle( ActionEvent event ) {
-								ownBattlefield.getPlayer().playCard( tempCard );
-							}
-						});
-
-						tt.play();
-
+						ownBattlefield.getPlayer().playCard(tempCard, ownBattlefield);
 					}
 				}
 			} catch (CardNotFoundException e) {
-				//TODO this will fail when using a card on the battlefield.
-				//Be aware that it's the reason for not doing anything here
+				// This will fail when using a card on the battlefield.
+				// Be aware that it's the reason for not doing anything here
 				//e.printStackTrace();
 			}
 		}

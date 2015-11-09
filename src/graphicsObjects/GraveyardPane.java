@@ -4,7 +4,6 @@ import javafx.scene.layout.StackPane;
 
 /**
  * Pane for representing the gaveyard cardcollection
- * TODO make it more general
  * TODO maybe merge this and DeckPane
  * @see graphicsObjects.DeckPane
  */
@@ -20,7 +19,8 @@ public class GraveyardPane extends StackPane {
 		this.setPrefSize( width, height );
 
 		this.getStyleClass().add("graveyard");
-		this.setTranslateX( xPos - width  - 10 );
+		//this.setTranslateX( xPos - width  - 10 );
+		this.setTranslateX( xPos );
 		this.setTranslateY( yPos );
 	}
 

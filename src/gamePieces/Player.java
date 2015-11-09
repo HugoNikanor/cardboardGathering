@@ -3,7 +3,11 @@ package gamePieces;
 import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.DeckPane;
+import graphicsObjects.GraveyardPane;
+import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
+
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import network.Connection;
+
 import serverPackets.CardDrawPacket;
 import serverPackets.CardPlayedPacket;
 import serverPackets.HealthSetPacket;
@@ -36,10 +41,13 @@ public class Player extends Pane {
 	private boolean shouldSend;
 
 	private PlayerBtnPane playerBtnPane;
+	private DeckPane deckPane;
+	private GraveyardPane graveyardPane;
+	private LifeCounter lifeCounter;
 
 	/**
-	 * used by JSONCardReader to make every card have a uniqe id
-	 * id's local per player
+	 * Used by JSONCardReader to make every card have a uniqe id <br>
+	 * Note that id's are only uniqe per player
 	 */
 	private int cardIdCounter;
 
@@ -72,11 +80,22 @@ public class Player extends Pane {
 		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
 		this.getChildren().add(playerBtnPane);
 
+		// Objects displayed on the battlefield
+		String deckString = Integer.toString( getDeckCards().size() );
+		double deckX = Battlefield.WIDTH - Card.WIDTH - 10;
+		double deckY = Battlefield.HEIGHT - Card.HEIGHT - 10;
+		deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
+		double graveX = Battlefield.WIDTH - Card.WIDTH - 10;
+		double graveY = 10;
+		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, graveX, graveY );
+		lifeCounter = new LifeCounter(new LifeCounterHandler());
+
 	}
 
 	/**
-	 * Use this directly for the remote player
+	 * Use this directly for the remote player <br>
 	 * Be aware that this doen't initiate any of the JavaFX functions
+	 * except for the panes that sholud be displayed on the battlefield
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
 		cardIdCounter = 0;
@@ -90,11 +109,56 @@ public class Player extends Pane {
 
 		shouldSend = false;
 
-		//Draws the starting hand
-		//for( int i = 0; i < 7; i++ ) {
-		//	this.drawCard();
-		//}
-		
+		// Objects displayed on the battlefield
+		String deckString = Integer.toString( getDeckCards().size() );
+		double deckX = Battlefield.WIDTH - Card.WIDTH - 10;
+		double deckY = Battlefield.HEIGHT - Card.HEIGHT - 10;
+		deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
+		double graveX = Battlefield.WIDTH - Card.WIDTH - 10;
+		double graveY = 10;
+		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, graveX, graveY );
+		lifeCounter = new LifeCounter(new LifeCounterHandler());
+	}
+
+	/**
+	 * Changes the players health and poison values when the buttons
+	 * on the lifecounter are clicked.
+	 * @see grahicsObjects.LifeCounter
+	 */
+	private class LifeCounterHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent event) {
+			if( event.getSource() == lifeCounter.getHpUpBtn() ) {
+				changeHealth(1);
+			}
+			if( event.getSource() == lifeCounter.getHpDownBtn() ) {
+				changeHealth(-1);
+			}
+			if( event.getSource() == lifeCounter.getPoisonUpBtn() ) {
+				changePoison(1);
+			}
+			if( event.getSource() == lifeCounter.getPoisonDownBtn() ) {
+				changePoison(-1);
+			}
+			if( event.getSource() == lifeCounter.getResetBtn() ) {
+				setHealth(20);
+				setPoison(0);
+			}
+		}
+	}
+
+	/**
+	 * Sends the drawCard to player when the deck is pressed
+	 */
+	private class DeckPaneHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			try {
+				drawCard();
+			} catch (CardNotFoundException e) {
+				System.out.println("Player " + this + " trying to draw cards with an empty deck");
+			}
+		}
 	}
 
 	private class BtnPaneHandler implements EventHandler<ActionEvent> {
@@ -169,35 +233,6 @@ public class Player extends Pane {
 	 */
 	public void drawCard() throws CardNotFoundException {
 		drawCard( deckCards.getNextCard().getCardId() );
-		//try {
-		/*
-		Card tempCard = deckCards.getNextCard();
-		tempCard.setCurrentLocation(Card.CardLocation.HAND);
-		handCards.add(tempCard);
-
-		if( shouldSend ) {
-			System.out.println( "Sending " + tempCard.getCardId() );
-			CardDrawObject tempCDraw = new CardDrawObject( tempCard.getCardId() );
-			connection.sendPacket( tempCDraw );
-
-		}
-
-		tempCard.setTranslateY(handPopupValue);
-		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
-		tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
-		this.getChildren().add(tempCard);
-		*/
-		/*
-		} catch ( CardNotFoundException exception ) {
-			// This should trigger a player lost condition
-			// It's however a non fatal state for the program
-			System.out.println(
-				"==== Player (" +
-				this.hashCode() + 
-				"): trying to draw card with no cards left in deckn ===="
-			);
-		}
-		*/
 	}
 
 	public void drawCard( long cardId ) throws CardNotFoundException {
@@ -219,6 +254,9 @@ public class Player extends Pane {
 		} catch( IllegalArgumentException e) {
 			e.printStackTrace();
 		}
+
+		// Set the text on the graphical deck
+		deckPane.updateText(Integer.toString(getDeckCards().size()));
 	}
 
 	public void updateScaleFactor( double newScaleFactor ) {
@@ -253,20 +291,39 @@ public class Player extends Pane {
 
 	/**
 	 * Moves card to the table
+	 * @param card the card to be move
+	 * @param targetBattlefield the battlefield that the card should end up on
+	 * currently this only really works if you use "matching" player and battlefield
 	 */
-	public void playCard(Card whatCard) {
+	public void playCard(Card card, Battlefield targetBattlefield) {
 		try {
-			// This is also set before the code reaches thes point
-			whatCard.setCurrentLocation(Card.CardLocation.BATTLEFIELD);
-			battlefieldCards.add(handCards.takeCard(whatCard));
-			//whatCard.giveFocus();
+			card.setCurrentLocation( Card.CardLocation.BATTLEFIELD );
+
+			double finalPosY = 25;
+			double startY = card.getTranslateY();
+
+			// Move the card from here to the target battlefield
+			this.getChildren().remove(card);
+			targetBattlefield.getChildren().add(card);
+			battlefieldCards.add(handCards.takeCard(card));
+
+			card.setTranslateY( Battlefield.HEIGHT + startY );
+
+			double moveDistance = Battlefield.HEIGHT - finalPosY + startY;
+			TranslateTransition tt = new TranslateTransition( Duration.millis(500), card );
+			tt.setByY( -moveDistance );
 
 			if( shouldSend ) {
-				connection.sendPacket( new CardPlayedPacket( whatCard.getCardId(), whatCard.getTranslateX(), whatCard.getTranslateY() ) );
+				connection.sendPacket( new CardPlayedPacket( card.getCardId(), card.getTranslateX(), card.getTranslateY() ) );
 			}
 
-			whatCard.setOnMouseEntered( whatCard.getMouseEventHandler() );
+			// Changes the hower action from "jump up" in hand
+			// to "set focus" on the battlefield
+			card.setOnMouseEntered( card.getMouseEventHandler() );
 
+			tt.play();
+
+			// Maybe play this on animation finnis
 			this.rearangeCards();
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
@@ -284,7 +341,7 @@ public class Player extends Pane {
 		}
 	}
 
-	/**
+	/*
 	 * These functions moves cards on the battlefield,
 	 * TODO, Warn if a card that isn't on the battlefield is trying to be
 	 * moved
@@ -336,42 +393,68 @@ public class Player extends Pane {
 	}
 
 	/**
-	 * Change 'Health' and 'poison count'
+	 * @param health set the health value of the player
+	 * @see health
+	 * @see changeHealth
 	 */
 	public void setHealth(int health) {
 		if( shouldSend ) {
 			connection.sendPacket( new HealthSetPacket( health ) );
 		}
 		this.health = health;
+		lifeCounter.setHealthValue(getHealth());
 	}
 
+	/**
+	 * @param change how much the players life total should change
+	 * @see health
+	 * @see setHealth
+	 */
 	public void changeHealth(int change) {
-		if( shouldSend ) {
-			connection.sendPacket( new HealthSetPacket( getHealth() + change ) );
-		}
-		this.health += change;
+		setHealth( getHealth() + change );
 	}
 
+	/**
+	 * @param poisonCounters set how many poison counters the player should have
+	 * @see poisonCounters
+	 * @see changePoison
+	 */
 	public void setPoison(int poisonCounters) {
 		if( shouldSend ) {
 			connection.sendPacket( new PoisonSetPacket( poisonCounters ) );
 		}
 		this.poisonCounters = poisonCounters;
+		lifeCounter.setPoisonValue(getPoison());
 	}
 	
+	/**
+	 * @param change how many poison counters total the player has
+	 * @see poisonCounters
+	 * @see setPoison
+	 */
 	public void changePoison(int change) {
-		if( shouldSend ) {
-			connection.sendPacket( new PoisonSetPacket( getPoison() + change ) );
-		}
-		this.poisonCounters += change;
+		setPoison( getPoison() + change );
+	}
+	/**
+	 * @return the deckPane
+	 */
+	public DeckPane getDeckPane() {
+		return deckPane;
 	}
 
 	/**
-	 ********************************************
-	 * There be nothing but Getters bellow,
-	 * I think...
-	 ********************************************
+	 * @return the graveyardPane
 	 */
+	public GraveyardPane getGraveyardPane() {
+		return graveyardPane;
+	}
+
+	/**
+	 * @return the lifeCounter
+	 */
+	public LifeCounter getLifeCounter() {
+		return lifeCounter;
+	}
 
 	/**
 	 * @return the deckCards
