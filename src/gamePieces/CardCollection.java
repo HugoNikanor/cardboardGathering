@@ -37,8 +37,6 @@ public class CardCollection extends ArrayList<Card> {
 			while( cardChooser.hasNext() ) {
 				this.add( jCardReader.get( cardChooser.next(), cardIdCounter++ ) );
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
