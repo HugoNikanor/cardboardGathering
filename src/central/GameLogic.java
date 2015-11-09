@@ -110,7 +110,6 @@ public class GameLogic extends Application {
 				.toArray(String[]::new);           // Make it an array
 			cardStream.close();
 
-
 			connection.sendPacket( new CardListPacket( cardList ) );
 		} catch (IOException e2) {
 			e2.printStackTrace();
@@ -360,23 +359,22 @@ public class GameLogic extends Application {
 		@Override
 		public void handle(MouseEvent event) {
 			try {
-				Card tempCard = ownBattlefield.getPlayer().getHandCards().getCard( (Card)(event.getSource()) );
+				Card tempCard = ownBattlefield
+					.getPlayer()
+					.getHandCards()
+					.getCard(
+						(Card)event.getSource());
+
 				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
-					/*
-					 * Moves the card upwards from the hand to the battlefield
-					 * Then jerk it back down only to have it moved by actually
-					 * placing it on the battlefield
-					 *
-					 * Only locks up its private 'thread'
-					 */
+
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
 						ownBattlefield.getPlayer().playCard(tempCard, ownBattlefield);
 					}
+
 				}
 			} catch (CardNotFoundException e) {
 				// This will fail when using a card on the battlefield.
 				// Be aware that it's the reason for not doing anything here
-				//e.printStackTrace();
 			}
 		}
 	}
@@ -393,6 +391,8 @@ public class GameLogic extends Application {
 	 *
 	 * TODO The graphics only resize when the window is changed in the 'y'
 	 * direction
+	 *
+	 * TODO this doesn't work correctly on my Windows 8 laptop
 	 */ 
 	private class WindowSizeListener implements ChangeListener<Number> {
 		final Timer timer = new Timer();
@@ -422,7 +422,9 @@ public class GameLogic extends Application {
 	}
 
 	/**
-	 * Registers all the keys being pressed
+	 * Keeps a list of the pressed keys up to date
+	 * @see pressedKeys
+	 * @see KeyHandleThread
 	 */
 	public class KeyEventHandler implements EventHandler<KeyEvent> {
 		@Override
@@ -430,19 +432,18 @@ public class GameLogic extends Application {
 			if( event.getEventType() == KeyEvent.KEY_PRESSED) {
 				if( !(pressedKeys.contains(event.getCode())) ) {
 					pressedKeys.add(event.getCode());
-					//System.out.println("added: " + event.getCode());
 				}
 			}
 			if( event.getEventType() == KeyEvent.KEY_RELEASED) {
 				pressedKeys.remove(event.getCode());
-				//System.out.println("removed: " + event.getCode());
 			}
 		}
 	}
 
 	/**
-	 * Takes all the keys currently pressed and performs the actions linked 
-	 * to them.
+	 * Takes the pressed keys and do the actions linked to them
+	 * @see pressedKeys
+	 * @see KeyEventHandler
 	 */
 	private class KeyHandleThread implements Runnable {
 		boolean spacePressedBefore;
@@ -466,8 +467,7 @@ public class GameLogic extends Application {
 
 					/**
 					 * Use the arrow keys or 'hjkl' to move the card,
-					 * TODO This has the risk of crashing the program
-					 * TODO Why doesn't this use a switch statement
+					 * TODO This maybe has the risk of crashing the program
 					 */
 					if( pressedKeys.contains(KeyCode.DOWN) ||
 						pressedKeys.contains(KeyCode.J) ) {
@@ -502,7 +502,7 @@ public class GameLogic extends Application {
 					}
 					spacePressedBefore = pressedKeys.contains(KeyCode.SPACE);
 
-					/**
+					/*
 					 * Cycles thrugh the cards on the battlefield when <tab> or
 					 * <S-tab> is pressed,
 					 * TODO This currently doesn't play nicely with the buttons
@@ -525,6 +525,7 @@ public class GameLogic extends Application {
 						}
 					}
 
+					// TODO make this less agressive
 					if( pressedKeys.contains(KeyCode.F11) ) {
 						Platform.runLater(new Runnable() {
 							@Override

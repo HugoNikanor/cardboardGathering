@@ -4,8 +4,7 @@ workbench.xmi
 .settings/
 
 doc/
-
+classVisualizer.xml
 *x.json
-
 !jars/*jar
 

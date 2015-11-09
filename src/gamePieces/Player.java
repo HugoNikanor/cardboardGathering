@@ -283,7 +283,11 @@ public class Player extends Pane {
 			double finalPosY = 25;
 			double startY = card.getTranslateY();
 
-			// Move the card from here to the target battlefield
+			/*
+			 * Moves the card upwards from the hand to the battlefield
+			 * Then jerk it back down only to have it moved by actually
+			 * placing it on the target tbattlefield.
+			 */
 			this.getChildren().remove(card);
 			targetBattlefield.getChildren().add(card);
 			battlefieldCards.add(handCards.takeCard(card));
