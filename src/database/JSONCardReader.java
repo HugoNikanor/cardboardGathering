@@ -17,7 +17,6 @@ import exceptions.CardNotFoundException;
 import gamePieces.Card;
 
 /**
- * TODO see if some form of CardFactory could work better
  * A class for reading the JSon files
  * and writing their data to card obects
  * @see gamePieces.Card

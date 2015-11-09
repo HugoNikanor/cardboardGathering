@@ -3,6 +3,8 @@ workbench.xmi
 .project
 .settings/
 
+doc/
+
 *x.json
 
 !jars/*jar

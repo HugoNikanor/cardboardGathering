@@ -9,6 +9,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
+/**
+ * The players life counter
+ * Holds the health and poison values
+ * along with buttons for modifying it
+ */
 public class LifeCounter extends GridPane {
 	
 	private Button hpDownBtn;
@@ -28,6 +33,13 @@ public class LifeCounter extends GridPane {
 	private Text lifeText;
 	private Text poisonText;
 
+	/**
+	 * @param handler the handler for the buttons in the pane
+	 * @see hpDownBtn
+	 * @see hpUpBtn
+	 * @see poisonDownBtn
+	 * @see poisonUpBtn
+	 */
 	public LifeCounter(EventHandler<ActionEvent> handler) {
 		hpDownBtn = new Button("-");
 		hpDownBtn.setOnAction(handler);
@@ -84,10 +96,18 @@ public class LifeCounter extends GridPane {
 		this.setFocusTraversable( false );
 	}
 
+	/**
+	 * Sets the displayed life value
+	 * @param lifeValue the value to display
+	 */
 	public void setHealthValue(int lifeValue) {
 		this.lifeText.setText(Integer.toString(lifeValue));
 	}
 
+	/**
+	 * Sets the displayed poison value
+	 * @param poisonValue the value to display
+	 */
 	public void setPoisonValue(int poisonValue) {
 		this.poisonText.setText(Integer.toString(poisonValue));
 	}

@@ -6,6 +6,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 
+/**
+ * The pane for the buttons in the players inventory
+ * includes the resetBoardBtn and the shuffleHandBtn
+ * @see graphicsObjects.ResetBoardBtn
+ * @see graphicsObjects.ShuffleBtn
+ */
 public class PlayerBtnPane extends VBox{
 	public Button shuffleBtn;
 	public Button resetBoardBtn;
