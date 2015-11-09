@@ -4,8 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 
-public class ResetBoardBtn extends Button {
-	public ResetBoardBtn(EventHandler<ActionEvent> listener) {
+public class PlayerResetBoardBtn extends Button {
+	public PlayerResetBoardBtn(EventHandler<ActionEvent> listener) {
 		super("Reset Board");
 		this.setOnAction(listener);
 

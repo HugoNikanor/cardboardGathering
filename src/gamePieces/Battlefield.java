@@ -26,13 +26,10 @@ public class Battlefield extends Pane {
 	 *
 	 * @param jCardReader
 	 *            Get's the card data from there
+	 * @param cardList the name of the cards that should be created
 	 */
 	public Battlefield(JSONCardReader jCardReader, String[] cardList) {
-		// cardStream will be gotten over the network
 		// Both players MUST have all database files
-		// eventHandlers are exchanged for proper alternatives
-		// Connection is not used
-
 		player = new Player(jCardReader, cardList);
 		cards = player.getBattlefieldCards();
 
@@ -45,7 +42,7 @@ public class Battlefield extends Pane {
 	 *
 	 * @param cardListFile
 	 *            file which tells the program which cards are desired
-	 * @param mouseEventHandler
+	 * @param cardPlayHandler
 	 *            sholud handle the card being played upon pressing it in the
 	 *            hand
 	 * @param connection
@@ -53,9 +50,9 @@ public class Battlefield extends Pane {
 	 * @param jCardReader
 	 *            Get's the card data from there
 	 */
-	public Battlefield( EventHandler<MouseEvent> mouseEventHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
+	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
 
-		player = new Player( jCardReader, mouseEventHandler, connection, cardList );
+		player = new Player( jCardReader, cardPlayHandler, connection, cardList );
 		cards = player.getBattlefieldCards();
 
 		this.initialSetup();

@@ -8,13 +8,15 @@ import javafx.scene.control.Button;
 
 /**
  * The pane for the buttons in the players inventory
- * includes the resetBoardBtn and the shuffleHandBtn
- * @see graphicsObjects.ResetBoardBtn
- * @see graphicsObjects.ShuffleBtn
+ * Should be used for convinence features for the physical player
+ * @see graphicsObjects.PlayerResetBoardBtn
+ * @see graphicsObjects.PlayerShuffleHandBtn
+ * @see graphicsObjects.PlayerResetRotationBtn
  */
 public class PlayerBtnPane extends VBox{
 	public Button shuffleBtn;
 	public Button resetBoardBtn;
+	public Button resetRotationBtn;
 
 	public PlayerBtnPane(int width, int height, EventHandler<ActionEvent> handler) {
 		this.setPrefSize(width, height);
@@ -24,11 +26,14 @@ public class PlayerBtnPane extends VBox{
 
 		this.setAlignment(Pos.CENTER);
 
-		shuffleBtn = new ShuffleBtn(handler);
+		shuffleBtn = new PlayerShuffleHandBtn(handler);
 		this.getChildren().add(shuffleBtn);
 
-		resetBoardBtn = new ResetBoardBtn(handler);
+		resetBoardBtn = new PlayerResetBoardBtn(handler);
 		this.getChildren().add(resetBoardBtn);
+
+		resetRotationBtn = new PlayerResetRotationBtn(handler);
+		this.getChildren().add(resetRotationBtn);
 
 	}
 
@@ -44,5 +49,12 @@ public class PlayerBtnPane extends VBox{
 	 */
 	public Button getResetBoardBtn() {
 		return resetBoardBtn;
+	}
+
+	/**
+	 * @return the resetRotationBtn
+	 */
+	public Button getResetRotationBtn() {
+		return resetRotationBtn;
 	}
 }

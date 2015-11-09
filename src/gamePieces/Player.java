@@ -31,10 +31,6 @@ public class Player extends Pane {
 	private int health;
 	private int poisonCounters;
 
-	private MouseEventHandler mouseEventHandler;
-
-	// How far a card should pop up when you hoover over it
-	private int handPopupValue = 20;
 	private static final int HEIGHT = 132;//110;
 
 	private Connection connection;
@@ -55,17 +51,12 @@ public class Player extends Pane {
 	 * Use this for the local player
 	 */
 	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
-		//this( cardListStream );
 		this( jCardReader, cardList );
 
 		this.connection = connection;
 		shouldSend = true;
 
-		mouseEventHandler = new MouseEventHandler();
-
 		for( Card temp : deckCards ) {
-			temp.setOnMouseEntered( mouseEventHandler );
-			temp.setOnMouseExited ( mouseEventHandler );
 			temp.setOnMouseClicked( cardPlayHandler );
 			temp.setConnection( connection );
 		}
@@ -161,6 +152,13 @@ public class Player extends Pane {
 		}
 	}
 
+	/**
+	 * Takes care of the inputs from the buttons in the players pane
+	 * @see graphicsObjects.PlayerBtnPane
+	 * @see graphicsObjects.PlayerResetBoardBtn
+	 * @see graphicsObjects.PlayerResetRotationBtn
+	 * @see graphicsObjects.PlayerShuffleHandBtn
+	 */
 	private class BtnPaneHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent event) {
@@ -169,7 +167,7 @@ public class Player extends Pane {
 				rearangeCards();
 			}
 
-			/**
+			/*
 			 * Places the cards in accending order,
 			 * starting from the top left and going down and right
 			 * Starts a new 'stack' after 'cardsPerRow' cards.
@@ -190,51 +188,34 @@ public class Player extends Pane {
 					tempCard.smoothSetScale(1.0, 500);
 					tempCard.giveFocus();
 
-
 					displacement++;
 				}
 			}
-		}
-	}
 
-	private class MouseEventHandler implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent event) {
-			//TranslateTransition tt;
-
-			try {
-				Card tempCard = handCards.getCard(handCards.indexOf(event.getSource()));
-				//tt = new TranslateTransition(Duration.millis(200), tempCard);
-
-				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
-					if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-						tempCard.smoothPlace( tempCard.getTranslateX(), -3*handPopupValue, 200 );
-						//tt.setToY(-3*handPopupValue);
-						//tt.play();
-					}
-
-					if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-						//tt.setToY(handPopupValue);
-						//tt.play();
-						tempCard.smoothPlace( tempCard.getTranslateX(), handPopupValue, 200 );
-					}
+			/*
+			 * Rotates all cards on the own battlefield back to upright
+			 */
+			if( event.getSource() == playerBtnPane.getResetRotationBtn() ){
+				for( Card tempCard : battlefieldCards ) {
+					tempCard.smoothSetRotate( 0 );
 				}
-			} catch (CardNotFoundException e1) {
-				// TODO This is triggered due to the card keeping this listener when it enters the battlefield
-				// A problem might very well be here, due to no error reporting
 			}
 		}
 	}
 
 	/**
-	 * Moves a card from the deck to the hand
-	 * The exception is probably non fatal
-	 * @throws CardNotFoundException
+	 * Moves the next card from the deck to the hand
+	 * @throws CardNotFoundException probably non fatal
 	 */
 	public void drawCard() throws CardNotFoundException {
 		drawCard( deckCards.getNextCard().getCardId() );
 	}
 
+	/**
+	 * Moves a set card from the deck to the hand
+	 * @param cardId what card that should be drawn
+	 * @throws CardNotFoundException probably non fatal
+	 */
 	public void drawCard( long cardId ) throws CardNotFoundException {
 		Card tempCard = deckCards.takeCard( cardId );
 		tempCard.setCurrentLocation(Card.CardLocation.HAND);
@@ -245,20 +226,20 @@ public class Player extends Pane {
 			connection.sendPacket( new CardDrawPacket( tempCard.getCardId() ) );
 		}
 
-		tempCard.setTranslateY(handPopupValue);
+		tempCard.setTranslateY(tempCard.getHandPopupValue());
 		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
 		tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
-		try {
-			// TODO this could probably be solved with some synchronization
-			this.getChildren().add(tempCard);
-		} catch( IllegalArgumentException e) {
-			e.printStackTrace();
-		}
+
+		this.getChildren().add(tempCard);
 
 		// Set the text on the graphical deck
 		deckPane.updateText(Integer.toString(getDeckCards().size()));
 	}
 
+	/**
+	 * Notify the lower classes about that everything has changed scale <br>
+	 * Needed for card movement to scale it to the window size
+	 */
 	public void updateScaleFactor( double newScaleFactor ) {
 		for( Card tch : handCards ) {
 			tch.setScaleFactor( newScaleFactor );
@@ -330,6 +311,12 @@ public class Player extends Pane {
 		}
 	}
 
+	/**
+	 * Move a card from one collection to another
+	 * @param whatCard the card that should be moved
+	 * @param oldCollection where the card should be taken from
+	 * @param newCollection where the card sholud end up
+	 */
 	public void moveCardBetweenCollection(
 			Card whatCard,
 			CardCollection oldCollection,

@@ -34,6 +34,10 @@ public class Card extends StackPane {
 	private int toughness;
 	private int loyalty;
 
+	/**
+	 * The different "colors" of mana, <br>
+	 * also the "colors" a card can be
+	 */
 	enum ManaTypes {
 		BLANK,
 		BLACK,
@@ -56,23 +60,39 @@ public class Card extends StackPane {
 	private double containerSizeX;
 	private double containerSizeY;
 
+	/**
+	 * Used when draging the card if the screen is resized <br>
+	 */
 	private double scaleFactor;
 
 	public static final double HEIGHT = 180;//150;
 	public static final double WIDTH = 126;//105;
 
+	/**
+	 * Used as a check so only one card can be marked as current at a time, <br>
+	 * Allows to demark the old "currentCard" as non current.
+	 */
 	private static Card currentCard;
 
+	/**
+	 * The different places a card can be
+	 */
 	public static enum CardLocation {
 		HAND,
 		BATTLEFIELD,
 		DECK,
 		GRAVEYARD
 	}
+	/**
+	 * The current location of the card
+	 */
 	private CardLocation currentLocation;
 
-	// Used for the margin on one side of the card
-	// the margins of two cards shouldn't overlap
+	/**
+	 * The cards margin while it is in hand <br>
+	 * TODO this should be replaced with better card position logic
+	 * for the hand
+	 */
 	private int preferdMargin;
 
 	private Connection connection;
@@ -80,12 +100,30 @@ public class Card extends StackPane {
 
 	private MouseEventHandler mouseEventHandler;
 
+	/**
+	 * How far a card should pop up when you hoover over it
+	 */
+	private int handPopupValue = 20;
+
 
 	/**
 	 * Creates the general idea of the card
 	 * This version is however not to be used directly
 	 * but rather to be copied through the other constructor
-	 * TODO maybe have some sort of CardFactory
+	 * @param cardName name of the card
+	 * @param type types of the card, separated by spaces
+	 * @param subtype subtypes, separated by spaces
+	 * @param ability abilties, preferably separated by linebreak
+	 * @param flavour bonus text
+	 * @param power
+	 * @param toughness
+	 * @param loyalty
+	 * @param manaCostBlack
+	 * @param manaCostBlue
+	 * @param manaCostGreen
+	 * @param manaCostRed
+	 * @param manaCostWhite
+	 * @param manaCostBlank
 	 */
 	public Card(
 		String cardName,
@@ -128,13 +166,13 @@ public class Card extends StackPane {
 
 	/**
 	 * Used to allow for copying a card
+	 * @param cardToCopy the card that you want a copy of
+	 * @param cardId the id the new card should have
+	 * you have to make sure yourself that no two cards share an id number
+	 * in the local scope desired
 	 */
 	public Card( Card cardToCopy, int cardId ) {
-		//System.out.println("debug: start of Card");
-		//cardId = CARD_ID_COUNTER_COPY++;
 		this.cardId = cardId;
-		
-		//cardId = cardToCopy.getCardId();
 
 		this.cardName  = cardToCopy.getCardName();
 		this.type      = cardToCopy.getType();
@@ -175,10 +213,12 @@ public class Card extends StackPane {
 
 		mouseEventHandler = new MouseEventHandler();
 
+		// TODO these are only applicable for the own cards
 		this.setOnMouseDragged ( mouseEventHandler );
 		this.setOnMousePressed ( mouseEventHandler );
 		this.setOnMouseReleased( mouseEventHandler );
-
+		this.setOnMouseEntered ( mouseEventHandler );
+		this.setOnMouseExited  ( mouseEventHandler );
 		this.setOnScroll( new ScrollEventHandler() );
 
 		this.scaleFactor = 1;
@@ -286,9 +326,11 @@ public class Card extends StackPane {
 		private double mouseInSceneY;
 		private EventType<? extends MouseEvent> lastEvent;
 
+
 		@Override
 		public void handle(MouseEvent event) {
-			if( currentLocation == CardLocation.BATTLEFIELD ) {
+			switch( currentLocation ) {
+			case BATTLEFIELD:
 
 				// Give focus on hover
 				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
@@ -342,6 +384,19 @@ public class Card extends StackPane {
 					this.mouseInSceneY = event.getSceneY();
 				}
 				this.lastEvent = event.getEventType();
+
+				break;
+			case HAND:
+				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+					smoothPlace( getTranslateX(), -3*handPopupValue, 200 );
+				}
+
+				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+					smoothPlace( getTranslateX(), handPopupValue, 200 );
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -531,7 +586,7 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * @param scaleFactorY the scaleFactorY to set
+	 * @param scaleFactor the scaleFactor to set
 	 */
 	public void setScaleFactor(double scaleFactor) {
 		this.scaleFactor = scaleFactor;
@@ -567,6 +622,13 @@ public class Card extends StackPane {
 	 */
 	public MouseEventHandler getMouseEventHandler() {
 		return mouseEventHandler;
+	}
+
+	/**
+	 * @return the handPopupValue
+	 */
+	public int getHandPopupValue() {
+		return handPopupValue;
 	}
 
 	@Override
