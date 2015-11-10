@@ -224,7 +224,7 @@ public class JSONCardReader {
 	 * @return the card with the desired name
 	 * @param cardName get a usable version of the wanted card
 	 * @param cardId what id the returned card sholud have, make sure to incrament the value when calling the method
-	 * @throws cardNotFoundException if there is no card with cardName in the json files
+	 * @throws CardNotFoundException if there is no card with cardName in the json files
 	 */
 	public Card get( String cardName, int cardId ) throws CardNotFoundException {
 		for( Card returnCard : cards ) {

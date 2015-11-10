@@ -10,6 +10,11 @@ public class CardMovePacket extends NetworkPacket {
 
 	/**
 	 * This is for sending any form of movement the card has done
+	 *
+	 * @param cardId the id of the card to move
+	 * @param posX where the card has moved to horizontally
+	 * @param posY where the card has moved to vertically
+	 * @param rotate what angle the card has rotated to
 	 */
 	public CardMovePacket( long cardId, double posX, double posY, double rotate ) {
 		this.id = cardId;

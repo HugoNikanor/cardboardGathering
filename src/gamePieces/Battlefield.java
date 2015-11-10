@@ -40,8 +40,6 @@ public class Battlefield extends Pane {
 	/**
 	 * This is for creating the local battlefield
 	 *
-	 * @param cardListFile
-	 *            file which tells the program which cards are desired
 	 * @param cardPlayHandler
 	 *            sholud handle the card being played upon pressing it in the
 	 *            hand
@@ -49,6 +47,8 @@ public class Battlefield extends Pane {
 	 *            the connection to the server, used to send data
 	 * @param jCardReader
 	 *            Get's the card data from there
+	 * @param cardList
+	 *            String[] with all card names to use in it
 	 */
 	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
 

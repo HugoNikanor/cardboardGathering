@@ -1,6 +1,5 @@
 package gamePieces;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -65,7 +64,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * Take (get and remove) the next card in the collection
 	 * @return the next card in the collection
 	 * @throws CardNotFoundException if there are no more cards in the collection
-	 * @see getNextCard()
+	 * @see getNextCard
 	 */
 	public Card takeNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
@@ -81,7 +80,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @return the card it index cardIndex
 	 * @param cardIndex position of card to take
 	 * @throws CardNotFoundException if there is no card with that index
-	 * @see getCard(int cardIndex)
+	 * @see getCard
 	 */
 	public Card takeCard(int cardIndex) throws CardNotFoundException {
 		Card returnCard;
@@ -116,7 +115,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @return the card with the choosen cardId
 	 * @param cardId the id of the card, note that the id is gotten by Card.getCardId() and not Card.getId()
 	 * @throws CardNotFoundException if there is no card with that id
-	 * @see getCard(long cardId)
+	 * @see getCard
 	 */
 	public Card takeCard( long cardId ) throws CardNotFoundException {
 		for( Card temp : this ) {
@@ -131,7 +130,7 @@ public class CardCollection extends ArrayList<Card> {
 	/**
 	 * @return The next card in the collection
 	 * @throws CardNotFoundException if there are no more cards in the collection
-	 * @see takeNextCard()
+	 * @see takeNextCard
 	 */
 	public Card getNextCard() throws CardNotFoundException {
 		if(this.size() == 0) {
@@ -145,7 +144,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @return the card it index cardIndex
 	 * @param cardIndex position of card to take
 	 * @throws CardNotFoundException if there is no card with that index
-	 * @see getCard(int cardIndex)
+	 * @see getCard
 	 */
 	public Card getCard(int cardIndex) throws CardNotFoundException {
 		if( cardIndex < 0 || cardIndex >= this.size() ) {
@@ -160,7 +159,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @return the card entered
 	 * @param card card to check if it's in the collection
 	 * @throws CardNotFoundException if the card is not in the collection
-	 * @see takeCard(Card card)
+	 * @see takeCard
 	 */
 	public Card getCard( Card card ) throws CardNotFoundException {
 		int cardIndex = this.indexOf(card);
@@ -175,15 +174,15 @@ public class CardCollection extends ArrayList<Card> {
 	 * @return the card with the choosen cardId
 	 * @param cardId the id of the card, note that the id is gotten by Card.getCardId() and not Card.getId()
 	 * @throws CardNotFoundException if there is no card with that id
-	 * @see takeCard(long cardId)
+	 * @see takeCard
 	 */
-	public Card getCard( long id ) throws CardNotFoundException {
+	public Card getCard( long cardId ) throws CardNotFoundException {
 		for( Card temp : this ) {
-			if( Objects.equals( temp.getCardId(), id ) ) {
+			if( Objects.equals( temp.getCardId(), cardId ) ) {
 				return temp;
 			}
 		}
-		throw new CardNotFoundException("No card with that id " + id);
+		throw new CardNotFoundException("No card with that id " + cardId);
 	}
 
 }

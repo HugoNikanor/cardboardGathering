@@ -49,6 +49,18 @@ public class Player extends Pane {
 
 	/**
 	 * Use this for the local player
+	 * 
+	 * @param jCardReader
+	 *            where the cards should be read from
+	 * @param cardPlayHandler
+	 *            event handler for when the cards are activated in the hand and
+	 *            should be played
+	 * @param connection
+	 *            Called with {@code connection.sendPacket()} to push data to the server
+	 *            @see network.Connection
+	 *            @see serverPackets.NetworkPacket
+	 * @param cardList
+	 *            A string array of the names of the cards desired to be created
 	 */
 	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
 		this( jCardReader, cardList );
@@ -87,6 +99,10 @@ public class Player extends Pane {
 	 * Use this directly for the remote player <br>
 	 * Be aware that this doen't initiate any of the JavaFX functions
 	 * except for the panes that sholud be displayed on the battlefield
+	 * @param jCardReader
+	 *            where the cards should be read from
+	 * @param cardList
+	 *            A string array of the names of the cards desired to be created
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
 		cardIdCounter = 0;
@@ -239,6 +255,7 @@ public class Player extends Pane {
 	/**
 	 * Notify the lower classes about that everything has changed scale <br>
 	 * Needed for card movement to scale it to the window size
+	 * @param newScaleFactor what scale the new window is to the original
 	 */
 	public void updateScaleFactor( double newScaleFactor ) {
 		for( Card tch : handCards ) {

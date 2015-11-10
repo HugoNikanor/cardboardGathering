@@ -115,15 +115,15 @@ public class Card extends StackPane {
 	 * @param subtype subtypes, separated by spaces
 	 * @param ability abilties, preferably separated by linebreak
 	 * @param flavour bonus text
-	 * @param power
-	 * @param toughness
-	 * @param loyalty
-	 * @param manaCostBlack
-	 * @param manaCostBlue
-	 * @param manaCostGreen
-	 * @param manaCostRed
-	 * @param manaCostWhite
-	 * @param manaCostBlank
+	 * @param power the cards desired attack power TODO document special values
+	 * @param toughness the cards "health"
+	 * @param loyalty used by those who walk on the plains
+	 * @param manaCostBlack mana needed to play the card
+	 * @param manaCostBlue mana needed to play the card
+	 * @param manaCostGreen mana needed to play the card
+	 * @param manaCostRed mana needed to play the card
+	 * @param manaCostWhite mana needed to play the card
+	 * @param manaCostBlank mana needed to play the card
 	 */
 	public Card(
 		String cardName,
@@ -482,13 +482,19 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * Smoothly slides the card along
+	 * Smoothly slides the card along,
+	 * uses default movement speed of 30ms
+	 * @param changeX how much the card should move horizontaly
+	 * @param changeY how much the card should move verticly
 	 */
 	public void smoothMove( double changeX, double changeY ) {
 		smoothMove( changeX, changeY, 30 );
 	}
 	/**
 	 * Smoothly slides the card along
+	 * @param changeX how much the card should move horizontaly
+	 * @param changeY how much the card should move verticly
+	 * @param moveSpeed how many milli secounds the move should last
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
 		TranslateTransition tt;
@@ -530,16 +536,22 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * Smoothly moves the card to the set coordinate
-	 * If the coordinate is out of bounds then it's set to the bound
+	 * Smoothly moves the card to the set coordinate <br>
+	 * If the coordinate is out of bounds then it's set to the bound <br>
+	 * This version uses the default transitionSpeed of 200
+	 * @param posX the x coordinate the card should end up at
+	 * @param posY the Y coordinate the card should end up at
 	 */
 	public void smoothPlace( double posX, double posY ) {
 		smoothPlace( posX, posY, 200 );
 	}
 
 	/**
-	 * Smoothly moves the card to the set coordinate
+	 * Smoothly moves the card to the set coordinate <br>
 	 * If the coordinate is out of bounds then it's set to the bound
+	 * @param posX the x coordinate the card should end up at
+	 * @param posY the Y coordinate the card should end up at
+	 * @param transitionSpeed how long the animation should take, in milliseconds
 	 */
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
 		TranslateTransition tt;
