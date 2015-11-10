@@ -465,7 +465,7 @@ public class Card extends StackPane {
 	}
 
 	public void giveFocus() {
-		if( shouldSend ) {
+		if( shouldSend && currentCard != this ) {
 			try {
 				currentCard.setId( null );
 			} catch( NullPointerException e ) {
