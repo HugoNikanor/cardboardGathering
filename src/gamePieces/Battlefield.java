@@ -73,10 +73,10 @@ public class Battlefield extends Pane {
 		this.setMinSize(this.getWidth(), this.getHeight());
 
 		// Deck
-		this.getChildren().add( player.getDeckPane() );
+		this.getChildren().add( player.getDeckCont() );
 
 		// Graveyard
-		this.getChildren().add( player.getGraveyardPane() );
+		this.getChildren().add( player.getGraveCont() );
 
 		// Life counter
 		this.getChildren().add( player.getLifeCounter() );

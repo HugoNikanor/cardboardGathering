@@ -3,9 +3,8 @@ package gamePieces;
 import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
-import graphicsObjects.DeckContainer;
-//import graphicsObjects.DeckPane;
-import graphicsObjects.GraveyardPane;
+import graphicsObjects.CardStackContainer;
+import graphicsObjects.CardStackPane;
 import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
 
@@ -37,10 +36,14 @@ public class Player extends Pane {
 	private Connection connection;
 	private boolean shouldSend;
 
+	private DeckPaneHandler deckPaneHandler;
+	private CardStackContainer deckCont;
+	private CardStackPane deckPane;
+
+	private CardStackContainer graveCont;
+	private CardStackPane gravePane;
+
 	private PlayerBtnPane playerBtnPane;
-	//private DeckPane deckPane;
-	private DeckContainer deckPane; // TODO give this it's own identp
-	private GraveyardPane graveyardPane;
 	private LifeCounter lifeCounter;
 
 	/**
@@ -86,14 +89,23 @@ public class Player extends Pane {
 		this.getChildren().add(playerBtnPane);
 
 		// Objects displayed on the battlefield
-		String deckString = Integer.toString( getDeckCards().size() );
-		double deckX = Battlefield.WIDTH - Card.WIDTH - 10;
-		double deckY = Battlefield.HEIGHT - Card.HEIGHT - 10;
-		//deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
-		deckPane = new DeckContainer( new DeckPaneHandler(), deckString, Card.WIDTH + 50, Card.HEIGHT, deckX - 50, deckY );
-		double graveX = Battlefield.WIDTH - Card.WIDTH - 10;
-		double graveY = 10;
-		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, graveX, graveY );
+		deckPaneHandler = new DeckPaneHandler();
+		deckPane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
+		deckCont = new CardStackContainer(
+			deckPane,
+			deckPaneHandler,
+			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			Battlefield.HEIGHT - Card.HEIGHT - 10
+		);
+		deckCont.setText(Integer.toString( getDeckCards().size() ));
+		gravePane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
+		graveCont = new CardStackContainer(
+			gravePane,
+			deckPaneHandler,
+			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			10
+		);
+
 		lifeCounter = new LifeCounter(new LifeCounterHandler());
 
 	}
@@ -120,14 +132,24 @@ public class Player extends Pane {
 		shouldSend = false;
 
 		// Objects displayed on the battlefield
-		String deckString = Integer.toString( getDeckCards().size() );
-		double deckX = Battlefield.WIDTH - Card.WIDTH - 10;
-		double deckY = Battlefield.HEIGHT - Card.HEIGHT - 10;
-		//deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
-		deckPane = new DeckContainer( new DeckPaneHandler(), deckString, Card.WIDTH + 50, Card.HEIGHT, deckX - 50, deckY );
-		double graveX = Battlefield.WIDTH - Card.WIDTH - 10;
-		double graveY = 10;
-		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, graveX, graveY );
+		deckPaneHandler = new DeckPaneHandler();
+		deckPane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
+		deckCont = new CardStackContainer(
+			deckPane,
+			deckPaneHandler,
+			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			Battlefield.HEIGHT - Card.HEIGHT - 10
+		);
+		deckCont.setText(Integer.toString( getDeckCards().size() ));
+
+		gravePane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
+		graveCont = new CardStackContainer(
+			gravePane,
+			deckPaneHandler,
+			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			10
+		);
+
 		lifeCounter = new LifeCounter(new LifeCounterHandler());
 	}
 
@@ -253,7 +275,7 @@ public class Player extends Pane {
 		this.getChildren().add(tempCard);
 
 		// Set the text on the graphical deck
-		deckPane.updateText(Integer.toString(getDeckCards().size()));
+		deckCont.setText(Integer.toString(getDeckCards().size()));
 	}
 
 	/**
@@ -447,25 +469,19 @@ public class Player extends Pane {
 	public void changePoison(int change) {
 		setPoison( getPoison() + change );
 	}
-	/**
-	 * @return the deckPane
-	 */
-	/*
-	public DeckPane getDeckPane() {
-		return deckPane;
-	}
-	*/
-	public DeckContainer getDeckPane() {
-		return deckPane;
-	}
-		
-
 
 	/**
-	 * @return the graveyardPane
+	 * @return the deckCont
 	 */
-	public GraveyardPane getGraveyardPane() {
-		return graveyardPane;
+	public CardStackContainer getDeckCont() {
+		return deckCont;
+	}
+
+	/**
+	 * @return the graveCont
+	 */
+	public CardStackContainer getGraveCont() {
+		return graveCont;
 	}
 
 	/**
