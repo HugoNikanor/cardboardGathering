@@ -3,7 +3,8 @@ package gamePieces;
 import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
-import graphicsObjects.DeckPane;
+import graphicsObjects.DeckContainer;
+//import graphicsObjects.DeckPane;
 import graphicsObjects.GraveyardPane;
 import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
@@ -37,7 +38,8 @@ public class Player extends Pane {
 	private boolean shouldSend;
 
 	private PlayerBtnPane playerBtnPane;
-	private DeckPane deckPane;
+	//private DeckPane deckPane;
+	private DeckContainer deckPane; // TODO give this it's own identp
 	private GraveyardPane graveyardPane;
 	private LifeCounter lifeCounter;
 
@@ -87,7 +89,8 @@ public class Player extends Pane {
 		String deckString = Integer.toString( getDeckCards().size() );
 		double deckX = Battlefield.WIDTH - Card.WIDTH - 10;
 		double deckY = Battlefield.HEIGHT - Card.HEIGHT - 10;
-		deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
+		//deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
+		deckPane = new DeckContainer( new DeckPaneHandler(), deckString, Card.WIDTH + 50, Card.HEIGHT, deckX - 50, deckY );
 		double graveX = Battlefield.WIDTH - Card.WIDTH - 10;
 		double graveY = 10;
 		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, graveX, graveY );
@@ -120,7 +123,8 @@ public class Player extends Pane {
 		String deckString = Integer.toString( getDeckCards().size() );
 		double deckX = Battlefield.WIDTH - Card.WIDTH - 10;
 		double deckY = Battlefield.HEIGHT - Card.HEIGHT - 10;
-		deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
+		//deckPane = new DeckPane( new DeckPaneHandler(), deckString, Card.WIDTH, Card.HEIGHT, deckX, deckY );
+		deckPane = new DeckContainer( new DeckPaneHandler(), deckString, Card.WIDTH + 50, Card.HEIGHT, deckX - 50, deckY );
 		double graveX = Battlefield.WIDTH - Card.WIDTH - 10;
 		double graveY = 10;
 		graveyardPane = new GraveyardPane( Card.WIDTH, Card.HEIGHT, graveX, graveY );
@@ -446,9 +450,16 @@ public class Player extends Pane {
 	/**
 	 * @return the deckPane
 	 */
+	/*
 	public DeckPane getDeckPane() {
 		return deckPane;
 	}
+	*/
+	public DeckContainer getDeckPane() {
+		return deckPane;
+	}
+		
+
 
 	/**
 	 * @return the graveyardPane
