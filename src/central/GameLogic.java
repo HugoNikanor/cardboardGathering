@@ -37,15 +37,9 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import network.Connection;
+import network.InputObjectHandler;
 
-import serverPackets.CardDrawPacket;
-import serverPackets.CardFocusPacket;
 import serverPackets.CardListPacket;
-import serverPackets.CardMovePacket;
-import serverPackets.CardPlayedPacket;
-import serverPackets.HealthSetPacket;
-import serverPackets.NetworkPacket;
-import serverPackets.PoisonSetPacket;
 
 public class GameLogic extends Application {
 
@@ -84,9 +78,8 @@ public class GameLogic extends Application {
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
-		inputObjectHandler = new InputObjectHandler();
-
 		jCardReader = new JSONCardReader();
+		inputObjectHandler = new InputObjectHandler( jCardReader );
 
 		Properties prop = new Properties();
 		try {
@@ -100,7 +93,6 @@ public class GameLogic extends Application {
 		// WARNING, this can maybe fail
 		String ipAddr = prop.getProperty("ipaddress");
 		connection = new Connection( inputObjectHandler, ipAddr );
-
 
 		Path filepath = Paths.get( "decks/" + cardListFile );
 		String[] cardList = {};
@@ -122,13 +114,12 @@ public class GameLogic extends Application {
 
 
 		// Waits for the other battlefield to get ready
-		while( true ) {
+		while( otherBattlefield == null ) {
 			try {
-				if( otherBattlefield.isReady() ) {
-					break;
-				}
+				otherBattlefield = inputObjectHandler.getBattlefield();
 			} catch( NullPointerException npe ) {
-				System.out.println( "not ready yet..." );
+				System.out.println( "Other battlefield not ready yet..." );
+				System.out.println( "Wainting for the other client..." );
 				try {
 					Thread.sleep( 2000 );
 				} catch( InterruptedException ie ) {
@@ -217,138 +208,6 @@ public class GameLogic extends Application {
 		defaultSceneHeight = gameScene.getHeight();
 	}
 
-	/**
-	 * Class which takes the info recieved over Connection and tells
-	 * the GameLogic, and all classes under it, what to do.
-	 */
-	public class InputObjectHandler {
-		
-		private ArrayList<NetworkPacket> pendingPackets;
-		
-		public InputObjectHandler() { 
-			System.out.println( "InputObjectHandler created" );
-
-			pendingPackets = new ArrayList<NetworkPacket>();
-			new Thread() {
-				@Override
-				public void run() {
-				synchronized( this ) {
-				while( true ) {
-					while( pendingPackets.size() > 0 ) {
-						switch( pendingPackets.get(0).getDataType() ) {
-						case INFO:
-							System.out.println( "INFO" + System.currentTimeMillis() );
-							break;
-						case CARDMOVE:
-							System.out.println( "CARDMOVE" + System.currentTimeMillis());
-							cardMove( (CardMovePacket) pendingPackets.get(0).getData() );
-							break;
-						case CARDPLAYED:
-							System.out.println( "CARDPLAYED" + System.currentTimeMillis());
-							playCard( (CardPlayedPacket) pendingPackets.get(0).getData() );
-							break;
-						case CARDDRAW:
-							System.out.println( "CARDDRAW" + System.currentTimeMillis() );
-							drawCard( (CardDrawPacket) pendingPackets.get(0).getData() );
-							break;
-						case CARDFOCUS:
-							System.out.println( "CARDFOCUS" + System.currentTimeMillis() );
-							focusCard( (CardFocusPacket) pendingPackets.get(0).getData() );
-							break;
-						case HEALTHSET:
-							System.out.println( "HEALTHSET" + System.currentTimeMillis() );
-							setHealth( (HealthSetPacket) pendingPackets.get(0).getData() );
-							break;
-						case POISONSET:
-							System.out.println( "POISONSET" + System.currentTimeMillis() );
-							setPoison( (PoisonSetPacket) pendingPackets.get(0).getData() );
-							break;
-						case CARDLIST:
-							System.out.println( "CARDLIST" + System.currentTimeMillis() );
-							setCardList( (CardListPacket) pendingPackets.get(0).getData() );
-							break;
-						default:
-							System.err.println( "Somethin is wrong with the data:" );
-							System.err.println( pendingPackets.get(0).toString() );
-							break;
-						}
-						pendingPackets.remove(0);
-					}
-					try {
-						this.wait(Connection.UPDATE_TIME);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				}
-				}
-			}.start();
-		}
-
-		public void handleObject( NetworkPacket data ) {
-			pendingPackets.add( data );
-		}
-
-		private void cardMove( CardMovePacket obj ) {
-			try {
-				Card temp = otherBattlefield.getCards().getCard( obj.getId() );
-				Platform.runLater( new Runnable() {
-					@Override
-					public void run() {
-						temp.smoothPlace( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
-						temp.smoothSetRotate( obj.getRotate(), Connection.UPDATE_TIME );
-						//temp.giveFocus();
-					}
-				});
-			} catch( CardNotFoundException e ) {
-				e.printStackTrace();
-			}
-		}
-		private void playCard( CardPlayedPacket obj ) {
-			try {
-				System.out.println( "obj.getId(): " + obj.getId() );
-				Card tempCard = otherBattlefield.getPlayer().getHandCards().getCard( obj.getId() );
-
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						otherBattlefield.getPlayer().playCard( tempCard, otherBattlefield );
-					}
-				});
-			} catch( CardNotFoundException e ) {
-				e.printStackTrace();
-			}
-		}
-		private void drawCard( CardDrawPacket obj ) {
-			try {
-				otherBattlefield.getPlayer().drawCard( obj.getId() );
-			} catch (CardNotFoundException e) {
-				e.printStackTrace();
-			}
-
-		}
-		private void focusCard( CardFocusPacket obj ) {
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						otherBattlefield.getCards().getCard( obj.getId() ).giveFocus();
-					} catch( CardNotFoundException e ){
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-		private void setHealth( HealthSetPacket obj ) {
-			otherBattlefield.getPlayer().setHealth( obj.getHealth() );
-		}
-		private void setPoison( PoisonSetPacket obj ) {
-			otherBattlefield.getPlayer().setPoison( obj.getPoison() );
-		}
-		private void setCardList( CardListPacket obj ) {
-			otherBattlefield = new Battlefield( jCardReader, obj.getCardList() );
-		}
-	}
 
 	/**
 	 * EventHandler for cards being played, <br>

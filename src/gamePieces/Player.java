@@ -175,28 +175,43 @@ public class Player extends Pane {
 	/**
 	 * Event handler for the cardStackCollections <br>
 	 */
-	private class CardStackCollectionHandler implements EventHandler<Event>
-		{
+	private class CardStackCollectionHandler implements EventHandler<Event> {
+		private void handleDeckPress() {
+			try {
+				drawCard();
+			} catch (CardNotFoundException e) {
+				System.out.println(
+					"Player " + this + 
+					" trying to draw cards with an empty deck");
+			}
+		}
+
+		private void handleDeckBtn() {
+			System.out.println( "deck btn pressed" );
+		}
+
+		private void handleGravePress() {
+			// Should this even do anything
+		}
+
+		private void handleGraveBtn() {
+			System.out.println( "grave btn pressed" );
+		}
+
+
 		@Override
 		public void handle(Event event) {
-			if( event.getSource() == graveCont.getCardStack() ) {
-				// Should this event have an action
-			}
-			if( event.getSource() == graveCont.getGetFromDeckBtn() ) {
-				System.out.println( "Grave get button pressed" );
-			}
 			if( event.getSource() == deckCont.getCardStack() ) {
-				try {
-					drawCard();
-				} catch (CardNotFoundException e) {
-					System.out.println(
-						"Player " + 
-						this + 
-						" trying to draw cards with an empty deck");
-				}
+				this.handleDeckPress();
 			}
 			if( event.getSource() == deckCont.getGetFromDeckBtn() ) {
-				System.out.println( "Deck get button pressed" );
+				this.handleDeckBtn();
+			}
+			if( event.getSource() == graveCont.getCardStack() ) {
+				this.handleGravePress();
+			}
+			if( event.getSource() == graveCont.getGetFromDeckBtn() ) {
+				this.handleGraveBtn();
 			}
 		}
 	}

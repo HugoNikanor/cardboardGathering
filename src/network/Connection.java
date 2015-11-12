@@ -8,7 +8,6 @@ import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
 
-import central.GameLogic;
 import serverPackets.NetworkPacket;
 
 /**
@@ -27,7 +26,7 @@ public class Connection {
 	private ObjectInputStream objInStream;
 	private ObjectOutputStream objOutStream;
 
-	private GameLogic.InputObjectHandler inObjHandler;
+	private InputObjectHandler inObjHandler;
 
 	/**
 	 * If the client is connected to the server
@@ -40,7 +39,7 @@ public class Connection {
 	 * @param inputObjectHandler the class that takes care of the inputs
 	 * @param ip the ip address of the server
 	 */
-	public Connection( GameLogic.InputObjectHandler inputObjectHandler, String ip ) {
+	public Connection( InputObjectHandler inputObjectHandler, String ip ) {
 		this( inputObjectHandler, ip, 23732 );
 	}
 
@@ -51,7 +50,7 @@ public class Connection {
 	 * @param ip the servers ip address
 	 * @param port the port that the server is on
 	 */
-	public Connection( GameLogic.InputObjectHandler inputObjectHandler, String ip, int port ) {
+	public Connection( InputObjectHandler inputObjectHandler, String ip, int port ) {
 		this.inObjHandler = inputObjectHandler;
 
 		connected = false;

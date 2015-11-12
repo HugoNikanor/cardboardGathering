@@ -3,6 +3,7 @@ package graphicsObjects;
 import gamePieces.Card;
 import gamePieces.CardCollection;
 
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -20,8 +21,8 @@ public class CardStackContainer extends Pane {
 	public static final double HEIGHT = Card.HEIGHT;
 
 	
-	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> listener, double xPos, double yPos ) {
-		cardStack = new CardStackPane( type, listener, Card.WIDTH, Card.HEIGHT );
+	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> handler, double xPos, double yPos ) {
+		cardStack = new CardStackPane( type, handler, Card.WIDTH, Card.HEIGHT );
 
 		getFromDeckBtn = new Button();
 		getFromDeckBtn.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
@@ -30,9 +31,10 @@ public class CardStackContainer extends Pane {
 		getFromDeckBtn.setMinHeight( WIDTH - Card.WIDTH - 10 );
 		getFromDeckBtn.setMaxHeight( WIDTH - Card.WIDTH - 10 );
 		getFromDeckBtn.setMinWidth( HEIGHT );
-
 		getFromDeckBtn.setPrefHeight( 40 );
 		getFromDeckBtn.setPrefWidth( 100 );
+		getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
+				
 
 		this.setPrefWidth( WIDTH );
 		this.setPrefHeight( HEIGHT );
