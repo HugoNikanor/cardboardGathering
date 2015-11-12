@@ -4,12 +4,12 @@ import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
 import graphicsObjects.CardStackContainer;
-import graphicsObjects.CardStackPane;
 import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
 
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -36,12 +36,9 @@ public class Player extends Pane {
 	private Connection connection;
 	private boolean shouldSend;
 
-	private DeckPaneHandler deckPaneHandler;
+	private CardStackCollectionHandler cardStackHandler;
 	private CardStackContainer deckCont;
-	private CardStackPane deckPane;
-
 	private CardStackContainer graveCont;
-	private CardStackPane gravePane;
 
 	private PlayerBtnPane playerBtnPane;
 	private LifeCounter lifeCounter;
@@ -89,19 +86,17 @@ public class Player extends Pane {
 		this.getChildren().add(playerBtnPane);
 
 		// Objects displayed on the battlefield
-		deckPaneHandler = new DeckPaneHandler();
-		deckPane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
+		cardStackHandler = new CardStackCollectionHandler();
 		deckCont = new CardStackContainer(
-			deckPane,
-			deckPaneHandler,
+			CardCollection.Collections.DECK,
+			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			Battlefield.HEIGHT - Card.HEIGHT - 10
 		);
 		deckCont.setText(Integer.toString( getDeckCards().size() ));
-		gravePane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
 		graveCont = new CardStackContainer(
-			gravePane,
-			deckPaneHandler,
+			CardCollection.Collections.GRAVEYARD,
+			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			10
 		);
@@ -132,20 +127,17 @@ public class Player extends Pane {
 		shouldSend = false;
 
 		// Objects displayed on the battlefield
-		deckPaneHandler = new DeckPaneHandler();
-		deckPane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
+		cardStackHandler = new CardStackCollectionHandler();
 		deckCont = new CardStackContainer(
-			deckPane,
-			deckPaneHandler,
+			CardCollection.Collections.DECK,
+			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			Battlefield.HEIGHT - Card.HEIGHT - 10
 		);
 		deckCont.setText(Integer.toString( getDeckCards().size() ));
-
-		gravePane = new CardStackPane( deckPaneHandler, Card.WIDTH, Card.HEIGHT );
 		graveCont = new CardStackContainer(
-			gravePane,
-			deckPaneHandler,
+			CardCollection.Collections.GRAVEYARD,
+			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			10
 		);
@@ -181,15 +173,30 @@ public class Player extends Pane {
 	}
 
 	/**
-	 * Sends the drawCard to player when the deck is pressed
+	 * Event handler for the cardStackCollections <br>
 	 */
-	private class DeckPaneHandler implements EventHandler<MouseEvent> {
+	private class CardStackCollectionHandler implements EventHandler<Event>
+		{
 		@Override
-		public void handle(MouseEvent event) {
-			try {
-				drawCard();
-			} catch (CardNotFoundException e) {
-				System.out.println("Player " + this + " trying to draw cards with an empty deck");
+		public void handle(Event event) {
+			if( event.getSource() == graveCont.getCardStack() ) {
+				// Should this event have an action
+			}
+			if( event.getSource() == graveCont.getGetFromDeckBtn() ) {
+				System.out.println( "Grave get button pressed" );
+			}
+			if( event.getSource() == deckCont.getCardStack() ) {
+				try {
+					drawCard();
+				} catch (CardNotFoundException e) {
+					System.out.println(
+						"Player " + 
+						this + 
+						" trying to draw cards with an empty deck");
+				}
+			}
+			if( event.getSource() == deckCont.getGetFromDeckBtn() ) {
+				System.out.println( "Deck get button pressed" );
 			}
 		}
 	}
@@ -260,7 +267,7 @@ public class Player extends Pane {
 	 */
 	public void drawCard( long cardId ) throws CardNotFoundException {
 		Card tempCard = deckCards.takeCard( cardId );
-		tempCard.setCurrentLocation(Card.CardLocation.HAND);
+		tempCard.setCurrentLocation(CardCollection.Collections.HAND);
 		handCards.add(tempCard);
 
 		if( shouldSend ) {
@@ -321,7 +328,7 @@ public class Player extends Pane {
 	 */
 	public void playCard(Card card, Battlefield targetBattlefield) {
 		try {
-			card.setCurrentLocation( Card.CardLocation.BATTLEFIELD );
+			card.setCurrentLocation( CardCollection.Collections.BATTLEFIELD );
 
 			double finalPosY = 25;
 			double startY = card.getTranslateY();

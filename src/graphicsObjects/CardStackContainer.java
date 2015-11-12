@@ -1,10 +1,11 @@
 package graphicsObjects;
 
 import gamePieces.Card;
+import gamePieces.CardCollection;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Rotate;
 
@@ -17,10 +18,10 @@ public class CardStackContainer extends Pane {
 
 	public static final double WIDTH = Card.WIDTH + 40;
 	public static final double HEIGHT = Card.HEIGHT;
+
 	
-	public CardStackContainer( CardStackPane cardStack, EventHandler<MouseEvent> listener, double xPos, double yPos ) {
-		//deck = new CardStackPane(listener, "initialText", Card.WIDTH, Card.HEIGHT,  0, 0);
-		this.cardStack = cardStack;
+	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> listener, double xPos, double yPos ) {
+		cardStack = new CardStackPane( type, listener, Card.WIDTH, Card.HEIGHT );
 
 		getFromDeckBtn = new Button();
 		getFromDeckBtn.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
@@ -43,5 +44,23 @@ public class CardStackContainer extends Pane {
 	
 	public void setText( String newText ) {
 		cardStack.setText( newText );
+	}
+
+	public CardCollection.Collections getType() {
+		return cardStack.getType();
+	}
+
+	/**
+	 * @return the getFromDeckBtn
+	 */
+	public Button getGetFromDeckBtn() {
+		return getFromDeckBtn;
+	}
+
+	/**
+	 * @return the cardStack
+	 */
+	public CardStackPane getCardStack() {
+		return cardStack;
 	}
 }

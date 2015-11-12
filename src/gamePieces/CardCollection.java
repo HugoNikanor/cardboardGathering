@@ -18,6 +18,16 @@ public class CardCollection extends ArrayList<Card> {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * The different types of collections
+	 */
+	public static enum Collections {
+		DECK,
+		GRAVEYARD,
+		HAND,
+		BATTLEFIELD
+	}
+
+	/**
 	 * Create an empty collection
 	 */
 	public CardCollection() { }

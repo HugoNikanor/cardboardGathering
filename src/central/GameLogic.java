@@ -19,6 +19,8 @@ import exceptions.CardNotFoundException;
 
 import gamePieces.Battlefield;
 import gamePieces.Card;
+import gamePieces.CardCollection;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -35,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import network.Connection;
+
 import serverPackets.CardDrawPacket;
 import serverPackets.CardFocusPacket;
 import serverPackets.CardListPacket;
@@ -365,7 +368,7 @@ public class GameLogic extends Application {
 					.getCard(
 						(Card)event.getSource());
 
-				if( tempCard.getCurrentLocation() == Card.CardLocation.HAND ) {
+				if( tempCard.getCurrentLocation() == CardCollection.Collections.HAND ) {
 
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
 						ownBattlefield.getPlayer().playCard(tempCard, ownBattlefield);

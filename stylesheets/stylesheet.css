@@ -1,10 +1,10 @@
 .battlefield {
 	-fx-border-color: black;
 }
-.deck {
+.deck-pane {
 	-fx-background-color: brown;
 }
-.graveyard {
+.grave-pane {
 	-fx-background-color: darkslategray;
 }
 .cards-in-hand-pane {

@@ -75,18 +75,9 @@ public class Card extends StackPane {
 	private static Card currentCard;
 
 	/**
-	 * The different places a card can be
-	 */
-	public static enum CardLocation {
-		HAND,
-		BATTLEFIELD,
-		DECK,
-		GRAVEYARD
-	}
-	/**
 	 * The current location of the card
 	 */
-	private CardLocation currentLocation;
+	private CardCollection.Collections currentLocation;
 
 	/**
 	 * The cards margin while it is in hand <br>
@@ -161,7 +152,7 @@ public class Card extends StackPane {
 
 		this.calcConvMana();
 
-		currentLocation = CardLocation.DECK;
+		currentLocation = CardCollection.Collections.DECK;
 	}
 
 	/**
@@ -297,7 +288,7 @@ public class Card extends StackPane {
 			synchronized( this ) {
 				while( true ){
 					// Only send move data if it's sencible to do so
-					if( Objects.equals( Card.this.currentLocation, Card.CardLocation.BATTLEFIELD ) ) {
+					if( Objects.equals( Card.this.currentLocation, CardCollection.Collections.BATTLEFIELD ) ) {
 						double newX = getTranslateX();
 						double newY = getTranslateY();
 						double newRotate = getRotate();
@@ -608,11 +599,11 @@ public class Card extends StackPane {
 		return currentCard;
 	}
 
-	public CardLocation getCurrentLocation() {
+	public CardCollection.Collections getCurrentLocation() {
 		return currentLocation;
 	}
 
-	public void setCurrentLocation(CardLocation currentLocation) {
+	public void setCurrentLocation(CardCollection.Collections currentLocation) {
 		this.currentLocation = currentLocation;
 	}
 

@@ -1,7 +1,9 @@
 package graphicsObjects;
 
+import gamePieces.CardCollection;
+
+import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -17,14 +19,18 @@ public class CardStackPane extends StackPane {
 	 */
 	private Text deckCardText;
 
+	private CardCollection.Collections type;
+
+
 	/**
 	 * Don't create this by itself
 	 * @param handler the event hadler for pressing the pane
 	 * @param width how wide the pane should be
 	 * @param height how high the pane should be
 	 */
-	public CardStackPane(EventHandler<MouseEvent> handler, double width, double height) {
+	public CardStackPane( CardCollection.Collections type, EventHandler<Event> handler, double width, double height) {
 
+		this.type = type;
 		this.setOnMouseClicked( handler );
 		this.setPrefSize(width, height);
 
@@ -34,8 +40,19 @@ public class CardStackPane extends StackPane {
 		this.getStyleClass().add("deck");
 		//this.setTranslateX(xPos - width  - 10);
 		//this.setTranslateY(yPos - height - 10);
-		this.setTranslateX( 0 );
-		this.setTranslateY( 0 );
+		//this.setTranslateX( 0 );
+		//this.setTranslateY( 0 );
+
+		switch(type) {
+		case DECK:
+			this.getStyleClass().add("deck-pane");
+			break;
+		case GRAVEYARD:
+			this.getStyleClass().add("grave-pane");
+			break;
+		default:
+			break;
+		}
 
 	}
 
@@ -46,6 +63,13 @@ public class CardStackPane extends StackPane {
 	 */
 	public void setText(String newText) {
 		deckCardText.setText(newText);
+	}
+
+	/**
+	 * @return the type
+	 */
+	public CardCollection.Collections getType() {
+		return type;
 	}
 
 }
