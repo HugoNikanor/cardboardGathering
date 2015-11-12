@@ -3,11 +3,13 @@ package gamePieces;
 import database.JSONCardReader;
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.CardSelectionPane;
 import graphicsObjects.CardStackContainer;
 import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
 
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -187,6 +189,20 @@ public class Player extends Pane {
 		}
 
 		private void handleDeckBtn() {
+
+			new Thread(() -> {
+				try {
+					Card testCard = new CardSelectionPane().getStaticCard( deckCards, Player.this );
+					Player.this.drawCard(testCard);
+				} catch (CardNotFoundException e) {
+					e.printStackTrace();
+				}
+			}).start();
+
+
+
+
+
 			System.out.println( "deck btn pressed" );
 		}
 
@@ -275,13 +291,23 @@ public class Player extends Pane {
 		drawCard( deckCards.getNextCard().getCardId() );
 	}
 
+
 	/**
 	 * Moves a set card from the deck to the hand
 	 * @param cardId what card that should be drawn
 	 * @throws CardNotFoundException probably non fatal
 	 */
 	public void drawCard( long cardId ) throws CardNotFoundException {
-		Card tempCard = deckCards.takeCard( cardId );
+		drawCard( deckCards.getCard( cardId ));
+	}
+
+	/**
+	 * Moves the choosen card from the deck to the hand
+	 * @param card  what card that should be drawn
+	 * @throws CardNotFoundException probably non fatal
+	 */
+	public void drawCard( Card card ) throws CardNotFoundException {
+		Card tempCard = deckCards.takeCard( card );
 		tempCard.setCurrentLocation(CardCollection.Collections.HAND);
 		handCards.add(tempCard);
 
@@ -294,7 +320,9 @@ public class Player extends Pane {
 		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
 		tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
 
-		this.getChildren().add(tempCard);
+		Platform.runLater( new Thread(() -> {
+			this.getChildren().add(tempCard);
+		}));
 
 		// Set the text on the graphical deck
 		deckCont.setText(Integer.toString(getDeckCards().size()));

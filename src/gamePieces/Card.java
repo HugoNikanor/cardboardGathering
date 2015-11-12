@@ -162,7 +162,7 @@ public class Card extends StackPane {
 	 * you have to make sure yourself that no two cards share an id number
 	 * in the local scope desired
 	 */
-	public Card( Card cardToCopy, int cardId ) {
+	public Card( Card cardToCopy, long cardId ) {
 		this.cardId = cardId;
 
 		this.cardName  = cardToCopy.getCardName();
