@@ -69,7 +69,9 @@ public class CardSelectionPane extends ScrollPane {
 		outerPane.setMinWidth  (( 2 * rootWidth ) / 3 );
 		outerPane.setPrefHeight(( 2 * rootHeight) / 3 );
 
-		outerPane.relocate( rootWidth/6, rootHeight/6 );
+		//outerPane.relocate( rootWidth/6, rootHeight/6 );
+		// TODO set the dimensions to something nice.
+		outerPane.relocate( rootWidth/6, -rootHeight );
 
 		innerPane.setPrefWrapLength( 2*rootWidth / 3 );
 
