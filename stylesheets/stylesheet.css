@@ -5,13 +5,21 @@
 	-fx-background-color: brown;
 }
 .grave-pane {
-	-fx-background-color: darkslategray;
+	-fx-background-color: DarkSlateGray;
 }
 .cards-in-hand-pane {
 
 }
-.btn-pane {
+
+/* When getting a specific card from a collection */
+.card-select-pane-outer {
+	-fx-border-color: #4D4D4D;
+	-fx-border-width: 2px;
 }
+.card-select-pane-inner {
+	-fx-background-color: DimGray;
+}
+
 .card {
 	-fx-border-color: black;
 	-fx-border-width: 5px;

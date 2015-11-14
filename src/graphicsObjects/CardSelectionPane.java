@@ -5,11 +5,13 @@ import java.util.concurrent.CyclicBarrier;
 
 import exceptions.CardNotFoundException;
 
+import gamePieces.Battlefield;
 import gamePieces.Card;
 import gamePieces.CardCollection;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -21,22 +23,24 @@ import javafx.scene.layout.Pane;
  * is returned <br>
  * <b>ALWAYS RUN THIS IN A NEW THREAD, SINCE IT LOCKS UP THE THREAD RUN ON!</b>
  */
-public class CardSelectionPane extends ScrollPane {
+public class CardSelectionPane {
 
 	private Card returnCard;
 
 	/**
-	 * @return the card selected
+	 * @return the card selected in the popup
 	 * @param cards the collection of cards to display
 	 * @param rootPane the pane to draw the selection pane upon
 	 */
 	public Card getStaticCard(CardCollection cards, Pane rootPane) throws CardNotFoundException {
+		if( cards.size() <= 0 ) {
+			throw new CardNotFoundException("No cards in collection");
+		}
 
 		CyclicBarrier latch = new CyclicBarrier(2);
 
 		ScrollPane outerPane = new ScrollPane();
 		FlowPane innerPane = new FlowPane();
-
 
 		for( Card temp : cards ) {
 			Card innerTemp = new Card(temp, temp.getCardId());
@@ -54,12 +58,17 @@ public class CardSelectionPane extends ScrollPane {
 					}
 				}
 			});
-
 			innerPane.getChildren().add(innerTemp);
 		}
 
+		innerPane.getStyleClass().add("card-select-pane-inner");
+		innerPane.setVgap( 15 );
+		innerPane.setHgap( 15 );
+		innerPane.setAlignment( Pos.TOP_CENTER );
+
 		outerPane.setContent( innerPane );
-		outerPane.setStyle("-fx-background-color: DAE6F3;");
+		outerPane.getStyleClass().add("card-select-pane-outer");
+
 
 		double rootWidth  = rootPane.getWidth();
 		double rootHeight = rootPane.getHeight();
@@ -67,19 +76,21 @@ public class CardSelectionPane extends ScrollPane {
 		System.out.println( "rootWidth = " + rootWidth );
 		System.out.println( "rootHeight = " + rootHeight );
 		outerPane.setMinWidth  (( 2 * rootWidth ) / 3 );
-		outerPane.setPrefHeight(( 2 * rootHeight) / 3 );
+
+		//outerPane.setPrefHeight(( 2 * rootHeight) / 3 );
+		//TODO do this better!
+		outerPane.setPrefHeight(( 2 * (rootHeight+Battlefield.HEIGHT)) / 3 );
 
 		//outerPane.relocate( rootWidth/6, rootHeight/6 );
-		// TODO set the dimensions to something nice.
-		outerPane.relocate( rootWidth/6, -rootHeight );
+		//TODO do this better!
+		// When the pane goes into battlefield then the buttons there stop working...
+		outerPane.relocate( rootWidth/6, (rootHeight+Battlefield.HEIGHT)/6 - Battlefield.HEIGHT );
 
 		innerPane.setPrefWrapLength( 2*rootWidth / 3 );
 
 
 		Platform.runLater(new Thread(() -> {
 			rootPane.getChildren().add( outerPane );
-
-			System.out.println( "plat.run " + outerPane.getMinWidth() );
 		}));
 
 		try {
@@ -93,10 +104,12 @@ public class CardSelectionPane extends ScrollPane {
 		System.out.println( "latch released" );
 
 		Platform.runLater(new Thread(() -> {
-			System.out.println( "End " + outerPane.getMinWidth() );
 			rootPane.getChildren().remove( outerPane );
 		}));
 
+		// This can throw a card not found exception
+		// but shouldn't do it as long as the collection
+		// isn't modified while popup is open
 		return cards.getCard( returnCard.getCardId());
 	}
 }
