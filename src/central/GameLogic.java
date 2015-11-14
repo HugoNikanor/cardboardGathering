@@ -149,7 +149,6 @@ public class GameLogic extends Application {
 		battlefieldContainer.add(otherBattlefield, 0, 0);
 		battlefieldContainer.add(ownBattlefield,   0, 1);
 
-
 		// The pane everything ingame should be placed in
 		// Change this for "out of game" menus & simmilar
 		rootGamePane = new BorderPane();
@@ -370,6 +369,7 @@ public class GameLogic extends Application {
 					 * TODO This currently doesn't play nicely with the buttons
 					 * focus, the cards on the battlefield should be changed to
 					 * use proper focus instead of my own version.
+					 * Basicly, it crashes.
 					 */ 
 					if( pressedKeys.contains(KeyCode.TAB) ) {
 						if( !pressedKeys.contains(KeyCode.SHIFT) ) {

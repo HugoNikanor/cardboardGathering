@@ -15,10 +15,21 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
+/**
+ * A class for displaying a popup in the middle of the given pane with all the
+ * cards from the given collection, when one of the cards are pressed that card
+ * is returned <br>
+ * <b>ALWAYS RUN THIS IN A NEW THREAD, SINCE IT LOCKS UP THE THREAD RUN ON!</b>
+ */
 public class CardSelectionPane extends ScrollPane {
 
 	private Card returnCard;
 
+	/**
+	 * @return the card selected
+	 * @param cards the collection of cards to display
+	 * @param rootPane the pane to draw the selection pane upon
+	 */
 	public Card getStaticCard(CardCollection cards, Pane rootPane) throws CardNotFoundException {
 
 		CyclicBarrier latch = new CyclicBarrier(2);
@@ -27,7 +38,6 @@ public class CardSelectionPane extends ScrollPane {
 		FlowPane innerPane = new FlowPane();
 
 
-		// This should maybe be made a bit safer...
 		for( Card temp : cards ) {
 			Card innerTemp = new Card(temp, temp.getCardId());
 			innerTemp.setOnMouseClicked( new EventHandler<MouseEvent>() {
@@ -46,7 +56,6 @@ public class CardSelectionPane extends ScrollPane {
 			});
 
 			innerPane.getChildren().add(innerTemp);
-			//System.out.println( "added: " + innerTemp.getCardName() );
 		}
 
 		outerPane.setContent( innerPane );
@@ -60,7 +69,7 @@ public class CardSelectionPane extends ScrollPane {
 		outerPane.setMinWidth  (( 2 * rootWidth ) / 3 );
 		outerPane.setPrefHeight(( 2 * rootHeight) / 3 );
 
-		outerPane.relocate( rootWidth / 6, 0 );
+		outerPane.relocate( rootWidth/6, rootHeight/6 );
 
 		innerPane.setPrefWrapLength( 2*rootWidth / 3 );
 

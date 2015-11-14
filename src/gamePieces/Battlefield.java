@@ -81,6 +81,7 @@ public class Battlefield extends Pane {
 		// Life counter
 		this.getChildren().add( player.getLifeCounter() );
 
+
 		// used when sending the battlefield to the other player
 		this.isReady = true;
 	}

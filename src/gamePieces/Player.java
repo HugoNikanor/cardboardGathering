@@ -198,12 +198,6 @@ public class Player extends Pane {
 					e.printStackTrace();
 				}
 			}).start();
-
-
-
-
-
-			System.out.println( "deck btn pressed" );
 		}
 
 		private void handleGravePress() {
