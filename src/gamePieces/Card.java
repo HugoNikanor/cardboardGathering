@@ -407,11 +407,6 @@ public class Card extends StackPane {
 		}
 	}
 
-	/*
-	 * Functions for manipulating the physical
-	 * represontation of the card
-	 */
-
 	public void smoothSetScale( double scale ) {
 		smoothSetScale( scale, 50 );
 	}
@@ -509,9 +504,9 @@ public class Card extends StackPane {
 
 		if( changeX < 0 ) {
 			if( this.getTranslateX() + changeX < 0 ) {
-					tt.setByX( -this.getTranslateX() );
+				tt.setByX( -this.getTranslateX() );
 			} else {
-					tt.setByX( changeX );
+				tt.setByX( changeX );
 			}
 		}
 

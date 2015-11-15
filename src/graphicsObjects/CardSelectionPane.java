@@ -21,7 +21,7 @@ import javafx.scene.layout.Pane;
  * A class for displaying a popup in the middle of the given pane with all the
  * cards from the given collection, when one of the cards are pressed that card
  * is returned <br>
- * <b>ALWAYS RUN THIS IN A NEW THREAD, SINCE IT LOCKS UP THE THREAD RUN ON!</b>
+ * <b>THIS LOCKS UP THE THREAD IT'S RUN ON!</b>
  */
 public class CardSelectionPane {
 
@@ -34,7 +34,7 @@ public class CardSelectionPane {
 	 */
 	public Card getStaticCard(CardCollection cards, Pane rootPane) throws CardNotFoundException {
 		if( cards.size() <= 0 ) {
-			throw new CardNotFoundException("No cards in collection");
+			throw new CardNotFoundException( "No cards in collection." );
 		}
 
 		CyclicBarrier latch = new CyclicBarrier(2);
@@ -42,6 +42,8 @@ public class CardSelectionPane {
 		ScrollPane outerPane = new ScrollPane();
 		FlowPane innerPane = new FlowPane();
 
+		// It would be better if this went backwards,
+		// since the cards in the deck are accessed that way.
 		for( Card temp : cards ) {
 			Card innerTemp = new Card(temp, temp.getCardId());
 			innerTemp.setOnMouseClicked( new EventHandler<MouseEvent>() {

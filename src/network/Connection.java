@@ -18,9 +18,10 @@ import serverPackets.NetworkPacket;
 public class Connection {
 
 	/**
-	 * How many milliseconds there should be between packets
+	 * How many milliseconds there should be between packets <br>
+	 * Setting this to high causes one of the clients to not start...
 	 */
-	public static int UPDATE_TIME = 100;
+	public static int UPDATE_TIME = 200;
 
 	private Socket socket;
 	private ObjectInputStream objInStream;

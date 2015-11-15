@@ -1,12 +1,15 @@
 .battlefield {
-	-fx-border-color: black;
+	-fx-border-color: Black;
+	-fx-background-color: White;
 }
 .deck-pane {
-	-fx-background-color: brown;
+	-fx-background-color: Brown;
 }
 .grave-pane {
 	-fx-background-color: DarkSlateGray;
 }
+
+/* The pane representing the cards on the hand */
 .cards-in-hand-pane {
 
 }
@@ -21,7 +24,7 @@
 }
 
 .card {
-	-fx-border-color: black;
+	-fx-border-color: Black;
 	-fx-border-width: 5px;
 }
 .black {
@@ -42,9 +45,9 @@
 .color-less {
 	-fx-background-color: #C0C0C0;
 }
+.back-side {
+	-fx-background-color: Brown;
+}
 #has-focus {
 	-fx-border-color: Red;
-}
-#nope {
-	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }

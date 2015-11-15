@@ -136,12 +136,12 @@ public class GameLogic extends Application {
 			otherBattlefield.getChildren().add(otherTemp);
 		}
 
-		//Give a proper card focus
+		// Give a proper card focus
+		// TODO this should probably just be removed
 		try {
 			ownBattlefield.getCards().getCard(0).giveFocus();
 		} catch (CardNotFoundException e1) {
 			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
-			//e1.printStackTrace();
 		}
 
 		// contain the ownBattlefield & and otherBattlefield
