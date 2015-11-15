@@ -4,9 +4,8 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
-import java.util.Objects;
-
 import graphicsObjects.CardData;
+
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -19,7 +18,6 @@ import javafx.util.Duration;
 import network.Connection;
 
 import serverPackets.CardFocusPacket;
-import serverPackets.CardMovePacket;
 
 public class Card extends StackPane {
 	private long cardId;
@@ -89,6 +87,11 @@ public class Card extends StackPane {
 
 	private Connection connection;
 	private boolean shouldSend;
+
+	// These three are used by the SendCardDataThread in player
+	private double oldX;
+	private double oldY;
+	private double oldRotate;
 
 	private MouseEventHandler mouseEventHandler;
 
@@ -280,37 +283,6 @@ public class Card extends StackPane {
 		}
 	}
 
-	private class SendDataThread implements Runnable {
-		private double oldX;
-		private double oldY;
-		private double oldRotate;
-
-		@Override
-		public void run() {
-			synchronized( this ) {
-				while( true ){
-					// Only send the move data if it's sencible to do so
-					if( Objects.equals( Card.this.currentLocation, CardCollection.Collections.BATTLEFIELD ) ) {
-						double newX = getTranslateX();
-						double newY = getTranslateY();
-						double newRotate = getRotate();
-
-						if( newX != oldX || newY != oldY || newRotate != oldRotate ) {
-							connection.sendPacket( new CardMovePacket( cardId, newX, newY, newRotate ) );
-						}
-						oldX = getTranslateX();
-						oldY = getTranslateY();
-						oldRotate = getRotate();
-					}
-					try {
-						this.wait( Connection.UPDATE_TIME );
-					} catch( InterruptedException e ) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
 
 	public class MouseEventHandler implements EventHandler<MouseEvent> {
 
@@ -577,9 +549,58 @@ public class Card extends StackPane {
 	 * @param connection the connection to set
 	 */
 	public void setConnection(Connection connection) {
-		new Thread( new SendDataThread() ).start();
+		//new Thread( new SendDataThread() ).start();
 		this.shouldSend = true;
 		this.connection = connection;
+	}
+
+	/**
+	 * @return the shouldSend
+	 */
+	public boolean isShouldSend() {
+		return shouldSend;
+	}
+
+	/**
+	 * @return the oldX
+	 */
+	public double getOldX() {
+		return oldX;
+	}
+
+	/**
+	 * @param oldX the oldX to set
+	 */
+	public void setOldX(double oldX) {
+		this.oldX = oldX;
+	}
+
+	/**
+	 * @return the oldY
+	 */
+	public double getOldY() {
+		return oldY;
+	}
+
+	/**
+	 * @param oldY the oldY to set
+	 */
+	public void setOldY(double oldY) {
+		this.oldY = oldY;
+	}
+
+	/**
+	 * @return the oldRotate
+	 */
+	public double getOldRotate() {
+		return oldRotate;
+	}
+
+	/**
+	 * @param oldRotate the oldRotate to set
+	 */
+	public void setOldRotate(double oldRotate) {
+		this.oldRotate = oldRotate;
 	}
 
 	/**

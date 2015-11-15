@@ -20,6 +20,7 @@ import javafx.util.Duration;
 import network.Connection;
 
 import serverPackets.CardBetweenCollectionsPacket;
+import serverPackets.CardMovePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.PoisonSetPacket;
 
@@ -70,6 +71,7 @@ public class Player extends Pane {
 
 		this.connection = connection;
 		shouldSend = true;
+		new Thread( new SendCardDataThread() ).start();
 
 		for( Card temp : deckCards ) {
 			temp.setOnMouseClicked( cardPlayHandler );
@@ -144,6 +146,50 @@ public class Player extends Pane {
 		);
 
 		lifeCounter = new LifeCounter(new LifeCounterHandler());
+	}
+
+	private class SendCardDataThread implements Runnable {
+		@Override
+		public void run() {
+			synchronized( this ) {
+				while( true ){
+					long startTime = System.currentTimeMillis();
+					for( Card card : battlefieldCards ) {
+						if( card.isShouldSend() ) {
+							double newX = card.getTranslateX();
+							double newY = card.getTranslateY();
+							double newRotate = card.getRotate();
+
+							if( newX != card.getOldX() ||
+							    newY != card.getOldY() ||
+							    newRotate != card.getOldRotate() ) {
+								// TODO this is the general idea of it
+								// However, it should be set to user
+								// better coordinates, and have some way
+								// of checking if the card isn't being held
+								// any more.
+								if( deckCont.getTranslateX() < newX &&
+								    deckCont.getTranslateY() < newY ) {
+									System.out.println("card on deck");
+								}
+								connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
+							}
+
+							card.setOldX( card.getTranslateX() );
+							card.setOldY( card.getTranslateY() );
+							card.setOldRotate( card.getRotate() );
+						}
+					}
+					try {
+						long waitTime = Connection.UPDATE_TIME - (System.currentTimeMillis() - startTime);
+						if( waitTime >= 0 )
+							this.wait( waitTime );
+					} catch( InterruptedException e ) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	/**

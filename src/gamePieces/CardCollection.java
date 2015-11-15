@@ -197,7 +197,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @throws CardNotFoundException if there is no card with that id
 	 * @see takeCard
 	 */
-	public Card getCard( long cardId ) throws CardNotFoundException {
+	public synchronized Card getCard( long cardId ) throws CardNotFoundException {
 		for( Card temp : this ) {
 			if( Objects.equals( temp.getCardId(), cardId ) ) {
 				return temp;
