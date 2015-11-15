@@ -19,8 +19,7 @@ import javafx.util.Duration;
 
 import network.Connection;
 
-import serverPackets.CardDrawPacket;
-import serverPackets.CardPlayedPacket;
+import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.PoisonSetPacket;
 
@@ -118,10 +117,10 @@ public class Player extends Pane {
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
 		cardIdCounter = 0;
-		deckCards        = new CardCollection( jCardReader, cardIdCounter, cardList );
-		handCards        = new CardCollection();
-		battlefieldCards = new CardCollection();
-		graveyardCards   = new CardCollection();
+		deckCards        = new CardCollection( CardCollection.Collections.DECK, jCardReader, cardIdCounter, cardList );
+		handCards        = new CardCollection( CardCollection.Collections.HAND );
+		battlefieldCards = new CardCollection( CardCollection.Collections.BATTLEFIELD );
+		graveyardCards   = new CardCollection( CardCollection.Collections.GRAVEYARD );
 
 		health = 20;
 		poisonCounters = 0;
@@ -208,12 +207,10 @@ public class Player extends Pane {
 		private void handleGraveBtn() {
 			// This locks up the controls in the battlefield since it
 			// is somehow drawn on top of it...
-			//
-			// TODO this currently doesn't send any data over the network
 			new Thread(() -> {
 				try {
 					Card card = new CardSelectionPane().getStaticCard( graveyardCards, Player.this );
-					moveCardBetweenCollection( card, graveyardCards, handCards );
+					moveCardBetweenCollections( graveyardCards, handCards, card );
 				} catch (CardNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -351,21 +348,14 @@ public class Player extends Pane {
 	 * @throws CardNotFoundException probably non fatal
 	 */
 	public void drawCard( Card card ) throws CardNotFoundException {
-		Card tempCard = deckCards.takeCard( card );
-		tempCard.setCurrentLocation(CardCollection.Collections.HAND);
-		handCards.add(tempCard);
+		moveCardBetweenCollections( deckCards, handCards, card );
 
-		if( shouldSend ) {
-			System.out.println( "Sending " + tempCard.getCardId() );
-			connection.sendPacket( new CardDrawPacket( tempCard.getCardId() ) );
-		}
-
-		tempCard.setTranslateY(tempCard.getHandPopupValue());
+		card.setTranslateY(card.getHandPopupValue());
 		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
-		tempCard.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( tempCard.getWidth() + tempCard.getPreferdMargin() * 2) );
+		card.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( card.getWidth() + card.getPreferdMargin() * 2) );
 
 		Platform.runLater( new Thread(() -> {
-			this.getChildren().add(tempCard);
+			this.getChildren().add(card);
 		}));
 
 		// Set the text on the graphical deck
@@ -380,8 +370,6 @@ public class Player extends Pane {
 	 */
 	public void playCard(Card card, Battlefield targetBattlefield) {
 		try {
-			card.setCurrentLocation( CardCollection.Collections.BATTLEFIELD );
-
 			double finalPosY = 25;
 			double startY = card.getTranslateY();
 
@@ -390,9 +378,9 @@ public class Player extends Pane {
 			 * Then jerk it back down only to have it moved by actually
 			 * placing it on the target tbattlefield.
 			 */
+			moveCardBetweenCollections( handCards, battlefieldCards, card );
 			this.getChildren().remove(card);
 			targetBattlefield.getChildren().add(card);
-			battlefieldCards.add(handCards.takeCard(card));
 
 			card.setTranslateY( Battlefield.HEIGHT + startY );
 
@@ -400,9 +388,6 @@ public class Player extends Pane {
 			TranslateTransition tt = new TranslateTransition( Duration.millis(500), card );
 			tt.setByY( -moveDistance );
 
-			if( shouldSend ) {
-				connection.sendPacket( new CardPlayedPacket( card.getCardId(), card.getTranslateX(), card.getTranslateY() ) );
-			}
 
 			// Changes the hower action from "jump up" in hand
 			// to "set focus" on the battlefield
@@ -418,22 +403,24 @@ public class Player extends Pane {
 	}
 
 	/**
-	 * Move a card from one collection to another <br>
-	 * TODO this should be better, and send data
-	 * TODO all the move between collection fucntions should be merged
-	 *      into just using this in different ways
+	 * Move a card from one collection to another
 	 * @param whatCard the card that should be moved
 	 * @param oldCollection where the card should be taken from
 	 * @param newCollection where the card sholud end up
+	 * @throws CardNotFoundException if the card isn't in the old collection
 	 */
-	public void moveCardBetweenCollection(
-			Card whatCard,
-			CardCollection oldCollection,
-			CardCollection newCollection ) {
-		try {
-			newCollection.add(oldCollection.takeCard(whatCard));
-		} catch (CardNotFoundException e) {
-			e.printStackTrace();
+	public void moveCardBetweenCollections(
+			CardCollection oldCollection, CardCollection newCollection, Card whatCard)
+			throws CardNotFoundException {
+
+		whatCard.setCurrentLocation( newCollection.getCollection() );
+		newCollection.add( oldCollection.takeCard(whatCard) );
+		if( shouldSend ) {
+			System.out.println( "Sending " + whatCard.getCardId() );
+
+			connection.sendPacket( new CardBetweenCollectionsPacket(
+						oldCollection.getCollection(), newCollection.getCollection(), whatCard.getCardId()) );
+
 		}
 	}
 

@@ -3,17 +3,19 @@ package network;
 import java.util.ArrayList;
 
 import database.JSONCardReader;
+
+import exceptions.BadDataException;
 import exceptions.CardNotFoundException;
+
 import gamePieces.Battlefield;
 import gamePieces.Card;
 
 import javafx.application.Platform;
 
-import serverPackets.CardDrawPacket;
+import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardFocusPacket;
 import serverPackets.CardListPacket;
 import serverPackets.CardMovePacket;
-import serverPackets.CardPlayedPacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.NetworkPacket;
 import serverPackets.PoisonSetPacket;
@@ -69,7 +71,11 @@ public class InputObjectHandler {
 			e.printStackTrace();
 		}
 	}
-	private void playCard( CardPlayedPacket obj ) {
+
+	/**
+	 * Called from cardCollectionChange
+	 */
+	private void playCard( CardBetweenCollectionsPacket obj ) {
 		try {
 			System.out.println( "obj.getId(): " + obj.getId() );
 			Card tempCard = battlefield.getPlayer().getHandCards().getCard( obj.getId() );
@@ -84,13 +90,66 @@ public class InputObjectHandler {
 			e.printStackTrace();
 		}
 	}
-	private void drawCard( CardDrawPacket obj ) {
+
+	/**
+	 * Called from cardCollectionChange
+	 */
+	private void drawCard( CardBetweenCollectionsPacket obj ) {
 		try {
 			battlefield.getPlayer().drawCard( obj.getId() );
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Move a card between collections <br>
+	 * Note that all moves are currently not supperted,
+	 * but more options can easily be added in the source.
+	 * @throws BadDataException if the data is bad or tries to make an illegal move
+	 */
+	private void cardCollectionChange( CardBetweenCollectionsPacket obj ) {
+		switch( obj.getOldCollection() ) {
+		case DECK:
+			switch( obj.getNewCollection() ) {
+			case HAND:
+				this.drawCard( obj );
+				break;
+			default:
+				throw new BadDataException( obj.toString() );
+			}
+			break;
+		case HAND:
+			switch( obj.getNewCollection() ) {
+			case BATTLEFIELD:
+				this.playCard( obj );
+				break;
+			default:
+				throw new BadDataException( obj.toString() );
+			}
+			break;
+		case BATTLEFIELD:
+			switch( obj.getNewCollection() ) {
+			case DECK:
+				break;
+			case GRAVEYARD:
+				break;
+			default:
+				throw new BadDataException( obj.toString() );
+			}
+			break;
+		case GRAVEYARD:
+			switch( obj.getNewCollection() ) {
+			case HAND:
+				break;
+			default:
+				throw new BadDataException( obj.toString() );
+			}
+			break;
+		default:
+			throw new BadDataException( obj.toString() );
+		}
 	}
 	private void focusCard( CardFocusPacket obj ) {
 		Platform.runLater(new Runnable() {
@@ -135,40 +194,27 @@ public class InputObjectHandler {
 			while( pendingPackets.size() > 0 ) {
 				switch( pendingPackets.get(0).getDataType() ) {
 				case INFO:
-					//System.out.println( "INFO" + System.currentTimeMillis() );
 					break;
 				case CARDMOVE:
-					//System.out.println( "CARDMOVE" + System.currentTimeMillis());
 					cardMove( (CardMovePacket) pendingPackets.get(0).getData() );
 					break;
-				case CARDPLAYED:
-					//System.out.println( "CARDPLAYED" + System.currentTimeMillis());
-					playCard( (CardPlayedPacket) pendingPackets.get(0).getData() );
-					break;
-				case CARDDRAW:
-					//System.out.println( "CARDDRAW" + System.currentTimeMillis() );
-					drawCard( (CardDrawPacket) pendingPackets.get(0).getData() );
+				case CARDCOLLECTIONCHANGE:
+					cardCollectionChange( (CardBetweenCollectionsPacket) pendingPackets.get(0).getData() );
 					break;
 				case CARDFOCUS:
-					//System.out.println( "CARDFOCUS" + System.currentTimeMillis() );
 					focusCard( (CardFocusPacket) pendingPackets.get(0).getData() );
 					break;
 				case HEALTHSET:
-					//System.out.println( "HEALTHSET" + System.currentTimeMillis() );
 					setHealth( (HealthSetPacket) pendingPackets.get(0).getData() );
 					break;
 				case POISONSET:
-					//System.out.println( "POISONSET" + System.currentTimeMillis() );
 					setPoison( (PoisonSetPacket) pendingPackets.get(0).getData() );
 					break;
 				case CARDLIST:
-					//System.out.println( "CARDLIST" + System.currentTimeMillis() );
 					setCardList( (CardListPacket) pendingPackets.get(0).getData() );
 					break;
 				default:
-					System.err.println( "Somethin is wrong with the data:" );
-					System.err.println( pendingPackets.get(0).toString() );
-					break;
+					throw new BadDataException( pendingPackets.get(0).toString() );
 				}
 				pendingPackets.remove(0);
 			}
