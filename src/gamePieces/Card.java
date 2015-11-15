@@ -397,7 +397,6 @@ public class Card extends StackPane {
 	 * over
 	 */
 	private class ScrollEventHandler implements EventHandler<ScrollEvent> {
-
 		@Override
 		public void handle(ScrollEvent event) {
 			if( event.getDeltaY() > 0 )
@@ -424,12 +423,14 @@ public class Card extends StackPane {
 	public void smoothSetRotate( double rotation ) {
 		smoothSetRotate( rotation, 500 );
 	}
+
 	public void smoothSetRotate( double rotation, int duration ) {
 		RotateTransition rt;
 		rt = new RotateTransition(Duration.millis(duration), Card.this);
 		rt.setToAngle(rotation);
 		rt.play();
 	}
+
 	// TODO rewrite this to work as the other smoothMove methods
 	public void smoothFlip( double rotation ) {
 		RotateTransition rt;
@@ -483,42 +484,7 @@ public class Card extends StackPane {
 	 * @param moveSpeed how many milli secounds the move should last
 	 */
 	public void smoothMove( double changeX, double changeY, int moveSpeed ) {
-		TranslateTransition tt;
-		tt = new TranslateTransition( Duration.millis( moveSpeed ), this );
-
-		if( changeX > 0 ) {
-			if( this.getTranslateX() + changeX > Battlefield.WIDTH - this.getWidth() ) {
-				tt.setByX( Battlefield.WIDTH - this.getWidth() - this.getTranslateX() );
-			} else {
-				tt.setByX( changeX );
-			}
-		}
-
-		if( changeY > 0 ) {
-			if( this.getTranslateY() + changeY > Battlefield.HEIGHT - this.getHeight() ) {
-				tt.setByY( Battlefield.HEIGHT - this.getHeight() - this.getTranslateY() );
-			} else {
-				tt.setByY( changeY );
-			}
-		}
-
-		if( changeX < 0 ) {
-			if( this.getTranslateX() + changeX < 0 ) {
-				tt.setByX( -this.getTranslateX() );
-			} else {
-				tt.setByX( changeX );
-			}
-		}
-
-		if( changeY < 0 ) {
-			if( this.getTranslateY() + changeY < 0 ) {
-				tt.setByY( -this.getTranslateY() );
-			} else {
-				tt.setByY( changeY );
-			}
-		}
-
-		tt.play();
+		smoothPlace( getTranslateX() + changeX, getTranslateY() + changeY, moveSpeed );
 	}
 
 	/**
