@@ -17,6 +17,7 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import network.Connection;
+
 import serverPackets.CardFocusPacket;
 import serverPackets.CardMovePacket;
 
@@ -222,8 +223,9 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * Adds up all the mana costs
-	 * Automacicly asigns the output to 'convertedManaCost'
+	 * Adds up all the mana costs <br>
+	 * Automacicly asigns the output to 'convertedManaCost' <br>
+	 * TODO this should have a special cause for lands
 	 */
 	private void calcConvMana() {
 		convertedManaCost = 
@@ -287,14 +289,13 @@ public class Card extends StackPane {
 		public void run() {
 			synchronized( this ) {
 				while( true ){
-					// Only send move data if it's sencible to do so
+					// Only send the move data if it's sencible to do so
 					if( Objects.equals( Card.this.currentLocation, CardCollection.Collections.BATTLEFIELD ) ) {
 						double newX = getTranslateX();
 						double newY = getTranslateY();
 						double newRotate = getRotate();
 
 						if( newX != oldX || newY != oldY || newRotate != oldRotate ) {
-							//connection.sendPacket( new CardMoveObject( cardId, changeX, changeY ) );
 							connection.sendPacket( new CardMovePacket( cardId, newX, newY, newRotate ) );
 						}
 						oldX = getTranslateX();
@@ -316,7 +317,6 @@ public class Card extends StackPane {
 		private double mouseInSceneX;
 		private double mouseInSceneY;
 		private EventType<? extends MouseEvent> lastEvent;
-
 
 		@Override
 		public void handle(MouseEvent event) {
@@ -522,6 +522,7 @@ public class Card extends StackPane {
 		}
 
 		tt.play();
+
 	}
 
 	public void modifyTranslateX(double change) {
