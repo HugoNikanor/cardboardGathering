@@ -24,21 +24,32 @@ public class CardCollection extends ArrayList<Card> {
 		DECK,
 		GRAVEYARD,
 		HAND,
-		BATTLEFIELD
+		BATTLEFIELD, BATTLEFILED
 	}
 
 	/**
-	 * Create an empty collection
+	 * The type of collection this is
 	 */
-	public CardCollection() { }
+	private Collections collection;
+
+	/**
+	 * Create an empty collection
+	 * @param collection the type of collection this is
+	 */
+	public CardCollection( Collections collection ) {
+		this.collection = collection;
+   	}
 
 	/**
 	 * Create a collection with cards in it to start
+	 * @param collection the type of collection this is
 	 * @param jCardReader where the cards should be read from
 	 * @param cardIdCounter what id the next created card should have, make sure to incarment every time it is used
 	 * @param cardList String[] sent to the cardChooser to allow it to be read as a bad iterrator
 	 */
-	public CardCollection( JSONCardReader jCardReader, int cardIdCounter, String[] cardList ) {
+	public CardCollection( Collections collection, JSONCardReader jCardReader, int cardIdCounter, String[] cardList ) {
+		this.collection = collection;
+
 		try {
 			CardChooser cardChooser = new CardChooser( cardList );
 
@@ -193,6 +204,13 @@ public class CardCollection extends ArrayList<Card> {
 			}
 		}
 		throw new CardNotFoundException("No card with that id " + cardId);
+	}
+
+	/**
+	 * @return the collection
+	 */
+	public Collections getCollection() {
+		return collection;
 	}
 
 }

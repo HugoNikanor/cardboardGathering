@@ -16,8 +16,9 @@ public class NetworkPacket implements Serializable {
 	public static enum DataTypes {
 		INFO,
 		CARDMOVE,
-		CARDPLAYED,
-		CARDDRAW,
+		CARDCOLLECTIONCHANGE,
+		//CARDPLAYED,
+		//CARDDRAW,
 		CARDFOCUS,
 		HEALTHSET,
 		POISONSET,
