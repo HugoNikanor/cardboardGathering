@@ -15,7 +15,6 @@ public class CardBetweenCollectionsPacket extends NetworkPacket {
 		this.id = cardId;
 
 		this.dataType = DataTypes.CARDCOLLECTIONCHANGE;
-		this.data = this;
 	}
 
 	/**

@@ -9,7 +9,6 @@ public class CardListPacket extends NetworkPacket {
 		this.cardList = cardList;
 
 		this.dataType = DataTypes.CARDLIST;
-		this.data = this;
 	}
 
 	/**

@@ -9,7 +9,6 @@ public class PoisonSetPacket extends NetworkPacket {
 		this.poison = poison;
 
 		this.dataType = DataTypes.POISONSET;
-		this.data = this;
 	}
 
 	/**

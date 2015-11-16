@@ -93,6 +93,13 @@ public class Card extends StackPane {
 	private double oldY;
 	private double oldRotate;
 
+	/**
+	 * used in playes SendCardDataThread to check if it's safe
+	 * to let the card go into a collection, among other possible
+	 * future uses.
+	 */
+	private boolean beingUsed;
+
 	private MouseEventHandler mouseEventHandler;
 
 	/**
@@ -308,6 +315,7 @@ public class Card extends StackPane {
 
 				// Set the cursor back to normal when not draging any more
 				if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+					beingUsed = false;
 					Card.this.setCursor( Cursor.HAND );
 				}
 
@@ -323,6 +331,7 @@ public class Card extends StackPane {
 
 				// Moves the card when it's draged by the mouse
 				if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
+					beingUsed = true;
 					Card.this.setCursor(Cursor.MOVE);
 					double xChange = event.getSceneX() - this.mouseInSceneX;
 					double yChange = event.getSceneY() - this.mouseInSceneY;
@@ -601,6 +610,20 @@ public class Card extends StackPane {
 	 */
 	public void setOldRotate(double oldRotate) {
 		this.oldRotate = oldRotate;
+	}
+
+	/**
+	 * @return the beingUsed
+	 */
+	public boolean isBeingUsed() {
+		return beingUsed;
+	}
+
+	/**
+	 * @param beingUsed the beingUsed to set
+	 */
+	public void setBeingUsed(boolean beingUsed) {
+		this.beingUsed = beingUsed;
 	}
 
 	/**

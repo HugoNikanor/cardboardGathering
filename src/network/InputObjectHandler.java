@@ -132,8 +132,10 @@ public class InputObjectHandler {
 		case BATTLEFIELD:
 			switch( obj.getNewCollection() ) {
 			case DECK:
+				battlefield.getPlayer().cardToDeck( obj.getId() );
 				break;
 			case GRAVEYARD:
+				battlefield.getPlayer().cardToGrave( obj.getId() );
 				break;
 			default:
 				throw new BadDataException( obj.toString() );
@@ -196,22 +198,22 @@ public class InputObjectHandler {
 				case INFO:
 					break;
 				case CARDMOVE:
-					cardMove( (CardMovePacket) pendingPackets.get(0).getData() );
+					cardMove( (CardMovePacket) pendingPackets.get(0) );
 					break;
 				case CARDCOLLECTIONCHANGE:
-					cardCollectionChange( (CardBetweenCollectionsPacket) pendingPackets.get(0).getData() );
+					cardCollectionChange( (CardBetweenCollectionsPacket) pendingPackets.get(0) );
 					break;
 				case CARDFOCUS:
-					focusCard( (CardFocusPacket) pendingPackets.get(0).getData() );
+					focusCard( (CardFocusPacket) pendingPackets.get(0) );
 					break;
 				case HEALTHSET:
-					setHealth( (HealthSetPacket) pendingPackets.get(0).getData() );
+					setHealth( (HealthSetPacket) pendingPackets.get(0) );
 					break;
 				case POISONSET:
-					setPoison( (PoisonSetPacket) pendingPackets.get(0).getData() );
+					setPoison( (PoisonSetPacket) pendingPackets.get(0) );
 					break;
 				case CARDLIST:
-					setCardList( (CardListPacket) pendingPackets.get(0).getData() );
+					setCardList( (CardListPacket) pendingPackets.get(0) );
 					break;
 				default:
 					throw new BadDataException( pendingPackets.get(0).toString() );

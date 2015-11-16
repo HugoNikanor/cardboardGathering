@@ -9,7 +9,6 @@ public class HealthSetPacket extends NetworkPacket {
 		this.health = health;
 
 		this.dataType = DataTypes.HEALTHSET;
-		this.data = this;
 	}
 
 	/**

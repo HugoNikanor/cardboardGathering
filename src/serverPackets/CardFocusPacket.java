@@ -8,7 +8,6 @@ public class CardFocusPacket extends NetworkPacket {
 		this.id = id;
 
 		this.dataType = DataTypes.CARDFOCUS;
-		this.data = this;
 	}
 
 	/**

@@ -23,7 +23,6 @@ public class CardMovePacket extends NetworkPacket {
 		this.rotate = rotate;
 		
 		this.dataType = DataTypes.CARDMOVE;
-		this.data = this;
 	}
 
 

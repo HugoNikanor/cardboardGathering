@@ -1,6 +1,9 @@
 package gamePieces;
 
+import java.util.ArrayList;
+
 import database.JSONCardReader;
+
 import exceptions.CardNotFoundException;
 
 import graphicsObjects.CardSelectionPane;
@@ -149,6 +152,14 @@ public class Player extends Pane {
 	}
 
 	private class SendCardDataThread implements Runnable {
+
+		private ArrayList<Card> cardsToDeck;
+		private ArrayList<Card> cardsToGrave;
+
+		public SendCardDataThread() {
+			cardsToDeck = new ArrayList<Card>();
+			cardsToGrave = new ArrayList<Card>();
+		}
 		@Override
 		public void run() {
 			synchronized( this ) {
@@ -160,18 +171,16 @@ public class Player extends Pane {
 							double newY = card.getTranslateY();
 							double newRotate = card.getRotate();
 
+							if( !card.isBeingUsed() &&
+							    deckCont.getTranslateX() < newX &&
+							    deckCont.getTranslateY() < newY ) {
+								System.out.println( "moving to deck");
+								cardsToDeck.add(card);
+							}
+
 							if( newX != card.getOldX() ||
 							    newY != card.getOldY() ||
 							    newRotate != card.getOldRotate() ) {
-								// TODO this is the general idea of it
-								// However, it should be set to user
-								// better coordinates, and have some way
-								// of checking if the card isn't being held
-								// any more.
-								if( deckCont.getTranslateX() < newX &&
-								    deckCont.getTranslateY() < newY ) {
-									System.out.println("card on deck");
-								}
 								connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
 							}
 
@@ -180,6 +189,17 @@ public class Player extends Pane {
 							card.setOldRotate( card.getRotate() );
 						}
 					}
+
+					for( Card card : cardsToDeck ) {
+						cardToDeck( card );
+					}
+					cardsToDeck.clear();
+
+					for( Card card : cardsToGrave ) {
+						cardToGrave( card );
+					}
+					cardsToGrave.clear();
+
 					try {
 						long waitTime = Connection.UPDATE_TIME - (System.currentTimeMillis() - startTime);
 						if( waitTime >= 0 )
@@ -191,6 +211,49 @@ public class Player extends Pane {
 			}
 		}
 	}
+
+	public void cardToDeck( long cardId ) {
+		try {
+			cardToDeck( battlefieldCards.getCard(cardId) );
+		} catch (CardNotFoundException e ) {
+			e.printStackTrace();
+		}
+	}
+	public void cardToDeck( Card card ) {
+		try {
+			moveCardBetweenCollections(battlefieldCards, deckCards, card );
+			Platform.runLater(new Thread() {
+				@Override
+				public void run() {
+					((Pane) card.getParent()).getChildren().remove(card);
+				}
+			});
+		} catch (CardNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void cardToGrave( long cardId ) {
+		try {
+			cardToGrave( battlefieldCards.getCard(cardId) );
+		} catch( CardNotFoundException e ) {
+			e.printStackTrace();
+		}
+	}
+	public void cardToGrave( Card card ) {
+		try {
+			moveCardBetweenCollections(battlefieldCards, graveyardCards, card );
+			Platform.runLater(new Thread() {
+				@Override
+				public void run() {
+					((Pane) card.getParent()).getChildren().remove(card);
+				}
+			});
+		} catch (CardNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	/**
 	 * Changes the players health and poison values when the buttons
