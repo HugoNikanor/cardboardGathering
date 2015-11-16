@@ -171,11 +171,23 @@ public class Player extends Pane {
 							double newY = card.getTranslateY();
 							double newRotate = card.getRotate();
 
+							// card to deck
 							if( !card.isBeingUsed() &&
-							    deckCont.getTranslateX() < newX &&
-							    deckCont.getTranslateY() < newY ) {
-								System.out.println( "moving to deck");
-								cardsToDeck.add(card);
+							    deckCont.getTranslateX() < newX + card.getHeight() / 4 &&
+							    deckCont.getTranslateY() < newY + card.getWidth()  / 4 &&
+								deckCont.getTranslateX() + deckCont.getWidth()  > newX + card.getWidth()  - card.getWidth()  / 4 &&
+								deckCont.getTranslateY() + deckCont.getHeight() > newY + card.getHeight() - card.getHeight() / 4 ) {
+								System.out.println( "moving to deck" );
+								cardsToDeck.add( card );
+							}
+							// card to graveyard
+							if( !card.isBeingUsed() &&
+							    graveCont.getTranslateX() < newX + card.getHeight() / 4 &&
+							    graveCont.getTranslateY() < newY + card.getWidth()  / 4 &&
+								graveCont.getTranslateX() + graveCont.getWidth()  > newX + card.getWidth()  - card.getWidth()  / 4 &&
+								graveCont.getTranslateY() + graveCont.getHeight() > newY + card.getHeight() - card.getHeight() / 4 ) {
+								System.out.println( "moving to grave" );
+								cardsToGrave.add( card );
 							}
 
 							if( newX != card.getOldX() ||
@@ -222,12 +234,9 @@ public class Player extends Pane {
 	public void cardToDeck( Card card ) {
 		try {
 			moveCardBetweenCollections(battlefieldCards, deckCards, card );
-			Platform.runLater(new Thread() {
-				@Override
-				public void run() {
-					((Pane) card.getParent()).getChildren().remove(card);
-				}
-			});
+			Platform.runLater(new Thread(() -> {
+				((Pane) card.getParent()).getChildren().remove(card);
+			}));
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -243,12 +252,9 @@ public class Player extends Pane {
 	public void cardToGrave( Card card ) {
 		try {
 			moveCardBetweenCollections(battlefieldCards, graveyardCards, card );
-			Platform.runLater(new Thread() {
-				@Override
-				public void run() {
+			Platform.runLater(new Thread(() -> {
 					((Pane) card.getParent()).getChildren().remove(card);
-				}
-			});
+			}));
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
