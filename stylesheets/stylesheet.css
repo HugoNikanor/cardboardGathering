@@ -14,10 +14,24 @@
 
 }
 
+.token-container {
+	-fx-border-color: Black;
+	-fx-border-width: 3px;
+}
+.token-container-drawer {
+	-fx-background-color: Red;
+}
+.token-container-handle {
+	-fx-background-color: Green;
+}
+.token {
+}
+
 /* When getting a specific card from a collection */
 .card-select-pane-outer {
 	-fx-border-color: #4D4D4D;
 	-fx-border-width: 2px;
+	-fx-background-color: DimGray;
 }
 .card-select-pane-inner {
 	-fx-background-color: DimGray;

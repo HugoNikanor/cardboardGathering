@@ -2,6 +2,9 @@ package gamePieces;
 
 import database.JSONCardReader;
 
+import graphicsObjects.Token;
+import graphicsObjects.TokenContainer;
+
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -71,6 +74,10 @@ public class Battlefield extends Pane {
 		this.setMaxHeight(HEIGHT);
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
+
+		// token container
+		this.getChildren().add( new TokenContainer() );
+		this.getChildren().add( new Token() );
 
 		// Deck
 		this.getChildren().add( player.getDeckCont() );
