@@ -37,6 +37,8 @@
 	-fx-background-color: DimGray;
 }
 
+.movable-game-piece {
+}
 .card {
 	-fx-border-color: Black;
 	-fx-border-width: 5px;
