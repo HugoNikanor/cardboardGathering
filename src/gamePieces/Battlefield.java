@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import database.JSONCardReader;
 
-import graphicsObjects.Token;
 import graphicsObjects.TokenContainer;
 
 import javafx.event.EventHandler;

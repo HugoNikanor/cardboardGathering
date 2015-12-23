@@ -1,7 +1,7 @@
 package graphicsObjects;
 
 import gamePieces.Card;
-import gamePieces.CardCollection;
+import gamePieces.Collections;
 
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -21,7 +21,7 @@ public class CardStackContainer extends Pane {
 	public static final double HEIGHT = Card.HEIGHT;
 
 	
-	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> handler, double xPos, double yPos ) {
+	public CardStackContainer( Collections type, EventHandler<Event> handler, double xPos, double yPos ) {
 		cardStack = new CardStackPane( type, handler, Card.WIDTH, Card.HEIGHT );
 
 		getFromDeckBtn = new Button();
@@ -48,7 +48,7 @@ public class CardStackContainer extends Pane {
 		cardStack.setText( newText );
 	}
 
-	public CardCollection.Collections getType() {
+	public Collections getType() {
 		return cardStack.getType();
 	}
 

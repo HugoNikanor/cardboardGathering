@@ -94,14 +94,14 @@ public class Player extends Pane {
 		// Objects displayed on the battlefield
 		cardStackHandler = new CardStackCollectionHandler();
 		deckCont = new CardStackContainer(
-			CardCollection.Collections.DECK,
+			Collections.DECK,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			Battlefield.HEIGHT - Card.HEIGHT - 10
 		);
 		deckCont.setText(Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
-			CardCollection.Collections.GRAVEYARD,
+			Collections.GRAVEYARD,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			10
@@ -122,10 +122,10 @@ public class Player extends Pane {
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
 		cardIdCounter = 0;
-		deckCards        = new CardCollection( CardCollection.Collections.DECK, jCardReader, cardIdCounter, cardList );
-		handCards        = new CardCollection( CardCollection.Collections.HAND );
-		battlefieldCards = new CardCollection( CardCollection.Collections.BATTLEFIELD );
-		graveyardCards   = new CardCollection( CardCollection.Collections.GRAVEYARD );
+		deckCards        = new CardCollection( Collections.DECK, jCardReader, cardIdCounter, cardList );
+		handCards        = new CardCollection( Collections.HAND );
+		battlefieldCards = new CardCollection( Collections.BATTLEFIELD );
+		graveyardCards   = new CardCollection( Collections.GRAVEYARD );
 
 		health = 20;
 		poisonCounters = 0;
@@ -135,14 +135,14 @@ public class Player extends Pane {
 		// Objects displayed on the battlefield
 		cardStackHandler = new CardStackCollectionHandler();
 		deckCont = new CardStackContainer(
-			CardCollection.Collections.DECK,
+			Collections.DECK,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			Battlefield.HEIGHT - Card.HEIGHT - 10
 		);
 		deckCont.setText(Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
-			CardCollection.Collections.GRAVEYARD,
+			Collections.GRAVEYARD,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			10

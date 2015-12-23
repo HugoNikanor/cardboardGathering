@@ -9,6 +9,9 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 
 public class Card extends MovableGamePiece {
+	public static final double HEIGHT = 180;
+	public static final double WIDTH = 126;
+
 	private String cardName;
 	private String type;
 	private String subtype;
@@ -99,7 +102,7 @@ public class Card extends MovableGamePiece {
 		int manaCostWhite,
 		int manaCostBlank
 	) {
-		super( 126, 180, Collections.DECK );
+		super( WIDTH, HEIGHT, Collections.DECK );
 		pieceId = PIECE_ID_COUNTER_NEW++;
 
 		this.cardName  = cardName;
@@ -130,7 +133,7 @@ public class Card extends MovableGamePiece {
 	 * in the local scope desired
 	 */
 	public Card( Card cardToCopy, long pieceId ) {
-		super( 180, 126, cardToCopy.getCurrentLocation() );
+		super( WIDTH, HEIGHT, cardToCopy.getCurrentLocation() );
 		this.pieceId = pieceId;
 
 		this.cardName  = cardToCopy.getCardName();

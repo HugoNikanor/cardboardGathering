@@ -2,6 +2,7 @@ package graphicsObjects;
 
 import java.util.ArrayList;
 
+import gamePieces.Token;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import javafx.animation.TranslateTransition;

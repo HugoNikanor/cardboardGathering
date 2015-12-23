@@ -25,7 +25,7 @@ public class MovableGamePiece extends StackPane {
 	/**
 	 * Used when draging the card if the screen is resized <br>
 	 */
-	protected double scaleFactor;
+	private double scaleFactor;
 
 	protected Connection connection;
 	protected boolean shouldSend;
@@ -69,9 +69,12 @@ public class MovableGamePiece extends StackPane {
 		currentLocation = position;
 		zoomable = true;
 
+		this.height = height;
+		this.width = width;
+
 		// JavaFX
-		this.setHeight(width);
-		this.setWidth(height);
+		this.setHeight(height);
+		this.setWidth(width);
 		this.setMinSize(this.getWidth(), this.getHeight());
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
