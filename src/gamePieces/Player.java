@@ -33,6 +33,8 @@ public class Player extends Pane {
 	private CardCollection battlefieldCards;
 	private CardCollection graveyardCards;
 
+	private ArrayList<Token> tokens;
+
 	private int health;
 	private int poisonCounters;
 
@@ -127,6 +129,8 @@ public class Player extends Pane {
 		battlefieldCards = new CardCollection( Collections.BATTLEFIELD );
 		graveyardCards   = new CardCollection( Collections.GRAVEYARD );
 
+		tokens = new ArrayList<Token>();
+
 		health = 20;
 		poisonCounters = 0;
 
@@ -165,40 +169,48 @@ public class Player extends Pane {
 			synchronized( this ) {
 				while( true ){
 					long startTime = System.currentTimeMillis();
-					for( Card card : battlefieldCards ) {
-						if( card.isShouldSend() ) {
-							double newX = card.getTranslateX();
-							double newY = card.getTranslateY();
-							double newRotate = card.getRotate();
+					ArrayList<MovableGamePiece> pieces = new ArrayList<MovableGamePiece>();
+					pieces.addAll( tokens );
+					pieces.addAll( battlefieldCards );
+					//for( Card card : battlefieldCards ) {
+					for( MovableGamePiece piece : pieces ) {
+						if( piece.isShouldSend() ) {
+							double newX = piece.getTranslateX();
+							double newY = piece.getTranslateY();
+							double newRotate = piece.getRotate();
 
-							// card to deck
-							if( !card.isBeingUsed() &&
-							    deckCont.getTranslateX() < newX + card.getHeight() / 4 &&
-							    deckCont.getTranslateY() < newY + card.getWidth()  / 4 &&
-								deckCont.getTranslateX() + deckCont.getWidth()  > newX + card.getWidth()  - card.getWidth()  / 4 &&
-								deckCont.getTranslateY() + deckCont.getHeight() > newY + card.getHeight() - card.getHeight() / 4 ) {
-								System.out.println( "moving to deck" );
-								cardsToDeck.add( card );
-							}
-							// card to graveyard
-							if( !card.isBeingUsed() &&
-							    graveCont.getTranslateX() < newX + card.getHeight() / 4 &&
-							    graveCont.getTranslateY() < newY + card.getWidth()  / 4 &&
-								graveCont.getTranslateX() + graveCont.getWidth()  > newX + card.getWidth()  - card.getWidth()  / 4 &&
-								graveCont.getTranslateY() + graveCont.getHeight() > newY + card.getHeight() - card.getHeight() / 4 ) {
-								System.out.println( "moving to grave" );
-								cardsToGrave.add( card );
+							if( piece instanceof Card ) {
+								// card to deck
+								if( !piece.isBeingUsed() &&
+									deckCont.getTranslateX() < newX + piece.getHeight() / 4 &&
+									deckCont.getTranslateY() < newY + piece.getWidth()  / 4 &&
+									deckCont.getTranslateX() + deckCont.getWidth()  > newX + piece.getWidth()  - piece.getWidth()  / 4 &&
+									deckCont.getTranslateY() + deckCont.getHeight() > newY + piece.getHeight() - piece.getHeight() / 4 ) {
+
+									System.out.println( "moving to deck" );
+									cardsToDeck.add( (Card) piece );
+								}
+								// card to graveyard
+								if( !piece.isBeingUsed() &&
+									graveCont.getTranslateX() < newX + piece.getHeight() / 4 &&
+									graveCont.getTranslateY() < newY + piece.getWidth()  / 4 &&
+									graveCont.getTranslateX() + graveCont.getWidth()  > newX + piece.getWidth()  - piece.getWidth()  / 4 &&
+									graveCont.getTranslateY() + graveCont.getHeight() > newY + piece.getHeight() - piece.getHeight() / 4 ) {
+
+									System.out.println( "moving to grave" );
+									cardsToGrave.add( (Card) piece );
+								}
+
+								if( newX != piece.getOldX() ||
+									newY != piece.getOldY() ||
+									newRotate != piece.getOldRotate() ) {
+									connection.sendPacket( new CardMovePacket( piece.getPieceId(), newX, newY, newRotate ) );
+								}
 							}
 
-							if( newX != card.getOldX() ||
-							    newY != card.getOldY() ||
-							    newRotate != card.getOldRotate() ) {
-								connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
-							}
-
-							card.setOldX( card.getTranslateX() );
-							card.setOldY( card.getTranslateY() );
-							card.setOldRotate( card.getRotate() );
+							piece.setOldX( piece.getTranslateX() );
+							piece.setOldY( piece.getTranslateY() );
+							piece.setOldRotate( piece.getRotate() );
 						}
 					}
 
@@ -630,6 +642,13 @@ public class Player extends Pane {
 	 */
 	public CardCollection getGraveyardCards() {
 		return graveyardCards;
+	}
+
+	/**
+	 * @return the tokens
+	 */
+	public ArrayList<Token> getTokens() {
+		return tokens;
 	}
 
 	/**

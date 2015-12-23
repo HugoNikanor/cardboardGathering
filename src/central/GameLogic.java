@@ -20,6 +20,7 @@ import exceptions.CardNotFoundException;
 import gamePieces.Battlefield;
 import gamePieces.Card;
 import gamePieces.Collections;
+import gamePieces.Token;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -134,6 +135,12 @@ public class GameLogic extends Application {
 		}
 		for( Card otherTemp : otherBattlefield.getCards() ) {
 			otherBattlefield.getChildren().add(otherTemp);
+		}
+		for( Token ownToken : ownBattlefield.getTokens() ) {
+			ownBattlefield.getChildren().add( ownToken );
+		}
+		for( Token otherToken : otherBattlefield.getTokens() ) {
+			otherBattlefield.getChildren().add( otherToken );
 		}
 
 		// Give a proper card focus

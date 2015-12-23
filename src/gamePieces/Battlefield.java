@@ -38,6 +38,7 @@ public class Battlefield extends Pane {
 		// Both players MUST have all database files
 		player = new Player(jCardReader, cardList);
 		cards = player.getBattlefieldCards();
+		tokens = player.getTokens();
 
 		this.initialSetup();
 		this.setRotate(180d);
@@ -64,7 +65,7 @@ public class Battlefield extends Pane {
 
 		this.initialSetup();
 
-		this.addToken( new Token() );
+		tokens.add( new Token() );
 	}
 
 	/**
@@ -98,11 +99,6 @@ public class Battlefield extends Pane {
 		this.isReady = true;
 	}
 
-	public void addToken( Token token ) {
-		tokens.add( token );
-		this.getChildren().add( token );
-	}
-
 	/**
 	 * Update which scale the window is in Used by card to know how far to move
 	 *
@@ -128,6 +124,13 @@ public class Battlefield extends Pane {
 	 */
 	public CardCollection getCards() {
 		return cards;
+	}
+
+	/**
+	 * @return the tokens
+	 */
+	public ArrayList<Token> getTokens() {
+		return tokens;
 	}
 
 	/**

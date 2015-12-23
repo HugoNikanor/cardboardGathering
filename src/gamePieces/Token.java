@@ -60,11 +60,6 @@ public class Token extends MovableGamePiece {
 		middlePane.setTranslateX( 25 );
 		middlePane.getChildren().add( circle );
 		//middlePane.getChildren().add( text );
-
-		//DragListener dl = new DragListener();
-		//middlePane.setOnMousePressed( dl );
-		//middlePane.setOnMouseDragged( dl );
-		//middlePane.setOnMouseReleased( dl );
 		
 		xPos = 200;
 		yPos = 200;
