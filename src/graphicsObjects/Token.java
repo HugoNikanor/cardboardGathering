@@ -31,6 +31,8 @@ public class Token extends Pane {
 	private double plusBtnXOut;
 	private double plusBtnXIn;
 
+	private double scaleFactor;
+
 	public Token() {
 
 		minusBtnXOut = 0;
@@ -66,6 +68,7 @@ public class Token extends Pane {
 		
 		xPos = 200;
 		yPos = 200;
+		scaleFactor = 1;
 
 		this.setTranslateX( xPos );
 		this.setTranslateY( yPos );
@@ -79,6 +82,10 @@ public class Token extends Pane {
 		MouseEnteredListener mel = new MouseEnteredListener();
 		this.setOnMouseEntered( mel );
 		this.setOnMouseExited( mel );
+	}
+
+	public void setScaleFactor( double newScaleFactor ) {
+		this.scaleFactor = newScaleFactor;
 	}
 
 	private void displayBtns() {
@@ -124,8 +131,6 @@ public class Token extends Pane {
 	private class DragListener implements EventHandler<MouseEvent> {
 		private double mouseInSceneX;
 		private double mouseInSceneY;
-
-		private double scaleFactor = 1.0;
 
 		@Override
 		public void handle(MouseEvent event) {

@@ -12,4 +12,4 @@
 
 # Other
 - Make crashes and other program close actions work better
-
+- Tokens should follow the same rules as cards
