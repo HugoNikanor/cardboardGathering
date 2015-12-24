@@ -1,15 +1,21 @@
 # Gameplay
 - Allow for cards getting turned upside down
-- Put card back into deck
 - Put card in graveyard
 - retrive card from graveyard
+- interface for creating tokens
+- creating card tokens
 
 # Graphical
-- Have a marker layer, that allow you to drag markers from a marker collection in your hand out to the battlefield. (any side)
-- Chat in lower right
+- Chat
+- make the token colored
+- make the token presentable
+- make the token drawer prettier
 
 # Network
+- make everything that refers to card refeer to MovableGamePiece
+- add 'create gamepiece packet' for creating token directly on the battlefield
+- make sure that token data is sent over the network
 
 # Other
 - Make crashes and other program close actions work better
-- Tokens should follow the same rules as cards
+
