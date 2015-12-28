@@ -32,12 +32,6 @@ public class NetworkPacket implements Serializable {
 	protected DataTypes dataType;
 
 	/**
-	 * The actual information sent over the network
-	 * extending classes should just put them self here
-	 */
-	//protected NetworkPacket data;
-
-	/**
 	 * @return the dataType
 	 */
 	public DataTypes getDataType() {

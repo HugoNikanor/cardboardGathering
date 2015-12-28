@@ -52,7 +52,7 @@ public class Player extends Pane {
 	 * Used by JSONCardReader to make every card have a uniqe id <br>
 	 * Note that id's are only uniqe per player
 	 */
-	private int cardIdCounter;
+	private CardIdCounter counter;
 
 	/**
 	 * Use this for the local player
@@ -121,8 +121,8 @@ public class Player extends Pane {
 	 *            A string array of the names of the cards desired to be created
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
-		cardIdCounter = 0;
-		deckCards        = new CardCollection( CardCollection.Collections.DECK, jCardReader, cardIdCounter, cardList );
+		counter = new CardIdCounter( 0 );
+		deckCards        = new CardCollection( CardCollection.Collections.DECK, jCardReader, counter, cardList );
 		handCards        = new CardCollection( CardCollection.Collections.HAND );
 		battlefieldCards = new CardCollection( CardCollection.Collections.BATTLEFIELD );
 		graveyardCards   = new CardCollection( CardCollection.Collections.GRAVEYARD );

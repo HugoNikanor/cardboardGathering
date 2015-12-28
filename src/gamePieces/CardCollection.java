@@ -47,7 +47,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @param cardIdCounter what id the next created card should have, make sure to incarment every time it is used
 	 * @param cardList String[] sent to the cardChooser to allow it to be read as a bad iterrator
 	 */
-	public CardCollection( Collections collection, JSONCardReader jCardReader, int cardIdCounter, String[] cardList ) {
+	public CardCollection( Collections collection, JSONCardReader jCardReader, CardIdCounter counter, String[] cardList ) {
 		this.collection = collection;
 
 		try {
@@ -55,7 +55,7 @@ public class CardCollection extends ArrayList<Card> {
 
 			// Get all cards from the jCardChooser
 			while( cardChooser.hasNext() ) {
-				this.add( jCardReader.get( cardChooser.next(), cardIdCounter++ ) );
+				this.add( jCardReader.get( cardChooser.next(), counter.getCounterAndIncrament() ) );
 			}
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();

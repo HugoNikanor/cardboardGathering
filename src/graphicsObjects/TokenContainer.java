@@ -1,7 +1,5 @@
 package graphicsObjects;
 
-import java.util.ArrayList;
-
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import javafx.animation.TranslateTransition;
@@ -10,15 +8,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 /**
- * Class for keeping the tokens in,
- * a token is a small circle with information, kinda
+ * This might be used for the card creation menu,
+ * If it isn't used for that then this should be removed.
  */
 public class TokenContainer extends HBox {
 
 	private Pane drawer;
 	private Pane handle;
-
-	private ArrayList<Token> tokenTypes;
 
 	private double xPosIn;
 	private double xPosOut;
@@ -31,8 +27,6 @@ public class TokenContainer extends HBox {
 	private boolean drawerOut;
 
 	public TokenContainer() {
-		tokenTypes = new ArrayList<Token>();
-
 		height = 200;
 		drawerWidth = 200;
 		handleWidth = 50;

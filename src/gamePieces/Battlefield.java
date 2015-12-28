@@ -1,10 +1,7 @@
 package gamePieces;
 
-import java.util.ArrayList;
-
 import database.JSONCardReader;
 
-import graphicsObjects.Token;
 import graphicsObjects.TokenContainer;
 
 import javafx.event.EventHandler;
@@ -20,8 +17,6 @@ public class Battlefield extends Pane {
 
 	private Player player;
 	private CardCollection cards;
-
-	private ArrayList<Token> tokens;
 
 	public static final double WIDTH = 1920;// 1600;
 	public static final double HEIGHT = 474;// 395;
@@ -61,11 +56,8 @@ public class Battlefield extends Pane {
 
 		player = new Player( jCardReader, cardPlayHandler, connection, cardList );
 		cards = player.getBattlefieldCards();
-		tokens = new ArrayList<Token>();
 
 		this.initialSetup();
-
-		this.addToken( new Token() );
 	}
 
 	/**
@@ -99,11 +91,6 @@ public class Battlefield extends Pane {
 		this.isReady = true;
 	}
 
-	public void addToken( Token token ) {
-		tokens.add( token );
-		this.getChildren().add( token );
-	}
-
 	/**
 	 * Update which scale the window is in Used by card to know how far to move
 	 *
@@ -112,9 +99,6 @@ public class Battlefield extends Pane {
 	 */
 	public void updateScaleFactor(double newScaleFactor) {
 		player.updateScaleFactor(newScaleFactor);
-		for( Token token : tokens ) {
-			token.setScaleFactor( newScaleFactor );
-		}
 	}
 
 	/**

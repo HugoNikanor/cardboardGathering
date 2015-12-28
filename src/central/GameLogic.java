@@ -244,9 +244,6 @@ public class GameLogic extends Application {
 	 * Listens for window resizing,
 	 * If a resize is detected, the graphics will scale to match
 	 *
-	 * TODO Currently there is a problem with the background being slightly
-	 * darker when making the window smaller
-	 *
 	 * TODO The cards on hand have a tendancy to dissapear when making the 
 	 * window larger
 	 *
