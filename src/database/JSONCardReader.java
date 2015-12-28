@@ -19,6 +19,8 @@ import gamePieces.Card;
 /**
  * A class for reading the JSon files
  * and writing their data to card obects
+ * TODO this may use 'int`s' for card id's in a few places,
+ * this might be a problem since the card id's are 'long`s'
  * @see gamePieces.Card
  */
 public class JSONCardReader {
@@ -226,7 +228,7 @@ public class JSONCardReader {
 	 * @param cardId what id the returned card sholud have, make sure to incrament the value when calling the method
 	 * @throws CardNotFoundException if there is no card with cardName in the json files
 	 */
-	public Card get( String cardName, int cardId ) throws CardNotFoundException {
+	public Card get( String cardName, long cardId ) throws CardNotFoundException {
 		for( Card returnCard : cards ) {
 			if( Objects.equals( returnCard.getCardName(), cardName ) ) {
 				// returns a copy of returnCard

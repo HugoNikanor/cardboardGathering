@@ -1,7 +1,7 @@
 package gamePieces;
 
 public class CardIdCounter {
-	int counter;
+	long counter;
 
 	public CardIdCounter( int initialValue ) {
 		counter = initialValue;
@@ -9,11 +9,11 @@ public class CardIdCounter {
 	public void incrament() {
 		counter++;
 	}
-	public int getCounter() {
+	public long getCounter() {
 		return counter;
 	}
-	public int getCounterAndIncrament() {
-		int temp = counter;
+	public long getCounterAndIncrament() {
+		long temp = counter;
 		counter++;
 		return temp;
 	}

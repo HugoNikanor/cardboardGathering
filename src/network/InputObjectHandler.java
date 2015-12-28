@@ -19,6 +19,7 @@ import serverPackets.CardMovePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.NetworkPacket;
 import serverPackets.PoisonSetPacket;
+import serverPackets.CardCreatedPacket;
 
 /**
  * Class which takes the info recieved over Connection and tells
@@ -174,6 +175,24 @@ public class InputObjectHandler {
 	private void setCardList( CardListPacket obj ) {
 		battlefield = new Battlefield( jCardReader, obj.getCardList() );
 	}
+	private void createCard( CardCreatedPacket obj ) {
+		battlefield.getPlayer().createCard( new Card(
+			obj.getCardName(),
+			obj.getType(),
+			obj.getType(),
+			obj.getAbility(),
+			obj.getFlavour(),
+			obj.getPower(),
+			obj.getToughness(),
+			obj.getLoyalty(),
+			obj.getManaCostBlack(),
+			obj.getManaCostBlue(),
+			obj.getManaCostGreen(),
+			obj.getManaCostRed(),
+			obj.getManaCostWhite(),
+			obj.getManaCostBlank())
+		);
+	}
 
 	/**
 	 * @return the battlefield, used for creating it in GameLogic
@@ -214,6 +233,9 @@ public class InputObjectHandler {
 					break;
 				case CARDLIST:
 					setCardList( (CardListPacket) pendingPackets.get(0) );
+					break;
+				case CARDCREATE:
+					createCard( (CardCreatedPacket) pendingPackets.get(0) );
 					break;
 				default:
 					throw new BadDataException( pendingPackets.get(0).toString() );

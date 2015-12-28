@@ -21,6 +21,7 @@ import serverPackets.CardFocusPacket;
 
 public class Card extends StackPane {
 	private long cardId;
+	// TODO, this should probably be removed
 	private static long CARD_ID_COUNTER_NEW = 0;
 
 	private String cardName;

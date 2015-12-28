@@ -23,6 +23,7 @@ import javafx.util.Duration;
 import network.Connection;
 
 import serverPackets.CardBetweenCollectionsPacket;
+import serverPackets.CardCreatedPacket;
 import serverPackets.CardMovePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.PoisonSetPacket;
@@ -55,6 +56,14 @@ public class Player extends Pane {
 	private CardIdCounter counter;
 
 	/**
+	 * the card reader, stored here to allow access to it from within
+	 * this class
+	 */
+	JSONCardReader jCardReader;
+
+	EventHandler<MouseEvent> cardPlayHandler;
+
+	/**
 	 * Use this for the local player
 	 * 
 	 * @param jCardReader
@@ -71,6 +80,7 @@ public class Player extends Pane {
 	 */
 	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
 		this( jCardReader, cardList );
+		this.cardPlayHandler = cardPlayHandler;
 
 		this.connection = connection;
 		shouldSend = true;
@@ -121,6 +131,7 @@ public class Player extends Pane {
 	 *            A string array of the names of the cards desired to be created
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
+		this.jCardReader = jCardReader;
 		counter = new CardIdCounter( 0 );
 		deckCards        = new CardCollection( CardCollection.Collections.DECK, jCardReader, counter, cardList );
 		handCards        = new CardCollection( CardCollection.Collections.HAND );
@@ -140,7 +151,7 @@ public class Player extends Pane {
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			Battlefield.HEIGHT - Card.HEIGHT - 10
 		);
-		deckCont.setText(Integer.toString( getDeckCards().size() ));
+		deckCont.setText( Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
 			CardCollection.Collections.GRAVEYARD,
 			cardStackHandler,
@@ -224,6 +235,37 @@ public class Player extends Pane {
 		}
 	}
 
+	// TODO, card is not properly created at the other side, lacks id
+	public void createCard( Card card, long id ) {
+		card.setCurrentLocation( CardCollection.Collections.HAND );
+		handCards.add( card );
+		// maybe have this in the 'shouldSend' block
+		card.setOnMouseClicked( cardPlayHandler );
+		// TODO update scale factor here
+		if( shouldSend ) {
+			card.setConnection( connection );
+			connection.sendPacket( new CardCreatedPacket( card ) );
+		}
+		Platform.runLater(new Thread(() -> {
+			this.getChildren().add( card );
+			this.rearangeCards();
+			// TODO this still doesn't set the correct height
+		}));
+	}
+	public void createCard( Card newCard ) {
+		createCard( newCard, counter.getCounterAndIncrament() );
+	}
+	public void createCard( String cardName ) {
+		try {
+			Card temp = jCardReader.get( cardName, counter.getCounterAndIncrament() );
+			createCard( temp, temp.getCardId() );
+		} catch( CardNotFoundException e ) {
+			// TODO this should print some sort of error to the graphics
+			e.printStackTrace();
+		}
+
+	}
+
 	public void cardToDeck( long cardId ) {
 		try {
 			cardToDeck( battlefieldCards.getCard(cardId) );
@@ -253,7 +295,7 @@ public class Player extends Pane {
 		try {
 			moveCardBetweenCollections(battlefieldCards, graveyardCards, card );
 			Platform.runLater(new Thread(() -> {
-					((Pane) card.getParent()).getChildren().remove(card);
+				((Pane) card.getParent()).getChildren().remove(card);
 			}));
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
@@ -510,7 +552,7 @@ public class Player extends Pane {
 
 			tt.play();
 
-			// Maybe play this on animation finnis
+			// Maybe play this on animation finish
 			this.rearangeCards();
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
@@ -525,16 +567,15 @@ public class Player extends Pane {
 	 * @throws CardNotFoundException if the card isn't in the old collection
 	 */
 	public void moveCardBetweenCollections(
-			CardCollection oldCollection, CardCollection newCollection, Card whatCard)
-			throws CardNotFoundException {
+		CardCollection oldCollection, CardCollection newCollection, Card whatCard)
+		throws CardNotFoundException {
+			whatCard.setCurrentLocation( newCollection.getCollection() );
+			newCollection.add( oldCollection.takeCard(whatCard) );
+			if( shouldSend ) {
+				System.out.println( "Sending " + whatCard.getCardId() );
 
-		whatCard.setCurrentLocation( newCollection.getCollection() );
-		newCollection.add( oldCollection.takeCard(whatCard) );
-		if( shouldSend ) {
-			System.out.println( "Sending " + whatCard.getCardId() );
-
-			connection.sendPacket( new CardBetweenCollectionsPacket(
-						oldCollection.getCollection(), newCollection.getCollection(), whatCard.getCardId()) );
+				connection.sendPacket( new CardBetweenCollectionsPacket(
+							oldCollection.getCollection(), newCollection.getCollection(), whatCard.getCardId()) );
 
 		}
 	}
@@ -602,6 +643,13 @@ public class Player extends Pane {
 	 */
 	public LifeCounter getLifeCounter() {
 		return lifeCounter;
+	}
+
+	/**
+	 * @return the counter
+	 */
+	public CardIdCounter getCounter() {
+		return counter;
 	}
 
 	/**

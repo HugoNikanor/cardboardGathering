@@ -3,7 +3,9 @@ package graphicsObjects;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
@@ -26,15 +28,24 @@ public class TokenContainer extends HBox {
 
 	private boolean drawerOut;
 
-	public TokenContainer() {
+	private TextField cardCreateField;
+
+	public TokenContainer( EventHandler<ActionEvent> cardCreateHandler ) {
 		height = 200;
 		drawerWidth = 200;
 		handleWidth = 50;
+
+
+		cardCreateField = new TextField();
+		cardCreateField.setPrefColumnCount( 10 );
+		cardCreateField.setPromptText( "card name" );
+		cardCreateField.setOnAction( cardCreateHandler );
 
 		drawer = new Pane();
 		drawer.setPrefWidth ( drawerWidth );
 		drawer.setPrefHeight( height );
 		drawer.getStyleClass().add( "token-container-drawer" );
+		drawer.getChildren().add( cardCreateField );
 
 		handle = new Pane();
 		handle.setPrefWidth( handleWidth );
