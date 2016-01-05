@@ -50,6 +50,8 @@ public class Player extends Pane {
 	private PlayerBtnPane playerBtnPane;
 	private LifeCounter lifeCounter;
 
+	private double scaleFactor;
+
 	/**
 	 * Used by JSONCardReader to make every card have a uniqe id <br>
 	 * Note that id's are only uniqe per player
@@ -60,9 +62,9 @@ public class Player extends Pane {
 	 * the card reader, stored here to allow access to it from within
 	 * this class
 	 */
-	JSONCardReader jCardReader;
+	private JSONCardReader jCardReader;
 
-	EventHandler<MouseEvent> cardPlayHandler;
+	private EventHandler<MouseEvent> cardPlayHandler;
 
 	/**
 	 * Use this for the local player
@@ -242,7 +244,6 @@ public class Player extends Pane {
 		handCards.add( card );
 		// maybe have this in the 'shouldSend' block
 		card.setOnMouseClicked( cardPlayHandler );
-		// TODO update scale factor here
 		if( shouldSend ) {
 			card.setConnection( connection );
 			connection.sendPacket( new CardCreatedPacket( card ) );
@@ -250,19 +251,16 @@ public class Player extends Pane {
 		Platform.runLater(new Thread(() -> {
 			this.getChildren().add( card );
 			this.rearangeCards();
-			// TODO this still doesn't set the correct height
+			// TODO this still doesn't set the correct height in the hand
 		}));
+		updateScaleFactor( scaleFactor );
 	}
 	public void createCard( Card newCard ) {
 		createCard( newCard, counter.getCounterAndIncrament() );
 	}
-	/**
-	 * TODO scale factor isn't set here
-	 */
 	public void createCardFromDatabase( String cardName ) {
 		try {
 			Card temp = jCardReader.get( cardName, counter.getCounterAndIncrament() );
-			//createCard( temp, temp.getCardId() );
 			temp.setCurrentLocation( CardCollection.Collections.HAND );
 			handCards.add( temp );
 			temp.setOnMouseClicked( cardPlayHandler );
@@ -274,8 +272,9 @@ public class Player extends Pane {
 			Platform.runLater(new Thread(() -> {
 				this.getChildren().add( temp );
 				this.rearangeCards();
-				// TODO this still doesn't set the correct height
+				// TODO this still doesn't set the correct height in the hand
 			}));
+			updateScaleFactor( scaleFactor );
 		} catch( CardNotFoundException e ) {
 			// TODO this should print some sort of error to the graphics
 			e.printStackTrace();
@@ -470,6 +469,7 @@ public class Player extends Pane {
 	 * @param newScaleFactor what scale the new window is to the original
 	 */
 	public void updateScaleFactor( double newScaleFactor ) {
+		this.scaleFactor = newScaleFactor;
 		for( Card tch : handCards ) {
 			tch.setScaleFactor( newScaleFactor );
 		}
