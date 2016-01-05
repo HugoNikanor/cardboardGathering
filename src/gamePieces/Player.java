@@ -238,12 +238,14 @@ public class Player extends Pane {
 		}
 	}
 
-	// TODO, card is not properly created at the other side, lacks id
 	public void createCard( Card card, long id ) {
 		card.setCurrentLocation( CardCollection.Collections.HAND );
 		handCards.add( card );
 		// maybe have this in the 'shouldSend' block
 		card.setOnMouseClicked( cardPlayHandler );
+
+		card.setTranslateY( card.getHandPopupValue() );
+
 		if( shouldSend ) {
 			card.setConnection( connection );
 			connection.sendPacket( new CardCreatedPacket( card ) );
@@ -251,7 +253,6 @@ public class Player extends Pane {
 		Platform.runLater(new Thread(() -> {
 			this.getChildren().add( card );
 			this.rearangeCards();
-			// TODO this still doesn't set the correct height in the hand
 		}));
 		updateScaleFactor( scaleFactor );
 	}
@@ -260,19 +261,21 @@ public class Player extends Pane {
 	}
 	public void createCardFromDatabase( String cardName ) {
 		try {
-			Card temp = jCardReader.get( cardName, counter.getCounterAndIncrament() );
-			temp.setCurrentLocation( CardCollection.Collections.HAND );
-			handCards.add( temp );
-			temp.setOnMouseClicked( cardPlayHandler );
+			Card card = jCardReader.get( cardName, counter.getCounterAndIncrament() );
+			card.setCurrentLocation( CardCollection.Collections.HAND );
+
+			card.setTranslateY( card.getHandPopupValue() );
+
+			handCards.add( card );
+			card.setOnMouseClicked( cardPlayHandler );
 			if( shouldSend ) {
-				temp.setConnection( connection );
+				card.setConnection( connection );
 				// TODO, don't send card if it's not valid
 				connection.sendPacket( new CardFromDatabasePacket( cardName ) );
 			}
 			Platform.runLater(new Thread(() -> {
-				this.getChildren().add( temp );
+				this.getChildren().add( card );
 				this.rearangeCards();
-				// TODO this still doesn't set the correct height in the hand
 			}));
 			updateScaleFactor( scaleFactor );
 		} catch( CardNotFoundException e ) {
@@ -383,7 +386,8 @@ public class Player extends Pane {
 			new Thread(() -> {
 				try {
 					Card card = new CardSelectionPane().getStaticCard( graveyardCards, Player.this );
-					moveCardBetweenCollections( graveyardCards, handCards, card );
+					//moveCardBetweenCollections( graveyardCards, handCards, card );
+					graveToHand( card );
 				} catch (CardNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -525,15 +529,26 @@ public class Player extends Pane {
 		moveCardBetweenCollections( deckCards, handCards, card );
 
 		card.setTranslateY(card.getHandPopupValue());
-		double cardPlacement = Battlefield.WIDTH * 0.08125; // TODO this should probably be put somewhere nicer
-		card.setTranslateX( cardPlacement + ( handCards.size() - 1 ) * ( card.getWidth() + card.getPreferdMargin() * 2) );
 
 		Platform.runLater( new Thread(() -> {
 			this.getChildren().add(card);
+			this.rearangeCards();
 		}));
 
 		// Set the text on the graphical deck
 		deckCont.setText(Integer.toString(getDeckCards().size()));
+	}
+
+	private void graveToHand( Card card ) throws CardNotFoundException {
+		moveCardBetweenCollections( graveyardCards, handCards, card );
+
+		card.setTranslateY( card.getHandPopupValue() );
+
+		Platform.runLater( new Thread(() -> {
+			this.getChildren().add(card);
+			this.rearangeCards();
+		}));
+		
 	}
 
 	/**
