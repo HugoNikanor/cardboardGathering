@@ -10,12 +10,14 @@ import graphicsObjects.CardSelectionPane;
 import graphicsObjects.CardStackContainer;
 import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
+import graphicsObjects.TokenContainer;
 
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -49,6 +51,7 @@ public class Player extends Pane {
 
 	private PlayerBtnPane playerBtnPane;
 	private LifeCounter lifeCounter;
+	private TokenContainer tokenContainer;
 
 	private double scaleFactor;
 
@@ -119,6 +122,7 @@ public class Player extends Pane {
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			10
 		);
+		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
 		lifeCounter = new LifeCounter(new LifeCounterHandler());
 
@@ -161,6 +165,7 @@ public class Player extends Pane {
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
 			10
 		);
+		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
 		lifeCounter = new LifeCounter(new LifeCounterHandler());
 	}
@@ -238,6 +243,19 @@ public class Player extends Pane {
 		}
 	}
 
+	private class CardCreateHandler implements EventHandler<ActionEvent> {
+		// TODO remove focus when drawer is closed
+		@Override
+		public void handle(ActionEvent event) {
+			String str = ((TextField)(event.getSource())).getText();
+			System.out.println( str );
+			tokenContainer.clearError();
+			createCardFromDatabase( str );
+
+			tokenContainer.clearTextArea();
+		}
+	}
+
 	public void createCard( Card card, long id ) {
 		card.setCurrentLocation( CardCollection.Collections.HAND );
 		handCards.add( card );
@@ -279,8 +297,9 @@ public class Player extends Pane {
 			}));
 			updateScaleFactor( scaleFactor );
 		} catch( CardNotFoundException e ) {
-			// TODO this should print some sort of error to the graphics
-			e.printStackTrace();
+			String errorMsg = "No card with that name in database";
+			System.out.println( errorMsg );
+			tokenContainer.error( errorMsg );
 		}
 
 	}
@@ -675,6 +694,13 @@ public class Player extends Pane {
 	 */
 	public LifeCounter getLifeCounter() {
 		return lifeCounter;
+	}
+
+	/**
+	 * @return the tokenContainer
+	 */
+	public TokenContainer getTokenContainer() {
+		return tokenContainer;
 	}
 
 	/**

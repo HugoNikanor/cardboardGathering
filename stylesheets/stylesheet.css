@@ -14,6 +14,7 @@
 
 }
 
+/* Token container */
 .token-container {
 	-fx-border-color: Black;
 	-fx-border-width: 3px;
@@ -23,9 +24,22 @@
 }
 .token-container-handle {
 	-fx-background-color: Green;
+	-fx-border-width: 5px;
+	-fx-border-colour: Black;
 }
-.token {
+.card-create-pane {
+	-fx-border-width: 2px;
+	-fx-border-color: Black;
+	-fx-background-color: Blue;
 }
+.card-create-name-field {
+	-fx-background-color: LightBlue;
+}
+.card-create-info-area .content {
+	-fx-background-color: LightBlue;
+}
+
+
 
 /* When getting a specific card from a collection */
 .card-select-pane-outer {
@@ -37,6 +51,7 @@
 	-fx-background-color: DimGray;
 }
 
+/* Cards, and different colours */
 .card {
 	-fx-border-color: Black;
 	-fx-border-width: 5px;

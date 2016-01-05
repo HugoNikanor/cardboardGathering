@@ -2,11 +2,7 @@ package gamePieces;
 
 import database.JSONCardReader;
 
-import graphicsObjects.TokenContainer;
-
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
@@ -77,9 +73,7 @@ public class Battlefield extends Pane {
 		this.setMinSize(this.getWidth(), this.getHeight());
 
 		// token container
-		TokenContainer tc = new TokenContainer( new CardCreateHandler() );
-		this.getChildren().add( tc );
-		
+		this.getChildren().add( player.getTokenContainer() );
 
 		// Deck
 		this.getChildren().add( player.getDeckCont() );
@@ -126,15 +120,6 @@ public class Battlefield extends Pane {
 		return isReady;
 	}
 
-	private class CardCreateHandler implements EventHandler<ActionEvent> {
-		// TODO remove focus when drawer is closed
-		@Override
-		public void handle(ActionEvent event) {
-			String str = ((TextField)(event.getSource())).getText();
-			System.out.println( str );
-			player.createCardFromDatabase( str );
-		}
-	}
 
 
 }
