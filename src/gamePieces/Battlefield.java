@@ -132,7 +132,7 @@ public class Battlefield extends Pane {
 		public void handle(ActionEvent event) {
 			String str = ((TextField)(event.getSource())).getText();
 			System.out.println( str );
-			player.createCard( str );
+			player.createCardFromDatabase( str );
 		}
 	}
 

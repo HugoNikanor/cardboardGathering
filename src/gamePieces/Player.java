@@ -24,6 +24,7 @@ import network.Connection;
 
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardCreatedPacket;
+import serverPackets.CardFromDatabasePacket;
 import serverPackets.CardMovePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.PoisonSetPacket;
@@ -255,10 +256,26 @@ public class Player extends Pane {
 	public void createCard( Card newCard ) {
 		createCard( newCard, counter.getCounterAndIncrament() );
 	}
-	public void createCard( String cardName ) {
+	/**
+	 * TODO scale factor isn't set here
+	 */
+	public void createCardFromDatabase( String cardName ) {
 		try {
 			Card temp = jCardReader.get( cardName, counter.getCounterAndIncrament() );
-			createCard( temp, temp.getCardId() );
+			//createCard( temp, temp.getCardId() );
+			temp.setCurrentLocation( CardCollection.Collections.HAND );
+			handCards.add( temp );
+			temp.setOnMouseClicked( cardPlayHandler );
+			if( shouldSend ) {
+				temp.setConnection( connection );
+				// TODO, don't send card if it's not valid
+				connection.sendPacket( new CardFromDatabasePacket( cardName ) );
+			}
+			Platform.runLater(new Thread(() -> {
+				this.getChildren().add( temp );
+				this.rearangeCards();
+				// TODO this still doesn't set the correct height
+			}));
 		} catch( CardNotFoundException e ) {
 			// TODO this should print some sort of error to the graphics
 			e.printStackTrace();

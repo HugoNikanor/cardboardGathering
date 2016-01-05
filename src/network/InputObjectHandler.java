@@ -14,6 +14,7 @@ import javafx.application.Platform;
 
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardFocusPacket;
+import serverPackets.CardFromDatabasePacket;
 import serverPackets.CardListPacket;
 import serverPackets.CardMovePacket;
 import serverPackets.HealthSetPacket;
@@ -193,6 +194,9 @@ public class InputObjectHandler {
 			obj.getManaCostBlank())
 		);
 	}
+	private void createCardFromDatabase( CardFromDatabasePacket obj ) {
+		battlefield.getPlayer().createCardFromDatabase( obj.getCardName() );
+	}
 
 	/**
 	 * @return the battlefield, used for creating it in GameLogic
@@ -236,6 +240,9 @@ public class InputObjectHandler {
 					break;
 				case CARDCREATE:
 					createCard( (CardCreatedPacket) pendingPackets.get(0) );
+					break;
+				case CARDFROMDATABASE:
+					createCardFromDatabase( (CardFromDatabasePacket) pendingPackets.get(0) );
 					break;
 				default:
 					throw new BadDataException( pendingPackets.get(0).toString() );

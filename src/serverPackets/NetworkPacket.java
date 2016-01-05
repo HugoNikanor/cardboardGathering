@@ -23,7 +23,8 @@ public class NetworkPacket implements Serializable {
 		HEALTHSET,
 		POISONSET,
 		CARDLIST,
-		CARDCREATE
+		CARDCREATE,
+		CARDFROMDATABASE
 	}
 
 	/**

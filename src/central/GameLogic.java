@@ -250,7 +250,7 @@ public class GameLogic extends Application {
 	 * TODO The graphics only resize when the window is changed in the 'y'
 	 * direction
 	 *
-	 * TODO this doesn't work correctly on my Windows 8 laptop
+	 * TODO this doesn't work correctly on my Windows 8 laptop
 	 */ 
 	private class WindowSizeListener implements ChangeListener<Number> {
 		final Timer timer = new Timer();
