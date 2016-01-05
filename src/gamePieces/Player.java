@@ -17,7 +17,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -171,7 +170,6 @@ public class Player extends Pane {
 	}
 
 	private class SendCardDataThread implements Runnable {
-
 		private ArrayList<Card> cardsToDeck;
 		private ArrayList<Card> cardsToGrave;
 
@@ -247,16 +245,47 @@ public class Player extends Pane {
 		// TODO remove focus when drawer is closed
 		@Override
 		public void handle(ActionEvent event) {
-			String str = ((TextField)(event.getSource())).getText();
-			System.out.println( str );
-			tokenContainer.clearError();
-			createCardFromDatabase( str );
+			if( event.getSource() == tokenContainer.getCardDatabaseBtn() ||
+			    event.getSource() == tokenContainer.getCardDatabaseField() ) {
 
-			tokenContainer.clearTextArea();
+				String cardToCreate = 
+					tokenContainer.getCardDatabaseField().getText();
+
+				tokenContainer.clearError();
+				createCardFromDatabase( cardToCreate );
+
+				tokenContainer.clearDatabaseTextField();
+			}
+			if( event.getSource() == tokenContainer.getCardCreateNameField() ||
+			    event.getSource() == tokenContainer.getCardCreateAction() ) {
+
+				String nameCreate = tokenContainer.getCardCreateNameField().getText();
+				String infoCreate = tokenContainer.getCardCreateInfoText();
+
+				tokenContainer.clearCardCreateTextAreas();
+
+				// TODO find the actual null values for some of these values
+				createCard( new Card(
+							nameCreate,
+							"Token",
+							"",
+							infoCreate,
+							"",
+							0,
+							0,
+							0,
+							0,
+							0,
+							0,
+							0,
+							0,
+							0) );
+			}
 		}
 	}
 
-	public void createCard( Card card, long id ) {
+	public void createCard( Card inCard, long id ) {
+		Card card = new Card( inCard, id );
 		card.setCurrentLocation( CardCollection.Collections.HAND );
 		handCards.add( card );
 		// maybe have this in the 'shouldSend' block
@@ -288,7 +317,6 @@ public class Player extends Pane {
 			card.setOnMouseClicked( cardPlayHandler );
 			if( shouldSend ) {
 				card.setConnection( connection );
-				// TODO, don't send card if it's not valid
 				connection.sendPacket( new CardFromDatabasePacket( cardName ) );
 			}
 			Platform.runLater(new Thread(() -> {

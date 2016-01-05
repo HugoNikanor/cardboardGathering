@@ -169,8 +169,12 @@ public class TokenContainer extends HBox {
 		this.getChildren().add( handle );
 	}
 
-	public void clearTextArea() {
+	public void clearDatabaseTextField() {
 		cardDatabaseField.setText( "" );
+	}
+	public void clearCardCreateTextAreas() {
+		cardCreateNameField.setText( "" );
+		cardCreateInfoArea.setText( "" );
 	}
 	
 	public void openDrawer() {
@@ -201,6 +205,38 @@ public class TokenContainer extends HBox {
 
 	public void clearError() {
 		errorText.setText( "" );
+	}
+
+	/**
+	 * @return the cardDatabaseField
+	 */
+	public TextField getCardDatabaseField() {
+		return cardDatabaseField;
+	}
+
+	/**
+	 * @return the cardDatabaseBtn
+	 */
+	public Button getCardDatabaseBtn() {
+		return cardDatabaseBtn;
+	}
+
+	/**
+	 * @return the cardCreateNameField
+	 */
+	public TextField getCardCreateNameField() {
+		return cardCreateNameField;
+	}
+
+	/**
+	 * @return the cardCreateAction
+	 */
+	public Button getCardCreateAction() {
+		return cardCreateAction;
+	}
+
+	public String getCardCreateInfoText() {
+		return cardCreateInfoArea.getText();
 	}
 
 	// TODO possibly add a mouse drag event to open and close the drawer
