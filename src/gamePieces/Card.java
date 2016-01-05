@@ -30,8 +30,19 @@ public class Card extends StackPane {
 	private String ability;
 	private String flavour;
 
+	/**
+	 * '*' is -200<br>
+	 * number format exception is -300 (weird things)<br>
+	 * -100 is missing data from database (a card without this value)
+	 */
 	private int power;
+	/**
+	 * '*' is -200<br>
+	 * number format exception is -300 (weird things)<br>
+	 * -100 is missing data from database (a card without this value)
+	 */
 	private int toughness;
+	/** This isn't even used... */
 	private int loyalty;
 
 	/**

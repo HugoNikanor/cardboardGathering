@@ -264,16 +264,15 @@ public class Player extends Pane {
 
 				tokenContainer.clearCardCreateTextAreas();
 
-				// TODO find the actual null values for some of these values
 				createCard( new Card(
 							nameCreate,
 							"Token",
 							"",
 							infoCreate,
 							"",
-							0,
-							0,
-							0,
+							-100,
+							-100,
+							-100,
 							0,
 							0,
 							0,
