@@ -30,11 +30,10 @@ public class Battlefield extends Pane {
 	 */
 	public Battlefield(JSONCardReader jCardReader, String[] cardList) {
 		// Both players MUST have all database files
-		player = new Player(jCardReader, cardList);
+		player = new Player( jCardReader, cardList );
 		cards = player.getBattlefieldCards();
 
-		this.initialSetup();
-		this.setRotate(180d);
+		this.initialSetup( "remote" );
 	}
 
 	/**
@@ -55,14 +54,14 @@ public class Battlefield extends Pane {
 		player = new Player( jCardReader, cardPlayHandler, connection, cardList );
 		cards = player.getBattlefieldCards();
 
-		this.initialSetup();
+		this.initialSetup( "local" );
 	}
 
 	/**
 	 * The parts of the constructor that are the same between the local and
 	 * remote instance of the class
 	 */
-	private void initialSetup() {
+	private void initialSetup( String localOrRemote ) {
 		// JavaFX
 		this.getStyleClass().add("battlefield");
 		this.setWidth(WIDTH);
@@ -72,8 +71,12 @@ public class Battlefield extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
+		// TODO maybe many of these should have one local and one remote version, 
+		// allowing some buttons to be omitted or added
+
 		// token container
-		this.getChildren().add( player.getTokenContainer() );
+		if( localOrRemote.equals( "local" ) )
+			this.getChildren().add( player.getTokenContainer() );
 
 		// Deck
 		this.getChildren().add( player.getDeckCont() );
@@ -83,10 +86,16 @@ public class Battlefield extends Pane {
 
 		// Life counter
 		this.getChildren().add( player.getLifeCounter() );
+		//if( localOrRemote.equals( "remote" ) )
+			//player.getLifeCounter().setRotate( 180d );
 
 
 		// used when sending the battlefield to the other player
-		this.isReady = true;
+		if( localOrRemote.equals( "local" ) )
+			this.isReady = true;
+
+		if( localOrRemote.equals( "remote" ) )
+			this.setRotate( 180d );
 	}
 
 	/**

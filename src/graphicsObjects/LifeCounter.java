@@ -40,33 +40,35 @@ public class LifeCounter extends GridPane {
 	 * @see poisonDownBtn
 	 * @see poisonUpBtn
 	 */
-	public LifeCounter(EventHandler<ActionEvent> handler) {
-		hpDownBtn = new Button("-");
-		hpDownBtn.setOnAction(handler);
-		hpDownBtn.setPrefSize(30, 30);
+	public LifeCounter(EventHandler<ActionEvent> handler, boolean isLocal ) {
+		if( isLocal ) {
+			hpDownBtn = new Button("-");
+			hpDownBtn.setOnAction(handler);
+			hpDownBtn.setPrefSize(30, 30);
 
-		this.add(hpDownBtn, 2, 0);
+			this.add(hpDownBtn, 2, 0);
 
-		hpUpBtn = new Button("+");
-		hpUpBtn.setOnAction(handler);
-		hpUpBtn.setPrefSize(30, 30);
-		this.add(hpUpBtn, 3, 0);
+			hpUpBtn = new Button("+");
+			hpUpBtn.setOnAction(handler);
+			hpUpBtn.setPrefSize(30, 30);
+			this.add(hpUpBtn, 3, 0);
 
-		poisonDownBtn = new Button("-");
-		poisonDownBtn.setOnAction(handler);
-		poisonDownBtn.setMaxSize(30, 30);
-		this.add(poisonDownBtn, 2, 1);
+			poisonDownBtn = new Button("-");
+			poisonDownBtn.setOnAction(handler);
+			poisonDownBtn.setMaxSize(30, 30);
+			this.add(poisonDownBtn, 2, 1);
 
-		poisonUpBtn = new Button("+");
-		poisonUpBtn.setOnAction(handler);
-		poisonUpBtn.setPrefSize(30, 30);
-		this.add(poisonUpBtn, 3, 1);
-		
-		resetBtn = new Button("Reset Values");
-		resetBtn.setOnAction(handler);
-		resetBtn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		GridPane.setConstraints(resetBtn, 0, 2, 4, 1);
-		this.add(resetBtn, 0, 2);
+			poisonUpBtn = new Button("+");
+			poisonUpBtn.setOnAction(handler);
+			poisonUpBtn.setPrefSize(30, 30);
+			this.add(poisonUpBtn, 3, 1);
+			
+			resetBtn = new Button("Reset Values");
+			resetBtn.setOnAction(handler);
+			resetBtn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+			GridPane.setConstraints(resetBtn, 0, 2, 4, 1);
+			this.add(resetBtn, 0, 2);
+		}
 
 
 		lifeLabel = new Text("Health: ");
@@ -92,6 +94,9 @@ public class LifeCounter extends GridPane {
 		this.setTranslateX(10);
 		// 90 is due to the 3 nodes in the pane all being 30px high
 		this.setTranslateY( Battlefield.HEIGHT - 90 - 10 );
+		if( !isLocal ) {
+			this.setRotate( 180d );
+		}
 
 		this.setFocusTraversable( false );
 	}

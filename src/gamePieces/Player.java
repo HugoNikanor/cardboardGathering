@@ -112,18 +112,20 @@ public class Player extends Pane {
 			CardCollection.Collections.DECK,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			Battlefield.HEIGHT - Card.HEIGHT - 10
+			Battlefield.HEIGHT - Card.HEIGHT - 10,
+			true
 		);
 		deckCont.setText(Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
 			CardCollection.Collections.GRAVEYARD,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			10
+			10,
+			true
 		);
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
-		lifeCounter = new LifeCounter(new LifeCounterHandler());
+		lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
 
 	}
 
@@ -150,23 +152,27 @@ public class Player extends Pane {
 		shouldSend = false;
 
 		// Objects displayed on the battlefield
+		// TODO these should have alternative versions since they are
+		// on the oponents side
 		cardStackHandler = new CardStackCollectionHandler();
 		deckCont = new CardStackContainer(
 			CardCollection.Collections.DECK,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			Battlefield.HEIGHT - Card.HEIGHT - 10
+			Battlefield.HEIGHT - Card.HEIGHT - 10,
+			false
 		);
 		deckCont.setText( Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
 			CardCollection.Collections.GRAVEYARD,
 			cardStackHandler,
 			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			10
+			10,
+			false
 		);
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
-		lifeCounter = new LifeCounter(new LifeCounterHandler());
+		lifeCounter = new LifeCounter( new LifeCounterHandler(), false );
 	}
 
 	private class SendCardDataThread implements Runnable {

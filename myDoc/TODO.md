@@ -13,5 +13,3 @@
 - Sort cards in hand?
 
 # Card creation
-- Give error message when card can't be created
-- Allow freeform creation
