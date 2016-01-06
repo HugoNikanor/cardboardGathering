@@ -16,6 +16,11 @@ public class Battlefield extends Pane {
 	private Player player;
 	private CardCollection cards;
 
+	/**
+	 * Here so that all cards can have a set height in relation to everything else.
+	 */
+	private Pane cardLayer;
+
 	public static final double WIDTH = 1920;// 1600;
 	public static final double HEIGHT = 474;// 395;
 
@@ -33,7 +38,7 @@ public class Battlefield extends Pane {
 		player = new Player( jCardReader, cardList );
 		cards = player.getBattlefieldCards();
 
-		this.initialSetup( "remote" );
+		this.initialSetup( false );
 	}
 
 	/**
@@ -54,14 +59,14 @@ public class Battlefield extends Pane {
 		player = new Player( jCardReader, cardPlayHandler, connection, cardList );
 		cards = player.getBattlefieldCards();
 
-		this.initialSetup( "local" );
+		this.initialSetup( true );
 	}
 
 	/**
 	 * The parts of the constructor that are the same between the local and
 	 * remote instance of the class
 	 */
-	private void initialSetup( String localOrRemote ) {
+	private void initialSetup( boolean isLocal ) {
 		// JavaFX
 		this.getStyleClass().add("battlefield");
 		this.setWidth(WIDTH);
@@ -71,31 +76,43 @@ public class Battlefield extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
-		// TODO maybe many of these should have one local and one remote version, 
-		// allowing some buttons to be omitted or added
+		cardLayer = new Pane();
+		cardLayer.setPickOnBounds( false );
+		cardLayer.setPrefSize(this.getWidth(), this.getHeight());
+		cardLayer.setMinSize(this.getWidth(), this.getHeight());
 
+		this.getChildren().add( cardLayer );
+
+		// Add a toBack if that's desired, else it goes in front of the cards
+		// It's preferable if noone puts two objects on top of each other
 		// token container
-		if( localOrRemote.equals( "local" ) )
+		if( isLocal ) 
 			this.getChildren().add( player.getTokenContainer() );
 
 		// Deck
 		this.getChildren().add( player.getDeckCont() );
+		player.getDeckCont().toBack();
 
 		// Graveyard
 		this.getChildren().add( player.getGraveCont() );
+		player.getGraveCont().toBack();
 
 		// Life counter
 		this.getChildren().add( player.getLifeCounter() );
-		//if( localOrRemote.equals( "remote" ) )
-			//player.getLifeCounter().setRotate( 180d );
-
 
 		// used when sending the battlefield to the other player
-		if( localOrRemote.equals( "local" ) )
+		if( isLocal )
 			this.isReady = true;
 
-		if( localOrRemote.equals( "remote" ) )
+		if( !isLocal )
 			this.setRotate( 180d );
+	}
+
+	/**
+	 * Place a card on the graphical battlefield
+	 */
+	public void playCard( Card card ) {
+		this.cardLayer.getChildren().add( card );
 	}
 
 	/**

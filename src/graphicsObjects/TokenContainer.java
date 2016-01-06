@@ -183,7 +183,6 @@ public class TokenContainer extends HBox {
 		TranslateTransition tt = new TranslateTransition(Duration.millis(500), this);
 		tt.setToX( xPosOut );
 		drawerOut = true;
-		this.toFront();
 		tt.play();
 	}
 
@@ -191,7 +190,6 @@ public class TokenContainer extends HBox {
 		TranslateTransition tt = new TranslateTransition(Duration.millis(500), this);
 		tt.setToX( xPosIn );
 		drawerOut = false;
-		this.toBack();
 		tt.play();
 	}
 

@@ -179,7 +179,9 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * Used to allow for copying a card
+	 * Used to allow for copying a card,<br>
+	 * also allow the above "idea of card" to become
+	 * a full fledged card, I'm sorry.
 	 * @param cardToCopy the card that you want a copy of
 	 * @param cardId the id the new card should have
 	 * you have to make sure yourself that no two cards share an id number

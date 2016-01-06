@@ -621,7 +621,7 @@ public class Player extends Pane {
 			 */
 			moveCardBetweenCollections( handCards, battlefieldCards, card );
 			this.getChildren().remove(card);
-			targetBattlefield.getChildren().add(card);
+			targetBattlefield.playCard( card );
 
 			card.setTranslateY( Battlefield.HEIGHT + startY );
 
