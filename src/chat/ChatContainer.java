@@ -1,8 +1,6 @@
 package chat;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -20,13 +18,15 @@ public class ChatContainer extends VBox {
 
 	private Button toggleDisplayBtn;
 
+	/**
+	 * The whole chat interface
+	 */
 	public ChatContainer( Connection connection ) {
 		chatBox = new TextBox( e -> {
-			//msgArea.printMessage( chatBox.getTextAndClear(), MessageInfo.PLAYER );
 			ChatStream.print( chatBox.getTextAndClear(), MessageInfo.PLAYER, connection );
 		} );
 
-		msgArea = new MessageArea( connection );
+		msgArea = new MessageArea();
 
 		toggleDisplayBtn = new Button();
 		toggleDisplayBtn.setPrefWidth( 30 );
@@ -45,29 +45,20 @@ public class ChatContainer extends VBox {
 		upperArea.getChildren().add( msgArea );
 		this.getChildren().addAll( upperArea, lowerArea );
 
-		this.setTranslateX( 100 );
-		this.setTranslateY( 10 );
-
 		this.setPickOnBounds( false );
 		this.getStyleClass().add( "chat-container" );
 
-		msgArea.visibleProperty().addListener( new ChangeListener<Boolean>() {
-			@Override
-			public void changed( ObservableValue<? extends Boolean> observableValue,
-			                     Boolean oldValue,
-			                     Boolean newValue ) {
-				setDisplayBtnStr( newValue );
-				upperArea.setMouseTransparent( !newValue );
-			}
-		});
+		msgArea.visibleProperty().addListener( (ov, oldValue, newValue) -> {
+			setDisplayBtnStr( newValue );
+			upperArea.setMouseTransparent( !newValue );
+		} );
 
 		msgArea.setVisible( false );
-	}
 
-	//public void sendMessage( String message, MessageInfo type ) {
-		//msgArea.printMessage( message, type );
-		//ChatStream.print( message, type, connection
-	//}
+		// position
+		this.setTranslateX( 100 );
+		this.setTranslateY( 10 );
+	}
 
 	private void setDisplayBtnStr( boolean isOut ) {
 		if( isOut ) toggleDisplayBtn.setText( "-" );

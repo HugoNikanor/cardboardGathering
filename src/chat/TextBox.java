@@ -14,6 +14,7 @@ public class TextBox extends HBox {
 
 	public TextBox( EventHandler<ActionEvent> handler ) {
 		textField = new TextField();
+		textField.setPromptText( "send message" );
 		textField.setOnAction( handler );
 
 		submitBtn = new Button( ">" );

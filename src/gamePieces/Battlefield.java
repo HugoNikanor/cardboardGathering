@@ -85,12 +85,12 @@ public class Battlefield extends Pane {
 
 		// Add a toBack if that's desired, else it goes in front of the cards
 		// It's preferable if noone puts two objects on top of each other
-		// token container
-		if( isLocal ) 
-			this.getChildren().add( player.getTokenContainer() );
 
-		if( isLocal )
-			this.getChildren().add( player.getChatContainer() );
+		// token container & chat
+		if( isLocal ) {
+			this.getChildren().addAll( player.getTokenContainer(),
+			                           player.getChatContainer() );
+		}
 
 		// Deck
 		this.getChildren().add( player.getDeckCont() );

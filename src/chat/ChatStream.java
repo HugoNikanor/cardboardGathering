@@ -1,5 +1,6 @@
 package chat;
 
+import javafx.application.Platform;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -17,8 +18,6 @@ public class ChatStream {
 			synchronized (ChatStream.class) {
                 if (linstance == null) {
                     linstance = new TextFlow();
-					//linstance.setPickOnBounds( false );
-					//linstance.setMouseTransparent( true );
                 }
             }
 		}
@@ -53,9 +52,11 @@ public class ChatStream {
 				text.getStyleClass().add( "chat-oponent" );
 				break;
 			case SYSTEM:
+				finalMessage = finalMessage.concat( "@" );
 				text.getStyleClass().add( "chat-system" );
 				break;
 			case ERROR:
+				finalMessage = finalMessage.concat( "!" );
 				text.getStyleClass().add( "chat-error" );
 				text.setUnderline( true );
 				break;
@@ -70,10 +71,19 @@ public class ChatStream {
 		text.setText( finalMessage );
 		//textLog.add( finalMessage );
 
-		if( shouldSend )
-			connection.sendPacket( new ChatMessagePacket( finalMessage, MessageInfo.OPONENT ) );
-		instance.getChildren().add( text );
+		if( shouldSend ) {
+			try {
+				connection.sendPacket( new ChatMessagePacket( message, MessageInfo.OPONENT ) );
+			} catch( NullPointerException e ) {
+				ChatStream.print( "Connection missing", MessageInfo.ERROR, null );
+			}
+		}
 
-		instance.setVisible( true );
+		Platform.runLater( new Thread(() -> {
+			instance.getChildren().add( text );
+			instance.setVisible( false );
+			instance.setVisible( true );
+		}) );
+
 	}
 }
