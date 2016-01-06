@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -104,19 +105,23 @@ public class Battlefield extends Pane {
 		lowerPane.setRight( cardStackContainerContainer );
 
 		
+		HBox lifeAndChatContainerContainer = new HBox();
+		lifeAndChatContainerContainer.setPickOnBounds( false );
+		Pane lifeAndChatContainer = new Pane();
+		lifeAndChatContainer.setPickOnBounds( false );
+
+		lifeAndChatContainerContainer.getChildren().add( lifeAndChatContainer );
+		lifeAndChatContainerContainer.setAlignment( Pos.CENTER_LEFT );
+		upperPane.setBottom( lifeAndChatContainerContainer );
 
 		this.getChildren().addAll( cardLayer, upperPane, lowerPane );
-
 		upperPane.toFront();
 		lowerPane.toBack();
 
-		// Add a toBack if that's desired, else it goes in front of the cards
-		// It's preferable if noone puts two objects on top of each other
-
-		// token container & chat
+		// token container 
 		if( isLocal ) {
 			this.getChildren().addAll( 
-					player.getTokenContainer(), player.getChatContainer() );
+					player.getTokenContainer() );
 		}
 
 		// Deck & Graveyard
@@ -124,7 +129,11 @@ public class Battlefield extends Pane {
 				player.getGraveCont(), player.getDeckCont() );
 
 		// Life counter
-		this.getChildren().add( player.getLifeCounter() );
+		//this.getChildren().add( player.getLifeCounter() );
+		lifeAndChatContainer.getChildren().add( player.getLifeCounter() );
+
+		if( isLocal )
+			lifeAndChatContainer.getChildren().add( player.getChatContainer() );
 
 		// used when sending the battlefield to the other player
 		if( isLocal )

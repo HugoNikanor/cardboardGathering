@@ -29,7 +29,7 @@ public class ChatContainer extends VBox {
 		msgArea = new MessageArea();
 
 		toggleDisplayBtn = new Button();
-		toggleDisplayBtn.setPrefWidth( 30 );
+		toggleDisplayBtn.setMinWidth( 30 );
 		toggleDisplayBtn.setOnAction( e -> {
 			toggleDisplay();
 		} );
@@ -40,9 +40,10 @@ public class ChatContainer extends VBox {
 
 		lowerArea = new HBox();
 		lowerArea.setPickOnBounds( false );
+		lowerArea.setMaxWidth( Double.MAX_VALUE );
 
 		lowerArea.getChildren().addAll( chatBox, toggleDisplayBtn );
-		upperArea.getChildren().add( msgArea );
+		upperArea.getChildren().addAll( msgArea );
 		this.getChildren().addAll( upperArea, lowerArea );
 
 		this.setPickOnBounds( false );
@@ -55,9 +56,8 @@ public class ChatContainer extends VBox {
 
 		msgArea.setVisible( false );
 
-		// position
-		this.setTranslateX( 100 );
-		this.setTranslateY( 10 );
+		this.setPrefWidth( 500 );
+		this.setFillWidth( true );
 	}
 
 	private void setDisplayBtnStr( boolean isOut ) {

@@ -11,11 +11,12 @@ public class TextBox extends HBox {
 	private TextField textField;
 	private Button submitBtn;
 
-
 	public TextBox( EventHandler<ActionEvent> handler ) {
 		textField = new TextField();
 		textField.setPromptText( "send message" );
 		textField.setOnAction( handler );
+		textField.setMaxWidth( Double.MAX_VALUE );
+		textField.setPrefColumnCount( Integer.MAX_VALUE );
 
 		submitBtn = new Button( ">" );
 		submitBtn.setOnAction( handler );
@@ -23,8 +24,7 @@ public class TextBox extends HBox {
 		this.setFillHeight( true );
 		this.getChildren().addAll( textField, submitBtn );
 
-		this.setMinHeight( 50d );
-
+		this.setMaxWidth( Double.MAX_VALUE );
 	}
 
 	public String getTextAndClear() {
