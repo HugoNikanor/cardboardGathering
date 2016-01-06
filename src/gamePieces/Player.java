@@ -3,7 +3,6 @@ package gamePieces;
 import java.util.ArrayList;
 
 import chat.ChatContainer;
-import chat.MessageInfo;
 
 import database.JSONCardReader;
 
@@ -344,11 +343,13 @@ public class Player extends Pane {
 
 	}
 
+	/*
 	public void sendMessage( String message, MessageInfo type ) {
 		if( shouldSend ) {
 			chatContainer.sendMessage( message, type );
 		}
 	}
+	*/
 
 	public void cardToDeck( long cardId ) {
 		try {

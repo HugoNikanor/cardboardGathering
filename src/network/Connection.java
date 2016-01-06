@@ -14,6 +14,7 @@ import serverPackets.NetworkPacket;
  * "Talks" to the network
  * Both responsible for sending and receiving data
  * but doesn't do anything with that data more than passing it along
+ * TODO possibly make this into some sort of singleton
  */
 public class Connection {
 

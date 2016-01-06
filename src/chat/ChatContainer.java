@@ -22,7 +22,8 @@ public class ChatContainer extends VBox {
 
 	public ChatContainer( Connection connection ) {
 		chatBox = new TextBox( e -> {
-			msgArea.printMessage( chatBox.getTextAndClear(), MessageInfo.PLAYER );
+			//msgArea.printMessage( chatBox.getTextAndClear(), MessageInfo.PLAYER );
+			ChatStream.print( chatBox.getTextAndClear(), MessageInfo.PLAYER, connection );
 		} );
 
 		msgArea = new MessageArea( connection );
@@ -63,9 +64,10 @@ public class ChatContainer extends VBox {
 		msgArea.setVisible( false );
 	}
 
-	public void sendMessage( String message, MessageInfo type ) {
-		msgArea.printMessage( message, type );
-	}
+	//public void sendMessage( String message, MessageInfo type ) {
+		//msgArea.printMessage( message, type );
+		//ChatStream.print( message, type, connection
+	//}
 
 	private void setDisplayBtnStr( boolean isOut ) {
 		if( isOut ) toggleDisplayBtn.setText( "-" );

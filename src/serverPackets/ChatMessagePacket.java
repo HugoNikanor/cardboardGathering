@@ -8,8 +8,9 @@ public class ChatMessagePacket extends NetworkPacket {
 	private String message;
 	private MessageInfo messageInfo;
 
-	public ChatMessagePacket( String message, MessageInfo type ) {
+	public ChatMessagePacket( String message, MessageInfo messageInfo ) {
 		this.message = message;
+		this.messageInfo = messageInfo;
 		this.dataType = NetworkPacket.DataTypes.CHATMESSAGE;
 	}
 

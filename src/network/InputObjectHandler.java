@@ -2,6 +2,7 @@ package network;
 
 import java.util.ArrayList;
 
+import chat.ChatStream;
 import database.JSONCardReader;
 
 import exceptions.BadDataException;
@@ -201,7 +202,8 @@ public class InputObjectHandler {
 
 	private void chatMessage( ChatMessagePacket obj ) {
 		System.out.println( "message recieved" );
-		battlefield.getPlayer().sendMessage( obj.getMessage(), obj.getMessageInfo() );
+		//battlefield.getPlayer().sendMessage( obj.getMessage(), obj.getMessageInfo() );
+		ChatStream.print( obj.getMessage(), obj.getMessageInfo(), null );
 	}
 
 	/**
