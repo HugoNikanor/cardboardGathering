@@ -72,6 +72,7 @@ public class LifeCounter extends GridPane {
 
 
 		lifeLabel = new Text("Health: ");
+		lifeLabel.setMouseTransparent( true );
 		this.add(lifeLabel, 0, 0);
 
 		lifeText = new Text("20");
@@ -79,9 +80,11 @@ public class LifeCounter extends GridPane {
 		lifeContainer = new StackPane();
 		lifeContainer.setPrefSize(30, 30);
 		lifeContainer.getChildren().add(lifeText);
+		lifeContainer.setMouseTransparent( true );
 		this.add(lifeContainer, 1, 0);
 
 		poisonLabel = new Text("Poison: ");
+		poisonLabel.setMouseTransparent( true );
 		this.add(poisonLabel, 0, 1);
 
 		poisonText = new Text("0");
@@ -89,6 +92,7 @@ public class LifeCounter extends GridPane {
 		poisonContainer = new StackPane();
 		poisonContainer.setPrefSize(30, 30);
 		poisonContainer.getChildren().add(poisonText);
+		poisonContainer.setMouseTransparent( true );
 		this.add(poisonContainer, 1, 1);
 
 		this.setTranslateX(10);

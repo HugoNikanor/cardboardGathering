@@ -24,7 +24,8 @@ public class NetworkPacket implements Serializable {
 		POISONSET,
 		CARDLIST,
 		CARDCREATE,
-		CARDFROMDATABASE
+		CARDFROMDATABASE,
+		CHATMESSAGE,
 	}
 
 	/**

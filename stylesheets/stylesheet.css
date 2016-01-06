@@ -47,9 +47,39 @@
 	-fx-border-width: 2px;
 	-fx-background-color: DimGray;
 }
+.card-select-pane-outer > .viewport {
+	-fx-background-color: DimGray;
+}
 .card-select-pane-inner {
 	-fx-background-color: DimGray;
 }
+
+.chat-container { }
+
+.message-area-scroll-pane {
+	/*-fx-background-color: transparent;*/
+	-fx-background-color: rgba( 133, 133, 133, 0.5 );
+	-fx-border-color: Black;
+	-fx-border-width: 2px;
+}
+.message-area-scroll-pane > .viewport {
+	/*-fx-background-color: transparent;*/
+	-fx-background-color: rgba( 133, 133, 133, 0.5 );
+}
+
+/* chat messages */
+.chat-player {}
+.chat-oponent {}
+.chat-system {
+	-fx-text-fill: Grey;
+}
+.chat-error {
+	-fx-text-fill: Red;
+}
+.chat-other {
+	-fx-text-fill: Green;
+}
+
 
 /* Cards, and different colours */
 .card {

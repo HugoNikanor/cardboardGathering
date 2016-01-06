@@ -17,6 +17,7 @@ import serverPackets.CardFocusPacket;
 import serverPackets.CardFromDatabasePacket;
 import serverPackets.CardListPacket;
 import serverPackets.CardMovePacket;
+import serverPackets.ChatMessagePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.NetworkPacket;
 import serverPackets.PoisonSetPacket;
@@ -198,6 +199,11 @@ public class InputObjectHandler {
 		battlefield.getPlayer().createCardFromDatabase( obj.getCardName() );
 	}
 
+	private void chatMessage( ChatMessagePacket obj ) {
+		System.out.println( "message recieved" );
+		battlefield.getPlayer().sendMessage( obj.getMessage(), obj.getMessageInfo() );
+	}
+
 	/**
 	 * @return the battlefield, used for creating it in GameLogic
 	 * @throws NullPointerException if battlefield is not yet readable
@@ -243,6 +249,9 @@ public class InputObjectHandler {
 					break;
 				case CARDFROMDATABASE:
 					createCardFromDatabase( (CardFromDatabasePacket) pendingPackets.get(0) );
+					break;
+				case CHATMESSAGE:
+					chatMessage( (ChatMessagePacket) pendingPackets.get(0) );
 					break;
 				default:
 					throw new BadDataException( pendingPackets.get(0).toString() );

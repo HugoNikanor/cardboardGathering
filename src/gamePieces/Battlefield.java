@@ -89,6 +89,9 @@ public class Battlefield extends Pane {
 		if( isLocal ) 
 			this.getChildren().add( player.getTokenContainer() );
 
+		if( isLocal )
+			this.getChildren().add( player.getChatContainer() );
+
 		// Deck
 		this.getChildren().add( player.getDeckCont() );
 		player.getDeckCont().toBack();

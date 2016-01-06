@@ -2,6 +2,9 @@ package gamePieces;
 
 import java.util.ArrayList;
 
+import chat.ChatContainer;
+import chat.MessageInfo;
+
 import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
@@ -51,6 +54,8 @@ public class Player extends Pane {
 	private PlayerBtnPane playerBtnPane;
 	private LifeCounter lifeCounter;
 	private TokenContainer tokenContainer;
+
+	private ChatContainer chatContainer;
 
 	private double scaleFactor;
 
@@ -126,6 +131,8 @@ public class Player extends Pane {
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
 		lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
+
+		chatContainer = new ChatContainer( connection );
 
 	}
 
@@ -335,6 +342,12 @@ public class Player extends Pane {
 			tokenContainer.error( errorMsg );
 		}
 
+	}
+
+	public void sendMessage( String message, MessageInfo type ) {
+		if( shouldSend ) {
+			chatContainer.sendMessage( message, type );
+		}
 	}
 
 	public void cardToDeck( long cardId ) {
@@ -734,6 +747,13 @@ public class Player extends Pane {
 	 */
 	public TokenContainer getTokenContainer() {
 		return tokenContainer;
+	}
+
+	/**
+	 * @return the chatContainer
+	 */
+	public ChatContainer getChatContainer() {
+		return chatContainer;
 	}
 
 	/**
