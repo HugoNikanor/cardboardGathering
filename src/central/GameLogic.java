@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,8 +27,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+//import javafx.scene.input.KeyCode;
+//import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -49,8 +49,8 @@ public class GameLogic extends Application {
 	private Battlefield otherBattlefield;
 
 	// Keyboard
-	private KeyEventHandler keyEventHandler;
-	private ArrayList<KeyCode> pressedKeys;
+	//private KeyEventHandler keyEventHandler;
+	//private ArrayList<KeyCode> pressedKeys;
 
 	// JavaFX Objects
 	private Stage primaryStage;
@@ -62,7 +62,7 @@ public class GameLogic extends Application {
 	private double defaultSceneHeight;
 	private Scale scale;
 	private double scaleFactor;
-	private boolean isFullscreen;
+	//private boolean isFullscreen;
 
 	// Network
 	private Connection connection;
@@ -73,8 +73,8 @@ public class GameLogic extends Application {
 	public GameLogic() {
 
 		// Initiates the eventHandlers
-		keyEventHandler = new KeyEventHandler();
-		pressedKeys = new ArrayList<KeyCode>();
+		//keyEventHandler = new KeyEventHandler();
+		//pressedKeys = new ArrayList<KeyCode>();
 
 		CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
@@ -164,8 +164,8 @@ public class GameLogic extends Application {
 		// Scene
 		// Only one at a time, can change
 		gameScene = new Scene(rootGamePane);
-		gameScene.setOnKeyPressed(keyEventHandler);
-		gameScene.setOnKeyReleased(keyEventHandler);
+		//gameScene.setOnKeyPressed(keyEventHandler);
+		//gameScene.setOnKeyReleased(keyEventHandler);
 
 
 		// ALL THE GRAPHICS OBJECTS SHOULD NOW BE INITIATED
@@ -174,7 +174,7 @@ public class GameLogic extends Application {
 		String styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
 		gameScene.getStylesheets().add(styleFilePath);
 
-		new Thread(new KeyHandleThread()).start();
+		//new Thread(new KeyHandleThread()).start();
 	}
 
 	@Override
@@ -284,6 +284,7 @@ public class GameLogic extends Application {
 	 * @see pressedKeys
 	 * @see KeyHandleThread
 	 */
+	/*
 	public class KeyEventHandler implements EventHandler<KeyEvent> {
 		@Override
 		public void handle(KeyEvent event) {
@@ -297,12 +298,14 @@ public class GameLogic extends Application {
 			}
 		}
 	}
+	*/
 
 	/**
 	 * Takes the pressed keys and do the actions linked to them
 	 * @see pressedKeys
 	 * @see KeyEventHandler
 	 */
+	/*
 	private class KeyHandleThread implements Runnable {
 		boolean spacePressedBefore;
 		Card tempCard;
@@ -326,7 +329,7 @@ public class GameLogic extends Application {
 					/**
 					 * Use the arrow keys or 'hjkl' to move the card,
 					 * TODO This maybe has the risk of crashing the program
-					 */
+					 * /
 					if( pressedKeys.contains(KeyCode.DOWN) ||
 						pressedKeys.contains(KeyCode.J) ) {
 
@@ -367,7 +370,7 @@ public class GameLogic extends Application {
 					 * focus, the cards on the battlefield should be changed to
 					 * use proper focus instead of my own version.
 					 * Basicly, it crashes.
-					 */ 
+					 * / 
 					if( pressedKeys.contains(KeyCode.TAB) ) {
 						if( !pressedKeys.contains(KeyCode.SHIFT) ) {
 							int newCardIndex = ownBattlefield.getCards().indexOf(Card.getCurrentCard()) + 1;
@@ -409,5 +412,5 @@ public class GameLogic extends Application {
 				}
 			}
 		}
-	}
+	}*/
 }
