@@ -3,6 +3,8 @@ package gamePieces;
 import java.util.ArrayList;
 
 import chat.ChatContainer;
+import chat.ChatStream;
+import chat.MessageInfo;
 
 import database.JSONCardReader;
 
@@ -87,7 +89,7 @@ public class Player extends Pane {
 	 * @param cardList
 	 *            A string array of the names of the cards desired to be created
 	 */
-	public Player( JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
+	public Player( double width, JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
 		this( jCardReader, cardList );
 		this.cardPlayHandler = cardPlayHandler;
 
@@ -103,7 +105,7 @@ public class Player extends Pane {
 		//===============================//
 		//         JavaFX below          //
 		//===============================//
-		this.setPrefWidth(Battlefield.WIDTH);
+		this.setPrefWidth( width );
 		this.setPrefHeight(HEIGHT);
 		this.getStyleClass().add("cards-in-hand-pane");
 
@@ -115,16 +117,16 @@ public class Player extends Pane {
 		deckCont = new CardStackContainer(
 			CardCollection.Collections.DECK,
 			cardStackHandler,
-			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			Battlefield.HEIGHT - Card.HEIGHT - 10,
+			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			//Battlefield.HEIGHT - Card.HEIGHT - 10,
 			true
 		);
 		deckCont.setText(Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
 			CardCollection.Collections.GRAVEYARD,
 			cardStackHandler,
-			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			10,
+			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			//10,
 			true
 		);
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
@@ -164,16 +166,16 @@ public class Player extends Pane {
 		deckCont = new CardStackContainer(
 			CardCollection.Collections.DECK,
 			cardStackHandler,
-			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			Battlefield.HEIGHT - Card.HEIGHT - 10,
+			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			//Battlefield.HEIGHT - Card.HEIGHT - 10,
 			false
 		);
 		deckCont.setText( Integer.toString( getDeckCards().size() ));
 		graveCont = new CardStackContainer(
 			CardCollection.Collections.GRAVEYARD,
 			cardStackHandler,
-			Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			10,
+			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
+			//10,
 			false
 		);
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
@@ -181,6 +183,12 @@ public class Player extends Pane {
 		lifeCounter = new LifeCounter( new LifeCounterHandler(), false );
 	}
 
+	/**
+	 * A thread checking what has happened the last game tick 
+	 * (except that I don't have game ticks )
+	 * and sends that data over the server<br>
+	 * It also does some things localy
+	 */
 	private class SendCardDataThread implements Runnable {
 		private ArrayList<Card> cardsToDeck;
 		private ArrayList<Card> cardsToGrave;
@@ -200,22 +208,19 @@ public class Player extends Pane {
 							double newY = card.getTranslateY();
 							double newRotate = card.getRotate();
 
+							// TODO try to have smaller hitboxes for the cardcollections
 							// card to deck
 							if( !card.isBeingUsed() &&
-							    deckCont.getTranslateX() < newX + card.getHeight() / 4 &&
-							    deckCont.getTranslateY() < newY + card.getWidth()  / 4 &&
-								deckCont.getTranslateX() + deckCont.getWidth()  > newX + card.getWidth()  - card.getWidth()  / 4 &&
-								deckCont.getTranslateY() + deckCont.getHeight() > newY + card.getHeight() - card.getHeight() / 4 ) {
-								System.out.println( "moving to deck" );
+								deckCont.localToScene(deckCont.getBoundsInLocal())
+									.intersects(card.localToScene( card.getBoundsInLocal())) ) {
+								ChatStream.print( "moving to deck", MessageInfo.SYSTEM, connection );
 								cardsToDeck.add( card );
 							}
 							// card to graveyard
 							if( !card.isBeingUsed() &&
-							    graveCont.getTranslateX() < newX + card.getHeight() / 4 &&
-							    graveCont.getTranslateY() < newY + card.getWidth()  / 4 &&
-								graveCont.getTranslateX() + graveCont.getWidth()  > newX + card.getWidth()  - card.getWidth()  / 4 &&
-								graveCont.getTranslateY() + graveCont.getHeight() > newY + card.getHeight() - card.getHeight() / 4 ) {
-								System.out.println( "moving to grave" );
+								graveCont.localToScene(graveCont.getBoundsInLocal())
+									.intersects(card.localToScene( card.getBoundsInLocal())) ) {
+								ChatStream.print( "moving to grave", MessageInfo.SYSTEM, connection );
 								cardsToGrave.add( card );
 							}
 
@@ -426,7 +431,7 @@ public class Player extends Pane {
 			// is somehow drawn on top of it...
 			new Thread(() -> {
 				try {
-					Card card = new CardSelectionPane().getStaticCard( deckCards, Player.this );
+					Card card = new CardSelectionPane().getStaticCard( deckCards, /*Player.this*/ ((Pane)getParent()) );
 					Player.this.drawCard( card );
 				} catch (CardNotFoundException e) {
 					e.printStackTrace();
@@ -443,7 +448,8 @@ public class Player extends Pane {
 			// is somehow drawn on top of it...
 			new Thread(() -> {
 				try {
-					Card card = new CardSelectionPane().getStaticCard( graveyardCards, Player.this );
+					//Card card = new CardSelectionPane().getStaticCard( graveyardCards, Player.this );
+					Card card = new CardSelectionPane().getStaticCard( graveyardCards, /*Player.this*/ ((Pane)getParent()) );
 					//moveCardBetweenCollections( graveyardCards, handCards, card );
 					graveToHand( card );
 				} catch (CardNotFoundException e) {
@@ -617,7 +623,7 @@ public class Player extends Pane {
 	 */
 	public void playCard(Card card, Battlefield targetBattlefield) {
 		try {
-			double finalPosY = 25;
+			//double finalPosY = 25;
 			double startY = card.getTranslateY();
 
 			/*
@@ -629,11 +635,14 @@ public class Player extends Pane {
 			this.getChildren().remove(card);
 			targetBattlefield.playCard( card );
 
-			card.setTranslateY( Battlefield.HEIGHT + startY );
+			//card.setTranslateY( Battlefield.HEIGHT + startY );
+			card.setTranslateY( ((Pane)card.getParent()).getPrefHeight() + startY );
+			card.updateContainerSize();
 
-			double moveDistance = Battlefield.HEIGHT - finalPosY + startY;
+			//double moveDistance = Battlefield.HEIGHT - finalPosY + startY;
 			TranslateTransition tt = new TranslateTransition( Duration.millis(500), card );
-			tt.setByY( -moveDistance );
+			//tt.setByY( -moveDistance );
+			tt.setToY( 10 );
 
 
 			// Changes the hower action from "jump up" in hand

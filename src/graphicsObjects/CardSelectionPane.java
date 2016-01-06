@@ -5,7 +5,6 @@ import java.util.concurrent.CyclicBarrier;
 
 import exceptions.CardNotFoundException;
 
-import gamePieces.Battlefield;
 import gamePieces.Card;
 import gamePieces.CardCollection;
 
@@ -81,12 +80,12 @@ public class CardSelectionPane {
 
 		//outerPane.setPrefHeight(( 2 * rootHeight) / 3 );
 		//TODO do this better!
-		outerPane.setPrefHeight(( 2 * (rootHeight+Battlefield.HEIGHT)) / 3 );
+		outerPane.setPrefHeight(( 2 * (rootHeight/*+Battlefield.HEIGHT*/)) / 3 );
 
 		//outerPane.relocate( rootWidth/6, rootHeight/6 );
 		//TODO do this better!
 		// When the pane goes into battlefield then the buttons there stop working...
-		outerPane.relocate( rootWidth/6, (rootHeight+Battlefield.HEIGHT)/6 - Battlefield.HEIGHT );
+		outerPane.relocate( rootWidth/6, (rootHeight/*+Battlefield.HEIGHT*/)/6 /*- Battlefield.HEIGHT */);
 
 		innerPane.setPrefWrapLength( 2*rootWidth / 3 );
 

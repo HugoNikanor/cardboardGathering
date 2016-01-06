@@ -1,6 +1,6 @@
 package graphicsObjects;
 
-import gamePieces.Battlefield;
+//import gamePieces.Battlefield;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -95,9 +95,10 @@ public class LifeCounter extends GridPane {
 		poisonContainer.setMouseTransparent( true );
 		this.add(poisonContainer, 1, 1);
 
-		this.setTranslateX(10);
+		this.setTranslateX( 10 );
 		// 90 is due to the 3 nodes in the pane all being 30px high
-		this.setTranslateY( Battlefield.HEIGHT - 90 - 10 );
+		//this.setTranslateY( Battlefield.HEIGHT - 90 - 10 );
+		this.setTranslateY( 10 );
 		if( !isLocal ) {
 			this.setRotate( 180d );
 		}

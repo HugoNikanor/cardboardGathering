@@ -21,7 +21,7 @@ public class CardStackContainer extends Pane {
 	public static final double HEIGHT = Card.HEIGHT;
 
 	
-	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> handler, double xPos, double yPos, boolean isLocal  ) {
+	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> handler,/* double xPos, double yPos,*/ boolean isLocal  ) {
 		cardStack = new CardStackPane( type, handler, Card.WIDTH, Card.HEIGHT );
 
 		if( isLocal ) {
@@ -41,8 +41,8 @@ public class CardStackContainer extends Pane {
 
 		this.setPrefWidth( WIDTH );
 		this.setPrefHeight( HEIGHT );
-		this.setTranslateX( xPos );
-		this.setTranslateY( yPos );
+		//this.setTranslateX( xPos );
+		//this.setTranslateY( yPos );
 
 		if( !isLocal ) {
 			this.setRotate( 180d );

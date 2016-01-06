@@ -11,6 +11,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
@@ -22,7 +23,7 @@ import serverPackets.CardFocusPacket;
 public class Card extends StackPane {
 	private long cardId;
 	// TODO, this should probably be removed
-	private static long CARD_ID_COUNTER_NEW = 0;
+	//private static long CARD_ID_COUNTER_NEW = 0;
 
 	private String cardName;
 	private String type;
@@ -155,7 +156,7 @@ public class Card extends StackPane {
 		int manaCostWhite,
 		int manaCostBlank
 	) {
-		cardId = CARD_ID_COUNTER_NEW++;
+		//cardId = CARD_ID_COUNTER_NEW++;
 
 		this.cardName  = cardName;
 		this.type      = type;
@@ -239,11 +240,18 @@ public class Card extends StackPane {
 
 		this.scaleFactor = 1;
 
-		// if there is a better way to do this, tell me
-		containerSizeX = Battlefield.WIDTH - this.getWidth();
-		containerSizeY = Battlefield.HEIGHT - this.getHeight();
 
 		this.setFocusTraversable( true );
+	}
+
+	public void updateContainerSize() {
+		try {
+			containerSizeX = ((Pane) this.getParent()).getPrefWidth() - this.getWidth();
+			containerSizeY = ((Pane) this.getParent()).getPrefHeight() - this.getHeight();
+		} catch( NullPointerException e ) {
+			containerSizeX = 0;
+			containerSizeY = 0;
+		}
 	}
 
 	/**
@@ -353,6 +361,7 @@ public class Card extends StackPane {
 					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactor ));
 					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactor ));
 
+					// Check that the card doesn't leave the field
 					if( getTranslateX() < 0 ) {
 						setTranslateX(0);
 					}
@@ -374,11 +383,13 @@ public class Card extends StackPane {
 				break;
 			case HAND:
 				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-					smoothPlace( getTranslateX(), -3*handPopupValue, 200 );
+					//smoothPlace( getTranslateX(), -3*handPopupValue, 200 );
+					smoothPlaceY( -3 * handPopupValue, 200 );
 				}
 
 				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-					smoothPlace( getTranslateX(), handPopupValue, 200 );
+					//smoothPlace( getTranslateX(), handPopupValue, 200 );
+					smoothPlaceY( handPopupValue, 200 );
 				}
 				break;
 			default:
@@ -494,8 +505,7 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * Smoothly moves the card to the set coordinate <br>
-	 * If the coordinate is out of bounds then it's set to the bound
+	 * Smoothly moves the card to the set coordinate
 	 * @param posX the x coordinate the card should end up at
 	 * @param posY the Y coordinate the card should end up at
 	 * @param transitionSpeed how long the animation should take, in milliseconds
@@ -503,21 +513,20 @@ public class Card extends StackPane {
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
+		tt.setToX( posX );
+		tt.setToY( posY );
+		tt.play();
+	}
+	public void smoothPlaceY( double posY, int transitionSpeed ) {
+		TranslateTransition tt;
+		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
 
-		if( posX > Battlefield.WIDTH - this.getWidth() ) {
-			tt.setToX( Battlefield.WIDTH - this.getWidth() );
-		} else {
-			tt.setToX( posX );
-		}
-
-		if( posY > Battlefield.HEIGHT - this.getHeight() ) {
-			tt.setToY( Battlefield.HEIGHT - this.getHeight() );
-		} else {
-			tt.setToY( posY );
-		}
+		tt.setToY( posY );
 
 		tt.play();
-
+	}
+	public void smoothPlaceY( double posY ) {
+		smoothPlaceY( posY, 200 );
 	}
 
 	public void modifyTranslateX(double change) {

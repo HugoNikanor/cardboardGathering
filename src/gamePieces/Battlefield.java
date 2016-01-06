@@ -3,8 +3,12 @@ package gamePieces;
 import database.JSONCardReader;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import network.Connection;
 
@@ -21,8 +25,11 @@ public class Battlefield extends Pane {
 	 */
 	private Pane cardLayer;
 
-	public static final double WIDTH = 1920;// 1600;
-	public static final double HEIGHT = 474;// 395;
+	private BorderPane upperPane;
+	private BorderPane lowerPane;
+
+	private static final double WIDTH = 1920;// 1600;
+	private static final double HEIGHT = 474;// 395;
 
 	private boolean isReady;
 
@@ -56,7 +63,7 @@ public class Battlefield extends Pane {
 	 */
 	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
 
-		player = new Player( jCardReader, cardPlayHandler, connection, cardList );
+		player = new Player( WIDTH, jCardReader, cardPlayHandler, connection, cardList );
 		cards = player.getBattlefieldCards();
 
 		this.initialSetup( true );
@@ -79,26 +86,42 @@ public class Battlefield extends Pane {
 		cardLayer = new Pane();
 		cardLayer.setPickOnBounds( false );
 		cardLayer.setPrefSize(this.getWidth(), this.getHeight());
-		cardLayer.setMinSize(this.getWidth(), this.getHeight());
+		//cardLayer.setMinSize(this.getWidth(), this.getHeight());
 
-		this.getChildren().add( cardLayer );
+		upperPane = new BorderPane();
+		upperPane.setPickOnBounds( false );
+		upperPane.setPrefSize( this.getWidth(), this.getHeight() );
+
+		lowerPane = new BorderPane();
+		lowerPane.setPickOnBounds( false );
+		lowerPane.setPrefSize( this.getWidth(), this.getHeight() );
+
+
+		VBox cardStackContainerContainer = new VBox( 30 );
+		cardStackContainerContainer.setFillWidth( false );
+		cardStackContainerContainer.setAlignment( Pos.CENTER );
+		cardStackContainerContainer.setPadding( new Insets(20) );
+		lowerPane.setRight( cardStackContainerContainer );
+
+		
+
+		this.getChildren().addAll( cardLayer, upperPane, lowerPane );
+
+		upperPane.toFront();
+		lowerPane.toBack();
 
 		// Add a toBack if that's desired, else it goes in front of the cards
 		// It's preferable if noone puts two objects on top of each other
 
 		// token container & chat
 		if( isLocal ) {
-			this.getChildren().addAll( player.getTokenContainer(),
-			                           player.getChatContainer() );
+			this.getChildren().addAll( 
+					player.getTokenContainer(), player.getChatContainer() );
 		}
 
-		// Deck
-		this.getChildren().add( player.getDeckCont() );
-		player.getDeckCont().toBack();
-
-		// Graveyard
-		this.getChildren().add( player.getGraveCont() );
-		player.getGraveCont().toBack();
+		// Deck & Graveyard
+		cardStackContainerContainer.getChildren().addAll( 
+				player.getGraveCont(), player.getDeckCont() );
 
 		// Life counter
 		this.getChildren().add( player.getLifeCounter() );

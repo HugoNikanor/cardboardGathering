@@ -68,7 +68,6 @@ public class InputObjectHandler {
 				public void run() {
 					temp.smoothPlace( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
 					temp.smoothSetRotate( obj.getRotate(), Connection.UPDATE_TIME );
-					//temp.giveFocus();
 				}
 			});
 		} catch( CardNotFoundException e ) {
