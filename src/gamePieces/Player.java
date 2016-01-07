@@ -427,6 +427,7 @@ public class Player extends Pane {
 				int cardsPerRow = 12;
 				int displacement = 0;
 				int laps = 0;
+				int offset = 30;
 				for( int i = 0; i < battlefieldCards.size(); i++ ) {
 					if(i % cardsPerRow  == 0 && i != 0) {
 						displacement = 0;
@@ -435,7 +436,7 @@ public class Player extends Pane {
 					Card tempCard = battlefieldCards.getCard(i);
 
 					tempCard.smoothPlace(
-							displacement*10 + 200*laps, displacement*20, 500);
+							displacement*10 + 200*laps + offset, displacement*20, 500);
 					tempCard.smoothSetScale(1.0, 500);
 					tempCard.giveFocus();
 

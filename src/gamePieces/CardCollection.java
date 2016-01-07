@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Random;
 
+import chat.ChatStream;
+import chat.MessageInfo;
 import database.CardChooser;
 import database.JSONCardReader;
 
@@ -21,7 +23,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.transform.Rotate;
 
 /**
@@ -43,6 +47,7 @@ public class CardCollection implements Iterable<Card> {
 	}
 
 	private Button getFromDeckBtn;
+	private Button shuffleBtn;
 	private CardStackPane cardStack;
 
 	private Pane graphicPane;
@@ -102,19 +107,35 @@ public class CardCollection implements Iterable<Card> {
 			graphicPane = new Pane();
 			cardStack = new CardStackPane( collection, Card.WIDTH, Card.HEIGHT );
 			if( isLocal ) {
+				HBox buttonCont = new HBox();
+				buttonCont.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
+				buttonCont.setTranslateX( Card.WIDTH + 40 );
+				buttonCont.setMinHeight( 30 );
+				buttonCont.setMaxHeight( 30 );
+				buttonCont.setMinWidth( Card.HEIGHT );
+				buttonCont.setPrefHeight( 40 );
+				buttonCont.setPrefWidth( 100 );
+
+
 				getFromDeckBtn = new Button();
-				getFromDeckBtn.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
 				getFromDeckBtn.setText( "Get Card" );
-				getFromDeckBtn.setTranslateX( Card.WIDTH + 40 );
-				getFromDeckBtn.setMinHeight( 30 );
-				getFromDeckBtn.setMaxHeight( 30 );
-				getFromDeckBtn.setMinWidth( Card.HEIGHT );
-				getFromDeckBtn.setPrefHeight( 40 );
-				getFromDeckBtn.setPrefWidth( 100 );
 				getFromDeckBtn.setOnAction( new BtnHandler() );
+				getFromDeckBtn.setMaxSize( Double.MAX_VALUE, Double.MAX_VALUE );
+
+				shuffleBtn = new Button( "Shuffle" );
+				shuffleBtn.setOnAction( e -> {
+					ChatStream.print( "Shuffling cards", MessageInfo.SYSTEM, null );
+					shuffleCards();
+				} );
+				shuffleBtn.setMaxSize( Double.MAX_VALUE, Double.MAX_VALUE );
+
+				HBox.setHgrow( getFromDeckBtn, Priority.ALWAYS );
+				HBox.setHgrow( shuffleBtn, Priority.ALWAYS );
+
 				cardStack.setOnMouseClicked( new DeckAreaHandler() );
 
-				graphicPane.getChildren().add( getFromDeckBtn );
+				buttonCont.getChildren().addAll( getFromDeckBtn, shuffleBtn );
+				graphicPane.getChildren().add( buttonCont );
 			} else {
 				graphicPane.setRotate( 180d );
 			}
