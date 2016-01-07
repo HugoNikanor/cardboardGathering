@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Stage;
 
 /**
  * A collection of cards
@@ -158,11 +159,10 @@ public class CardCollection implements Iterable<Card> {
 		public void handle( ActionEvent e ) {
 			new Thread(() -> {
 				try {
-					// The card should be removed from the collection when it's taken from here
 					observableCard.set( CardSelectionPane.getCard( 
-								CardCollection.this, (Pane)graphicPane.getParent() ));
+								CardCollection.this, (Stage)graphicPane.getScene().getWindow() ));
 				} catch( CardNotFoundException ex ) {
-					ex.printStackTrace();
+					//ex.printStackTrace();
 				}
 			}).start();
 		}
@@ -175,7 +175,8 @@ public class CardCollection implements Iterable<Card> {
 				// The card should be removed from the collection when it's taken from here
 				observableCard.set( getNextCard() );
 			} catch( CardNotFoundException ex ) {
-				ex.printStackTrace();
+				//ex.printStackTrace();
+				ChatStream.print( "No cards in collection", MessageInfo.SYSTEM, null );
 			}
 		}
 	}

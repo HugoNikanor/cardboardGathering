@@ -59,13 +59,15 @@ public class ChatContainer extends VBox {
 
 		msgArea.visibleProperty().addListener( (ov, oldValue, newValue) -> {
 			setDisplayBtnStr( newValue );
-			upperArea.setMouseTransparent( !newValue );
+			msgArea.setMouseTransparent( !newValue );
 		} );
 
 		msgArea.setVisible( false );
 
 		this.setPrefWidth( 500 );
 		this.setFillWidth( true );
+
+		this.setPadding( new Insets(10) );
 	}
 
 	private void setDisplayBtnStr( boolean isOut ) {
