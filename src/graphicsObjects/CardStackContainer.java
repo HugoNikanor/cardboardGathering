@@ -63,6 +63,8 @@ public class CardStackContainer extends Pane {
 		}
 	}
 	
+	private class 
+	
 	public void setText( String newText ) {
 		cardStack.setText( newText );
 	}

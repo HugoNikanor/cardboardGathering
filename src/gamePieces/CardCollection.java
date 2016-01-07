@@ -1,6 +1,7 @@
 package gamePieces;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Random;
 
@@ -9,13 +10,24 @@ import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.CardStackPane;
+
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.scene.transform.Rotate;
+
 /**
  * A collection of cards
  * Can hold about any number of cards
  * extends ArrayList
  */
-public class CardCollection extends ArrayList<Card> {
-	private static final long serialVersionUID = 1L;
+public class CardCollection extends Pane implements Iterable<Card> {
+	//private static final long serialVersionUID = 1L;
+	
+	private ArrayList<Card> collectionCards;
 
 	/**
 	 * The different types of collections
@@ -26,6 +38,13 @@ public class CardCollection extends ArrayList<Card> {
 		HAND,
 		BATTLEFIELD, BATTLEFILED
 	}
+
+	private Button getFromDeckBtn;
+	private CardStackPane cardStack;
+	private boolean graphicsInitiated;
+
+	private Card bufferCard;
+	private ObservableValue<Card> observableCard;
 
 	/**
 	 * The type of collection this is
@@ -49,13 +68,14 @@ public class CardCollection extends ArrayList<Card> {
 	 */
 	public CardCollection( Collections collection, JSONCardReader jCardReader, CardIdCounter counter, String[] cardList ) {
 		this.collection = collection;
+		collectionCards = new ArrayList<Card>();
 
 		try {
 			CardChooser cardChooser = new CardChooser( cardList );
 
 			// Get all cards from the jCardChooser
 			while( cardChooser.hasNext() ) {
-				this.add( jCardReader.get( cardChooser.next(), counter.getCounterAndIncrament() ) );
+				collectionCards.add( jCardReader.get( cardChooser.next(), counter.getCounterAndIncrament() ) );
 			}
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
@@ -63,6 +83,56 @@ public class CardCollection extends ArrayList<Card> {
 
 		//TODO should this be done here?
 		this.shuffleCards();
+
+		graphicsInitiated = false;
+
+		collectionCards.iterator();
+
+
+	}
+
+	public Pane getGraphics( boolean isLocal ) {
+		if( graphicsInitiated ) {
+			return this;
+		}
+		cardStack = new CardStackPane( collection, /*handler,*/ Card.WIDTH, Card.HEIGHT );
+		if( isLocal ) {
+			GetFromCollectionHandler handler = new GetFromCollectionHandler();
+
+			getFromDeckBtn = new Button();
+			getFromDeckBtn.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
+			getFromDeckBtn.setText( "Get Card" );
+			getFromDeckBtn.setTranslateX( Card.WIDTH + 40 );
+			getFromDeckBtn.setMinHeight( 30 );
+			getFromDeckBtn.setMaxHeight( 30 );
+			getFromDeckBtn.setMinWidth( Card.HEIGHT );
+			getFromDeckBtn.setPrefHeight( 40 );
+			getFromDeckBtn.setPrefWidth( 100 );
+			//getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
+			getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
+			cardStack.addEventHandler( ActionEvent.ACTION, handler );
+
+			this.getChildren().add( getFromDeckBtn );
+		} else {
+			this.setRotate( 180d );
+		}
+		this.getChildren().add( cardStack );
+		return this;
+	}
+
+	@Override
+	public Iterator<Card> iterator() {
+		return collectionCards.iterator();
+	}
+
+	private class GetFromCollectionHandler implements EventHandler<ActionEvent> {
+		@Override
+		public void handle( ActionEvent e ) {
+			if( e.getSource() == getFromDeckBtn ) {
+			}
+			if( e.getSource() == cardStack ) {
+			}
+		}
 	}
 
 	/**
@@ -72,12 +142,12 @@ public class CardCollection extends ArrayList<Card> {
 		Random rand = new Random();
 		Card tempCard;
 		int cardIndex;
-		int cardCount = this.size();
+		int cardCount = collectionCards.size();
 		for(int i = 0; i < cardCount; i++) {
-			cardIndex = rand.nextInt(this.size());
-			tempCard = this.get(cardIndex);
-			this.set(cardIndex, this.get(i));
-			this.set(i, tempCard);
+			cardIndex = rand.nextInt(collectionCards.size());
+			tempCard = collectionCards.get(cardIndex);
+			collectionCards.set(cardIndex, collectionCards.get(i));
+			collectionCards.set(i, tempCard);
 		}
 	}
 
@@ -88,11 +158,11 @@ public class CardCollection extends ArrayList<Card> {
 	 * @see getNextCard
 	 */
 	public Card takeNextCard() throws CardNotFoundException {
-		if(this.size() == 0) {
+		if(collectionCards.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
 		}
-		Card returnCard = this.get(this.size() - 1);
-		this.remove(this.size() - 1);
+		Card returnCard = collectionCards.get(collectionCards.size() - 1);
+		collectionCards.remove(collectionCards.size() - 1);
 		return returnCard;
 	}
 
@@ -106,11 +176,11 @@ public class CardCollection extends ArrayList<Card> {
 	public Card takeCard(int cardIndex) throws CardNotFoundException {
 		Card returnCard;
 		try {
-			returnCard = this.get(cardIndex);
+			returnCard = collectionCards.get(cardIndex);
 		} catch(IndexOutOfBoundsException e) {
 			throw new CardNotFoundException("Index out of bounds");
 		}
-		this.remove(cardIndex);
+		collectionCards.remove(cardIndex);
 		return returnCard;
 	}
 
@@ -121,13 +191,13 @@ public class CardCollection extends ArrayList<Card> {
 	 * @throws CardNotFoundException if the card is not in the collection
 	 */
 	public Card takeCard(Card card) throws CardNotFoundException {
-		int cardIndex = this.indexOf(card);
+		int cardIndex = collectionCards.indexOf(card);
 		// ArrayList.indexOf returns '-1' if there is no such element
 		if( cardIndex == -1 ) {
 			throw new CardNotFoundException("No such card in collection");
 		}
-		Card returnCard = this.get(cardIndex);
-		this.remove(this.indexOf(card));
+		Card returnCard = collectionCards.get(cardIndex);
+		collectionCards.remove(collectionCards.indexOf(card));
 		return returnCard;
 	}
 
@@ -139,9 +209,9 @@ public class CardCollection extends ArrayList<Card> {
 	 * @see getCard
 	 */
 	public Card takeCard( long cardId ) throws CardNotFoundException {
-		for( Card temp : this ) {
+		for( Card temp : collectionCards ) {
 			if( Objects.equals( temp.getCardId(), cardId ) ) {
-				this.remove( temp );
+				collectionCards.remove( temp );
 				return temp;
 			}
 		}
@@ -154,10 +224,10 @@ public class CardCollection extends ArrayList<Card> {
 	 * @see takeNextCard
 	 */
 	public Card getNextCard() throws CardNotFoundException {
-		if(this.size() == 0) {
+		if(collectionCards.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
 		}
-		Card returnCard = this.get(this.size() - 1);
+		Card returnCard = collectionCards.get(collectionCards.size() - 1);
 		return returnCard;
 	}
 
@@ -168,10 +238,10 @@ public class CardCollection extends ArrayList<Card> {
 	 * @see getCard
 	 */
 	public Card getCard(int cardIndex) throws CardNotFoundException {
-		if( cardIndex < 0 || cardIndex >= this.size() ) {
+		if( cardIndex < 0 || cardIndex >= collectionCards.size() ) {
 			throw new CardNotFoundException("Index out of bounds");
 		}
-		Card returnCard = this.get(cardIndex);
+		Card returnCard = collectionCards.get(cardIndex);
 		return returnCard;
 	}
 
@@ -183,11 +253,11 @@ public class CardCollection extends ArrayList<Card> {
 	 * @see takeCard
 	 */
 	public Card getCard( Card card ) throws CardNotFoundException {
-		int cardIndex = this.indexOf(card);
+		int cardIndex = collectionCards.indexOf(card);
 		if( cardIndex == -1 ) {
 			throw new CardNotFoundException("No such card in collection");
 		}
-		Card returnCard = this.get(cardIndex);
+		Card returnCard = collectionCards.get(cardIndex);
 		return returnCard;
 	}
 
@@ -198,7 +268,7 @@ public class CardCollection extends ArrayList<Card> {
 	 * @see takeCard
 	 */
 	public synchronized Card getCard( long cardId ) throws CardNotFoundException {
-		for( Card temp : this ) {
+		for( Card temp : collectionCards ) {
 			if( Objects.equals( temp.getCardId(), cardId ) ) {
 				return temp;
 			}
