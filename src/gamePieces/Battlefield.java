@@ -126,7 +126,8 @@ public class Battlefield extends Pane {
 
 		// Deck & Graveyard
 		cardStackContainerContainer.getChildren().addAll( 
-				player.getGraveCont(), player.getDeckCont() );
+				//player.getGraveCont(), player.getDeckCont() );
+				player.getGraveGraphic(isLocal), player.getDeckGraphic(isLocal) );
 
 		// Life counter || chat box
 		if( isLocal )

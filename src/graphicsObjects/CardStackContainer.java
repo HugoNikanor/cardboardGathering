@@ -3,7 +3,6 @@ package graphicsObjects;
 import gamePieces.Card;
 import gamePieces.CardCollection;
 
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -21,8 +20,8 @@ public class CardStackContainer extends Pane {
 	public static final double WIDTH = Card.WIDTH + 40;
 	public static final double HEIGHT = Card.HEIGHT;
 
-	private Card bufferCard;
-	private ObservableValue<Card> observableBufferCard;
+	//private Card bufferCard;
+	//private ObservableValue<Card> observableBufferCard;
 	
 	public CardStackContainer( CardCollection.Collections type, /*EventHandler<Event> handler,*//* double xPos, double yPos,*/ boolean isLocal  ) {
 		cardStack = new CardStackPane( type, /*handler,*/ Card.WIDTH, Card.HEIGHT );
@@ -63,7 +62,6 @@ public class CardStackContainer extends Pane {
 		}
 	}
 	
-	private class 
 	
 	public void setText( String newText ) {
 		cardStack.setText( newText );

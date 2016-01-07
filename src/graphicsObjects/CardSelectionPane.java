@@ -24,14 +24,14 @@ import javafx.scene.layout.Pane;
  */
 public class CardSelectionPane {
 
-	private Card returnCard;
+	private static Card returnCard;
 
 	/**
 	 * @return the card selected in the popup
 	 * @param cards the collection of cards to display
 	 * @param rootPane the pane to draw the selection pane upon
 	 */
-	public Card getStaticCard(CardCollection cards, Pane rootPane) throws CardNotFoundException {
+	public static Card getCard(CardCollection cards, Pane rootPane) throws CardNotFoundException {
 		if( cards.size() <= 0 ) {
 			throw new CardNotFoundException( "No cards in collection." );
 		}

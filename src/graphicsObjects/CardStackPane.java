@@ -28,10 +28,9 @@ public class CardStackPane extends StackPane {
 	 * @param width how wide the pane should be
 	 * @param height how high the pane should be
 	 */
-	public CardStackPane( CardCollection.Collections type, /*EventHandler<Event> handler,*/ double width, double height) {
+	public CardStackPane( CardCollection.Collections type, double width, double height) {
 
 		this.type = type;
-		//this.setOnMouseClicked( handler );
 		this.setPrefSize(width, height);
 
 		deckCardText = new Text("");

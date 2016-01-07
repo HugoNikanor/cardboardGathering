@@ -1,7 +1,6 @@
 package gamePieces;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Random;
 
@@ -10,12 +9,17 @@ import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
+import graphicsObjects.CardSelectionPane;
 import graphicsObjects.CardStackPane;
 
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Rotate;
 
@@ -24,10 +28,8 @@ import javafx.scene.transform.Rotate;
  * Can hold about any number of cards
  * extends ArrayList
  */
-public class CardCollection extends Pane implements Iterable<Card> {
-	//private static final long serialVersionUID = 1L;
-	
-	private ArrayList<Card> collectionCards;
+public class CardCollection extends ArrayList<Card> {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The different types of collections
@@ -41,10 +43,13 @@ public class CardCollection extends Pane implements Iterable<Card> {
 
 	private Button getFromDeckBtn;
 	private CardStackPane cardStack;
-	private boolean graphicsInitiated;
 
-	private Card bufferCard;
-	private ObservableValue<Card> observableCard;
+	private Pane graphicPane;
+
+	private ObjectProperty<Card> observableCard;
+	private IntegerProperty observableCount;
+
+
 
 	/**
 	 * The type of collection this is
@@ -57,6 +62,7 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 */
 	public CardCollection( Collections collection ) {
 		this.collection = collection;
+		observableCard = new SimpleObjectProperty<Card>();
    	}
 
 	/**
@@ -68,69 +74,82 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 */
 	public CardCollection( Collections collection, JSONCardReader jCardReader, CardIdCounter counter, String[] cardList ) {
 		this.collection = collection;
-		collectionCards = new ArrayList<Card>();
 
 		try {
 			CardChooser cardChooser = new CardChooser( cardList );
 
 			// Get all cards from the jCardChooser
 			while( cardChooser.hasNext() ) {
-				collectionCards.add( jCardReader.get( cardChooser.next(), counter.getCounterAndIncrament() ) );
+				this.add( jCardReader.get( cardChooser.next(), counter.getCounterAndIncrament() ) );
 			}
 		} catch (CardNotFoundException e) {
 			e.printStackTrace();
 		}
 
 		//TODO should this be done here?
-		this.shuffleCards();
+		//this.shuffleCards();
 
-		graphicsInitiated = false;
-
-		collectionCards.iterator();
-
-
+		observableCard = new SimpleObjectProperty<Card>();
 	}
 
 	public Pane getGraphics( boolean isLocal ) {
-		if( graphicsInitiated ) {
-			return this;
-		}
-		cardStack = new CardStackPane( collection, /*handler,*/ Card.WIDTH, Card.HEIGHT );
-		if( isLocal ) {
-			GetFromCollectionHandler handler = new GetFromCollectionHandler();
+		if( graphicPane == null ) {
+			graphicPane = new Pane();
+			cardStack = new CardStackPane( collection, Card.WIDTH, Card.HEIGHT );
+			if( isLocal ) {
+				getFromDeckBtn = new Button();
+				getFromDeckBtn.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
+				getFromDeckBtn.setText( "Get Card" );
+				getFromDeckBtn.setTranslateX( Card.WIDTH + 40 );
+				getFromDeckBtn.setMinHeight( 30 );
+				getFromDeckBtn.setMaxHeight( 30 );
+				getFromDeckBtn.setMinWidth( Card.HEIGHT );
+				getFromDeckBtn.setPrefHeight( 40 );
+				getFromDeckBtn.setPrefWidth( 100 );
+				getFromDeckBtn.setOnAction( new BtnHandler() );
+				cardStack.setOnMouseClicked( new DeckAreaHandler() );
 
-			getFromDeckBtn = new Button();
-			getFromDeckBtn.getTransforms().add( new Rotate(90, 0, 0, 0, Rotate.Z_AXIS) );
-			getFromDeckBtn.setText( "Get Card" );
-			getFromDeckBtn.setTranslateX( Card.WIDTH + 40 );
-			getFromDeckBtn.setMinHeight( 30 );
-			getFromDeckBtn.setMaxHeight( 30 );
-			getFromDeckBtn.setMinWidth( Card.HEIGHT );
-			getFromDeckBtn.setPrefHeight( 40 );
-			getFromDeckBtn.setPrefWidth( 100 );
-			//getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
-			getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
-			cardStack.addEventHandler( ActionEvent.ACTION, handler );
+				graphicPane.getChildren().add( getFromDeckBtn );
+			} else {
+				graphicPane.setRotate( 180d );
+			}
+			graphicPane.getChildren().add( cardStack );
 
-			this.getChildren().add( getFromDeckBtn );
-		} else {
-			this.setRotate( 180d );
+			observableCount = new SimpleIntegerProperty();
+			observableCount.set( this.size() );
+			observableCount.addListener( (ov, oldVal, newVal) -> {
+				System.out.println( "something changed" ); 
+				cardStack.setText( newVal.toString() );
+			} );
+
+			//cardStack.setText( Integer.toString(size()) );
 		}
-		this.getChildren().add( cardStack );
-		return this;
+		return graphicPane;
 	}
 
-	@Override
-	public Iterator<Card> iterator() {
-		return collectionCards.iterator();
-	}
-
-	private class GetFromCollectionHandler implements EventHandler<ActionEvent> {
+	private class BtnHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle( ActionEvent e ) {
-			if( e.getSource() == getFromDeckBtn ) {
-			}
-			if( e.getSource() == cardStack ) {
+			new Thread(() -> {
+				try {
+					// The card should be removed from the collection when it's taken from here
+					observableCard.set( CardSelectionPane.getCard( 
+								CardCollection.this, (Pane)graphicPane.getParent() ));
+				} catch( CardNotFoundException ex ) {
+					ex.printStackTrace();
+				}
+			}).start();
+		}
+	}
+
+	private class DeckAreaHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle( MouseEvent e ) {
+			try {
+				// The card should be removed from the collection when it's taken from here
+				observableCard.set( getNextCard() );
+			} catch( CardNotFoundException ex ) {
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -142,13 +161,17 @@ public class CardCollection extends Pane implements Iterable<Card> {
 		Random rand = new Random();
 		Card tempCard;
 		int cardIndex;
-		int cardCount = collectionCards.size();
+		int cardCount = this.size();
 		for(int i = 0; i < cardCount; i++) {
-			cardIndex = rand.nextInt(collectionCards.size());
-			tempCard = collectionCards.get(cardIndex);
-			collectionCards.set(cardIndex, collectionCards.get(i));
-			collectionCards.set(i, tempCard);
+			cardIndex = rand.nextInt(this.size());
+			tempCard = this.get(cardIndex);
+			this.set(cardIndex, this.get(i));
+			this.set(i, tempCard);
 		}
+	}
+
+	public ObjectProperty<Card> getObservableCardProperty() {
+		return observableCard;
 	}
 
 	/**
@@ -158,11 +181,11 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @see getNextCard
 	 */
 	public Card takeNextCard() throws CardNotFoundException {
-		if(collectionCards.size() == 0) {
+		if(this.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
 		}
-		Card returnCard = collectionCards.get(collectionCards.size() - 1);
-		collectionCards.remove(collectionCards.size() - 1);
+		Card returnCard = this.get(this.size() - 1);
+		this.remove(this.size() - 1);
 		return returnCard;
 	}
 
@@ -176,11 +199,11 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	public Card takeCard(int cardIndex) throws CardNotFoundException {
 		Card returnCard;
 		try {
-			returnCard = collectionCards.get(cardIndex);
+			returnCard = this.get(cardIndex);
 		} catch(IndexOutOfBoundsException e) {
 			throw new CardNotFoundException("Index out of bounds");
 		}
-		collectionCards.remove(cardIndex);
+		this.remove(cardIndex);
 		return returnCard;
 	}
 
@@ -191,13 +214,13 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @throws CardNotFoundException if the card is not in the collection
 	 */
 	public Card takeCard(Card card) throws CardNotFoundException {
-		int cardIndex = collectionCards.indexOf(card);
+		int cardIndex = this.indexOf(card);
 		// ArrayList.indexOf returns '-1' if there is no such element
 		if( cardIndex == -1 ) {
 			throw new CardNotFoundException("No such card in collection");
 		}
-		Card returnCard = collectionCards.get(cardIndex);
-		collectionCards.remove(collectionCards.indexOf(card));
+		Card returnCard = this.get(cardIndex);
+		this.remove(this.indexOf(card));
 		return returnCard;
 	}
 
@@ -209,9 +232,9 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @see getCard
 	 */
 	public Card takeCard( long cardId ) throws CardNotFoundException {
-		for( Card temp : collectionCards ) {
+		for( Card temp : this ) {
 			if( Objects.equals( temp.getCardId(), cardId ) ) {
-				collectionCards.remove( temp );
+				this.remove( temp );
 				return temp;
 			}
 		}
@@ -224,10 +247,10 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @see takeNextCard
 	 */
 	public Card getNextCard() throws CardNotFoundException {
-		if(collectionCards.size() == 0) {
+		if(this.size() == 0) {
 			throw new CardNotFoundException("No cards in collection");
 		}
-		Card returnCard = collectionCards.get(collectionCards.size() - 1);
+		Card returnCard = this.get(this.size() - 1);
 		return returnCard;
 	}
 
@@ -238,10 +261,10 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @see getCard
 	 */
 	public Card getCard(int cardIndex) throws CardNotFoundException {
-		if( cardIndex < 0 || cardIndex >= collectionCards.size() ) {
+		if( cardIndex < 0 || cardIndex >= this.size() ) {
 			throw new CardNotFoundException("Index out of bounds");
 		}
-		Card returnCard = collectionCards.get(cardIndex);
+		Card returnCard = this.get(cardIndex);
 		return returnCard;
 	}
 
@@ -253,11 +276,11 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @see takeCard
 	 */
 	public Card getCard( Card card ) throws CardNotFoundException {
-		int cardIndex = collectionCards.indexOf(card);
+		int cardIndex = this.indexOf(card);
 		if( cardIndex == -1 ) {
 			throw new CardNotFoundException("No such card in collection");
 		}
-		Card returnCard = collectionCards.get(cardIndex);
+		Card returnCard = this.get(cardIndex);
 		return returnCard;
 	}
 
@@ -268,7 +291,7 @@ public class CardCollection extends Pane implements Iterable<Card> {
 	 * @see takeCard
 	 */
 	public synchronized Card getCard( long cardId ) throws CardNotFoundException {
-		for( Card temp : collectionCards ) {
+		for( Card temp : this ) {
 			if( Objects.equals( temp.getCardId(), cardId ) ) {
 				return temp;
 			}

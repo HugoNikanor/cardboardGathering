@@ -679,7 +679,8 @@ public class Card extends StackPane {
 			"manaCostWhite: " + manaCostWhite + "\n" +
 			"manaCostBlack: " + manaCostBlack + "\n" +
 			"manaCostGreen: " + manaCostGreen + "\n" +
-			"manaCostBlank: " + manaCostBlank + "\n";
+			"manaCostBlank: " + manaCostBlank + "\n" +
+			"id           : " + cardId;
 		return returnString;
 	}
 	

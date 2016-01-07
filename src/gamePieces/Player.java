@@ -10,8 +10,6 @@ import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
-import graphicsObjects.CardSelectionPane;
-import graphicsObjects.CardStackContainer;
 import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
 import graphicsObjects.TokenContainer;
@@ -19,7 +17,6 @@ import graphicsObjects.TokenContainer;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -47,10 +44,6 @@ public class Player extends Pane {
 
 	private Connection connection;
 	private boolean shouldSend;
-
-	//private CardStackCollectionHandler cardStackHandler;
-	private CardStackContainer deckCont;
-	private CardStackContainer graveCont;
 
 	private PlayerBtnPane playerBtnPane;
 	private LifeCounter lifeCounter;
@@ -102,6 +95,24 @@ public class Player extends Pane {
 			temp.setConnection( connection );
 		}
 
+		deckCards.getObservableCardProperty().addListener( 
+				(ov, oldValue, newValue ) -> {
+			//if( newValue == null ) return;
+			try {
+				drawCard( newValue );
+			} catch ( CardNotFoundException e ) {
+				e.printStackTrace();
+			}
+		});
+		graveyardCards.getObservableCardProperty().addListener(
+				(ov, oldValue, newValue ) -> {
+			try {
+				graveToHand( newValue );
+			} catch( CardNotFoundException e ) {
+				e.printStackTrace();
+			}
+		});
+
 		//===============================//
 		//         JavaFX below          //
 		//===============================//
@@ -112,23 +123,6 @@ public class Player extends Pane {
 		playerBtnPane = new PlayerBtnPane(HEIGHT, HEIGHT, new BtnPaneHandler());
 		this.getChildren().add(playerBtnPane);
 
-		// Objects displayed on the battlefield
-		//cardStackHandler = new CardStackCollectionHandler();
-		deckCont = new CardStackContainer(
-			CardCollection.Collections.DECK,
-			cardStackHandler,
-			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			//Battlefield.HEIGHT - Card.HEIGHT - 10,
-			true
-		);
-		deckCont.setText(Integer.toString( getDeckCards().size() ));
-		graveCont = new CardStackContainer(
-			CardCollection.Collections.GRAVEYARD,
-			cardStackHandler,
-			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			//10,
-			true
-		);
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
 		lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
@@ -159,28 +153,17 @@ public class Player extends Pane {
 
 		shouldSend = false;
 
-		// Objects displayed on the battlefield
-		// TODO these should have alternative versions since they are
-		// on the oponents side
-		cardStackHandler = new CardStackCollectionHandler();
-		deckCont = new CardStackContainer(
-			CardCollection.Collections.DECK,
-			cardStackHandler,
-			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			//Battlefield.HEIGHT - Card.HEIGHT - 10,
-			false
-		);
-		deckCont.setText( Integer.toString( getDeckCards().size() ));
-		graveCont = new CardStackContainer(
-			CardCollection.Collections.GRAVEYARD,
-			cardStackHandler,
-			//Battlefield.WIDTH - CardStackContainer.WIDTH - 10,
-			//10,
-			false
-		);
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
 		lifeCounter = new LifeCounter( new LifeCounterHandler(), false );
+	}
+
+	public Pane getDeckGraphic( boolean local ) {
+		return deckCards.getGraphics( local );
+	}
+
+	public Pane getGraveGraphic( boolean local ) {
+		return graveyardCards.getGraphics( local );
 	}
 
 	/**
@@ -211,14 +194,17 @@ public class Player extends Pane {
 							// TODO try to have smaller hitboxes for the cardcollections
 							// card to deck
 							if( !card.isBeingUsed() &&
-								deckCont.localToScene(deckCont.getBoundsInLocal())
+								//deckCont.localToScene(deckCont.getBoundsInLocal())
+								// TODO this may throw an ArrayIndexOutOfBoundsException: -1
+								deckCards.getGraphics(true).localToScene(deckCards.getGraphics(true).getBoundsInLocal())
 									.intersects(card.localToScene( card.getBoundsInLocal())) ) {
 								ChatStream.print( "moving to deck", MessageInfo.SYSTEM, connection );
 								cardsToDeck.add( card );
 							}
 							// card to graveyard
 							if( !card.isBeingUsed() &&
-								graveCont.localToScene(graveCont.getBoundsInLocal())
+								//graveCont.localToScene(graveCont.getBoundsInLocal())
+								graveyardCards.getGraphics(true).localToScene(graveyardCards.getGraphics(true).getBoundsInLocal())
 									.intersects(card.localToScene( card.getBoundsInLocal())) ) {
 								ChatStream.print( "moving to grave", MessageInfo.SYSTEM, connection );
 								cardsToGrave.add( card );
@@ -414,70 +400,6 @@ public class Player extends Pane {
 	}
 
 	/**
-	 * Event handler for the cardStackCollections <br>
-	 */
-	private class CardStackCollectionHandler implements EventHandler<Event> {
-		private void handleDeckPress() {
-			try {
-				drawCard();
-			} catch (CardNotFoundException e) {
-				System.out.println(
-					"Player " + this + 
-					" trying to draw cards with an empty deck");
-			}
-		}
-
-		private void handleDeckBtn() {
-			// This locks up the controls in the battlefield since it
-			// is somehow drawn on top of it...
-			new Thread(() -> {
-				try {
-					Card card = new CardSelectionPane().getStaticCard( deckCards, /*Player.this*/ ((Pane)getParent()) );
-					Player.this.drawCard( card );
-				} catch (CardNotFoundException e) {
-					e.printStackTrace();
-				}
-			}).start();
-		}
-
-		private void handleGravePress() {
-			// Should this even do anything
-		}
-
-		private void handleGraveBtn() {
-			// This locks up the controls in the battlefield since it
-			// is somehow drawn on top of it...
-			new Thread(() -> {
-				try {
-					//Card card = new CardSelectionPane().getStaticCard( graveyardCards, Player.this );
-					Card card = new CardSelectionPane().getStaticCard( graveyardCards, /*Player.this*/ ((Pane)getParent()) );
-					//moveCardBetweenCollections( graveyardCards, handCards, card );
-					graveToHand( card );
-				} catch (CardNotFoundException e) {
-					e.printStackTrace();
-				}
-			}).start();
-		}
-
-
-		@Override
-		public void handle(Event event) {
-			if( event.getSource() == deckCont.getCardStack() ) {
-				this.handleDeckPress();
-			}
-			if( event.getSource() == deckCont.getGetFromDeckBtn() ) {
-				this.handleDeckBtn();
-			}
-			if( event.getSource() == graveCont.getCardStack() ) {
-				this.handleGravePress();
-			}
-			if( event.getSource() == graveCont.getGetFromDeckBtn() ) {
-				this.handleGraveBtn();
-			}
-		}
-	}
-
-	/**
 	 * Takes care of the inputs from the buttons in the players pane
 	 * @see graphicsObjects.PlayerBtnPane
 	 * @see graphicsObjects.PlayerResetBoardBtn
@@ -599,9 +521,6 @@ public class Player extends Pane {
 			this.getChildren().add(card);
 			this.rearangeCards();
 		}));
-
-		// Set the text on the graphical deck
-		deckCont.setText(Integer.toString(getDeckCards().size()));
 	}
 
 	private void graveToHand( Card card ) throws CardNotFoundException {
@@ -722,20 +641,6 @@ public class Player extends Pane {
 	 */
 	public void changePoison(int change) {
 		setPoison( getPoison() + change );
-	}
-
-	/**
-	 * @return the deckCont
-	 */
-	public CardStackContainer getDeckCont() {
-		return deckCont;
-	}
-
-	/**
-	 * @return the graveCont
-	 */
-	public CardStackContainer getGraveCont() {
-		return graveCont;
 	}
 
 	/**
