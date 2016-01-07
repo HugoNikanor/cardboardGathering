@@ -1,6 +1,7 @@
 package gamePieces;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Random;
 
@@ -28,8 +29,8 @@ import javafx.scene.transform.Rotate;
  * Can hold about any number of cards
  * extends ArrayList
  */
-public class CardCollection extends ArrayList<Card> {
-	private static final long serialVersionUID = 1L;
+public class CardCollection implements Iterable<Card> {
+	//private static final long serialVersionUID = 1L;
 
 	/**
 	 * The different types of collections
@@ -49,6 +50,8 @@ public class CardCollection extends ArrayList<Card> {
 	private ObjectProperty<Card> observableCard;
 	private IntegerProperty observableCount;
 
+	private ArrayList<Card> cards;
+
 
 
 	/**
@@ -62,6 +65,7 @@ public class CardCollection extends ArrayList<Card> {
 	 */
 	public CardCollection( Collections collection ) {
 		this.collection = collection;
+		cards = new ArrayList<Card>();
 		observableCard = new SimpleObjectProperty<Card>();
    	}
 
@@ -74,6 +78,7 @@ public class CardCollection extends ArrayList<Card> {
 	 */
 	public CardCollection( Collections collection, JSONCardReader jCardReader, CardIdCounter counter, String[] cardList ) {
 		this.collection = collection;
+		cards = new ArrayList<Card>();
 
 		try {
 			CardChooser cardChooser = new CardChooser( cardList );
@@ -122,7 +127,7 @@ public class CardCollection extends ArrayList<Card> {
 				cardStack.setText( newVal.toString() );
 			} );
 
-			//cardStack.setText( Integer.toString(size()) );
+			updateGraphicText();
 		}
 		return graphicPane;
 	}
@@ -152,6 +157,49 @@ public class CardCollection extends ArrayList<Card> {
 				ex.printStackTrace();
 			}
 		}
+	}
+	
+	private void updateGraphicText() {
+		if( cardStack != null ) {
+			cardStack.setText( Integer.toString(cards.size()) );
+		}
+	}
+
+	@Override
+	public Iterator<Card> iterator() {
+		return cards.iterator();
+	}
+
+	public int size() {
+		return cards.size();
+	}
+	private Card get( int index ) {
+		return cards.get( index );
+	}
+	private void set( int index, Card card ) {
+		cards.set( index, card );
+	}
+	private Card remove( int index ) {
+		Card removedCard = cards.remove( index );
+		updateGraphicText();
+		return removedCard;
+	}
+	private boolean remove( Card card ) {
+		boolean success = cards.remove( card );
+		updateGraphicText();
+		return success;
+	}
+	public int indexOf( Card card ) {
+		return cards.indexOf( card );
+	}
+	public boolean add( Card card ) {
+		boolean success = cards.add( card );
+		updateGraphicText();
+		return success;
+	}
+	public void add( int index, Card card ) {
+		cards.add( index, card );
+		updateGraphicText();
 	}
 
 	/**

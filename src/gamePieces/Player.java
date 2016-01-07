@@ -432,7 +432,7 @@ public class Player extends Pane {
 						displacement = 0;
 						laps++;
 					}
-					Card tempCard = battlefieldCards.get(i);
+					Card tempCard = battlefieldCards.getCard(i);
 
 					tempCard.smoothPlace(
 							displacement*10 + 200*laps, displacement*20, 500);
