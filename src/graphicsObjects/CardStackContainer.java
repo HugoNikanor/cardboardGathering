@@ -3,6 +3,7 @@ package graphicsObjects;
 import gamePieces.Card;
 import gamePieces.CardCollection;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -20,9 +21,11 @@ public class CardStackContainer extends Pane {
 	public static final double WIDTH = Card.WIDTH + 40;
 	public static final double HEIGHT = Card.HEIGHT;
 
+	private Card bufferCard;
+	private ObservableValue<Card> observableBufferCard;
 	
-	public CardStackContainer( CardCollection.Collections type, EventHandler<Event> handler,/* double xPos, double yPos,*/ boolean isLocal  ) {
-		cardStack = new CardStackPane( type, handler, Card.WIDTH, Card.HEIGHT );
+	public CardStackContainer( CardCollection.Collections type, /*EventHandler<Event> handler,*//* double xPos, double yPos,*/ boolean isLocal  ) {
+		cardStack = new CardStackPane( type, /*handler,*/ Card.WIDTH, Card.HEIGHT );
 
 		if( isLocal ) {
 			getFromDeckBtn = new Button();
@@ -34,7 +37,9 @@ public class CardStackContainer extends Pane {
 			getFromDeckBtn.setMinWidth( HEIGHT );
 			getFromDeckBtn.setPrefHeight( 40 );
 			getFromDeckBtn.setPrefWidth( 100 );
-			getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
+			//getFromDeckBtn.addEventHandler( ActionEvent.ACTION, handler );
+			GetFromDeckBtnHandler gfdbh = new GetFromDeckBtnHandler();
+			getFromDeckBtn.addEventHandler( ActionEvent.ACTION, gfdbh );
 			this.getChildren().add( getFromDeckBtn );
 		}
 				
@@ -50,6 +55,12 @@ public class CardStackContainer extends Pane {
 
 		//this.getChildren().addAll(cardStack, getFromDeckBtn);
 		this.getChildren().add( cardStack );
+	}
+
+	private class GetFromDeckBtnHandler implements EventHandler<Event> {
+		@Override
+		public void handle( Event e ) {
+		}
 	}
 	
 	public void setText( String newText ) {

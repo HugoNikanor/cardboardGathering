@@ -48,7 +48,7 @@ public class Player extends Pane {
 	private Connection connection;
 	private boolean shouldSend;
 
-	private CardStackCollectionHandler cardStackHandler;
+	//private CardStackCollectionHandler cardStackHandler;
 	private CardStackContainer deckCont;
 	private CardStackContainer graveCont;
 
@@ -113,7 +113,7 @@ public class Player extends Pane {
 		this.getChildren().add(playerBtnPane);
 
 		// Objects displayed on the battlefield
-		cardStackHandler = new CardStackCollectionHandler();
+		//cardStackHandler = new CardStackCollectionHandler();
 		deckCont = new CardStackContainer(
 			CardCollection.Collections.DECK,
 			cardStackHandler,
@@ -133,7 +133,7 @@ public class Player extends Pane {
 
 		lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
 
-		chatContainer = new ChatContainer( connection );
+		chatContainer = new ChatContainer( connection, lifeCounter );
 
 	}
 
@@ -324,7 +324,8 @@ public class Player extends Pane {
 	}
 	public void createCardFromDatabase( String cardName ) {
 		try {
-			Card card = jCardReader.get( cardName, counter.getCounterAndIncrament() );
+			Card card = jCardReader.get( cardName, counter.getCounter() );
+			counter.incrament();
 			card.setCurrentLocation( CardCollection.Collections.HAND );
 
 			card.setTranslateY( card.getHandPopupValue() );

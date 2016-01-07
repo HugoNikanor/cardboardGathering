@@ -104,7 +104,7 @@ public class Battlefield extends Pane {
 		cardStackContainerContainer.setPadding( new Insets(20) );
 		lowerPane.setRight( cardStackContainerContainer );
 
-		
+
 		HBox lifeAndChatContainerContainer = new HBox();
 		lifeAndChatContainerContainer.setPickOnBounds( false );
 		Pane lifeAndChatContainer = new Pane();
@@ -128,12 +128,11 @@ public class Battlefield extends Pane {
 		cardStackContainerContainer.getChildren().addAll( 
 				player.getGraveCont(), player.getDeckCont() );
 
-		// Life counter
-		//this.getChildren().add( player.getLifeCounter() );
-		lifeAndChatContainer.getChildren().add( player.getLifeCounter() );
-
+		// Life counter || chat box
 		if( isLocal )
 			lifeAndChatContainer.getChildren().add( player.getChatContainer() );
+		else
+			lifeAndChatContainer.getChildren().add( player.getLifeCounter() );
 
 		// used when sending the battlefield to the other player
 		if( isLocal )

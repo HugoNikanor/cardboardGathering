@@ -44,23 +44,23 @@ public class LifeCounter extends GridPane {
 		if( isLocal ) {
 			hpDownBtn = new Button("-");
 			hpDownBtn.setOnAction(handler);
-			hpDownBtn.setPrefSize(30, 30);
+			hpDownBtn.setMinSize(30, 30);
 
 			this.add(hpDownBtn, 2, 0);
 
 			hpUpBtn = new Button("+");
 			hpUpBtn.setOnAction(handler);
-			hpUpBtn.setPrefSize(30, 30);
+			hpUpBtn.setMinSize(30, 30);
 			this.add(hpUpBtn, 3, 0);
 
 			poisonDownBtn = new Button("-");
 			poisonDownBtn.setOnAction(handler);
-			poisonDownBtn.setMaxSize(30, 30);
+			poisonDownBtn.setMinSize(30, 30);
 			this.add(poisonDownBtn, 2, 1);
 
 			poisonUpBtn = new Button("+");
 			poisonUpBtn.setOnAction(handler);
-			poisonUpBtn.setPrefSize(30, 30);
+			poisonUpBtn.setMinSize(30, 30);
 			this.add(poisonUpBtn, 3, 1);
 			
 			resetBtn = new Button("Reset Values");
@@ -78,7 +78,7 @@ public class LifeCounter extends GridPane {
 		lifeText = new Text("20");
 
 		lifeContainer = new StackPane();
-		lifeContainer.setPrefSize(30, 30);
+		lifeContainer.setMinSize(30, 30);
 		lifeContainer.getChildren().add(lifeText);
 		lifeContainer.setMouseTransparent( true );
 		this.add(lifeContainer, 1, 0);
@@ -90,7 +90,7 @@ public class LifeCounter extends GridPane {
 		poisonText = new Text("0");
 
 		poisonContainer = new StackPane();
-		poisonContainer.setPrefSize(30, 30);
+		poisonContainer.setMinSize(30, 30);
 		poisonContainer.getChildren().add(poisonText);
 		poisonContainer.setMouseTransparent( true );
 		this.add(poisonContainer, 1, 1);

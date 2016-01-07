@@ -2,8 +2,8 @@ package graphicsObjects;
 
 import gamePieces.CardCollection;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
+//import javafx.event.Event;
+//import javafx.event.EventHandler;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -28,10 +28,10 @@ public class CardStackPane extends StackPane {
 	 * @param width how wide the pane should be
 	 * @param height how high the pane should be
 	 */
-	public CardStackPane( CardCollection.Collections type, EventHandler<Event> handler, double width, double height) {
+	public CardStackPane( CardCollection.Collections type, /*EventHandler<Event> handler,*/ double width, double height) {
 
 		this.type = type;
-		this.setOnMouseClicked( handler );
+		//this.setOnMouseClicked( handler );
 		this.setPrefSize(width, height);
 
 		deckCardText = new Text("");

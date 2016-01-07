@@ -13,11 +13,9 @@ public class MessageArea extends ScrollPane {
 
 		this.setPickOnBounds( false );
 
-		//this.setPrefWidth( 150 );
-		//this.setPrefHeight( 150 );
-
-		this.setPrefWidth( 300 );
-		this.setPrefHeight( 200 );
+		// This make it work, but it aint pretty
+		this.setPrefWidth( 500 );
+		this.setPrefHeight( 250 );
 
 		this.getStyleClass().add( "message-area-scroll-pane" );
 

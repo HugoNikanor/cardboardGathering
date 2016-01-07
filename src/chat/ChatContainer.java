@@ -1,9 +1,11 @@
 package chat;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import network.Connection;
@@ -21,7 +23,7 @@ public class ChatContainer extends VBox {
 	/**
 	 * The whole chat interface
 	 */
-	public ChatContainer( Connection connection ) {
+	public ChatContainer( Connection connection, Pane upperLeft ) {
 		chatBox = new TextBox( e -> {
 			ChatStream.print( chatBox.getTextAndClear(), MessageInfo.PLAYER, connection );
 		} );
@@ -34,8 +36,14 @@ public class ChatContainer extends VBox {
 			toggleDisplay();
 		} );
 
+		VBox upperLeftCont = new VBox();
+		upperLeftCont.setAlignment( Pos.BOTTOM_CENTER );
+		upperLeftCont.setPickOnBounds( false );
+		upperLeftCont.getChildren().add( upperLeft );
+		upperLeftCont.setPadding( new Insets(10) );
+
 		upperArea = new HBox();
-		upperArea.setAlignment( Pos.CENTER_RIGHT );
+		upperArea.setAlignment( Pos.BOTTOM_CENTER );
 		upperArea.setPickOnBounds( false );
 
 		lowerArea = new HBox();
@@ -43,7 +51,7 @@ public class ChatContainer extends VBox {
 		lowerArea.setMaxWidth( Double.MAX_VALUE );
 
 		lowerArea.getChildren().addAll( chatBox, toggleDisplayBtn );
-		upperArea.getChildren().addAll( msgArea );
+		upperArea.getChildren().addAll( upperLeftCont, msgArea );
 		this.getChildren().addAll( upperArea, lowerArea );
 
 		this.setPickOnBounds( false );
