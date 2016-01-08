@@ -10,6 +10,6 @@ public class Main {
 
 		// This also calls the constructor,
 		// but I don't know why...
-		GameLogic.launch(GameLogic.class);
+		GameLogic.launch( GameLogic.class );
 	}
 }

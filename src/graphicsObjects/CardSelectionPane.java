@@ -55,9 +55,6 @@ public class CardSelectionPane {
 
 		rootPane.getChildren().add( outerPane );
 
-		//rootPane.setScaleX( 1.5d );
-		//rootPane.setScaleY( 1.5d );
-		//rootPane.setScaleZ( 1.5d );
 		rootPane.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
 
 		Scene chooseScene = new Scene( rootPane, stage.getWidth(), stage.getHeight() );
@@ -111,6 +108,7 @@ public class CardSelectionPane {
 		// change back scene
 		Platform.runLater(new Thread(() -> {
 			stage.setScene( defaultScene );
+			defaultScene.getRoot().setScaleY( defaultScene.getRoot().getScaleY() );
 		}));
 
 

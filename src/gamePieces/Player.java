@@ -185,40 +185,51 @@ public class Player extends Pane {
 			synchronized( this ) {
 				while( true ){
 					long startTime = System.currentTimeMillis();
+					// TODO I have had this throw ConcurrentModifiactionException when the other player is playing cards...
+					// this crashes this thread, but not anything else, I think
 					for( Card card : battlefieldCards ) {
-						if( card.isShouldSend() ) {
-							double newX = card.getTranslateX();
-							double newY = card.getTranslateY();
-							double newRotate = card.getRotate();
+						try {
+							if( card.isShouldSend() ) {
+								double newX = card.getTranslateX();
+								double newY = card.getTranslateY();
+								double newRotate = card.getRotate();
 
-							// TODO try to have smaller hitboxes for the cardcollections
-							// card to deck
-							if( !card.isBeingUsed() &&
-								//deckCont.localToScene(deckCont.getBoundsInLocal())
-								// TODO this may throw an ArrayIndexOutOfBoundsException: -1
-								deckCards.getGraphics(true).localToScene(deckCards.getGraphics(true).getBoundsInLocal())
-									.intersects(card.localToScene( card.getBoundsInLocal())) ) {
-								ChatStream.print( "moving to deck", MessageInfo.SYSTEM, connection );
-								cardsToDeck.add( card );
-							}
-							// card to graveyard
-							if( !card.isBeingUsed() &&
-								//graveCont.localToScene(graveCont.getBoundsInLocal())
-								graveyardCards.getGraphics(true).localToScene(graveyardCards.getGraphics(true).getBoundsInLocal())
-									.intersects(card.localToScene( card.getBoundsInLocal())) ) {
-								ChatStream.print( "moving to grave", MessageInfo.SYSTEM, connection );
-								cardsToGrave.add( card );
-							}
+								// TODO try to have smaller hitboxes for the cardcollections
+								// card to deck
+								if( !card.isBeingUsed() &&
+									//deckCont.localToScene(deckCont.getBoundsInLocal())
+									// TODO this may throw an ArrayIndexOutOfBoundsException: -1
+									// this is now catchedv but may crash in other ways
+									deckCards.getGraphics(true).localToScene(deckCards.getGraphics(true).getBoundsInLocal())
+										.intersects(card.localToScene( card.getBoundsInLocal())) ) {
+									ChatStream.print( "moving to deck", MessageInfo.SYSTEM, connection );
+									cardsToDeck.add( card );
+								}
+								// card to graveyard
+								if( !card.isBeingUsed() &&
+									//graveCont.localToScene(graveCont.getBoundsInLocal())
+									graveyardCards.getGraphics(true).localToScene(graveyardCards.getGraphics(true).getBoundsInLocal())
+										.intersects(card.localToScene( card.getBoundsInLocal())) ) {
+									// TODO I have had this throw a NoClassDefFoundError. I believe that it has to do with my singleton not being thread safe
+									ChatStream.print( "moving to grave", MessageInfo.SYSTEM, connection );
+									cardsToGrave.add( card );
+								}
 
-							if( newX != card.getOldX() ||
-							    newY != card.getOldY() ||
-							    newRotate != card.getOldRotate() ) {
-								connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
-							}
+								if( newX != card.getOldX() ||
+									newY != card.getOldY() ||
+									newRotate != card.getOldRotate() ) {
+									connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
+								}
 
-							card.setOldX( card.getTranslateX() );
-							card.setOldY( card.getTranslateY() );
-							card.setOldRotate( card.getRotate() );
+								card.setOldX( card.getTranslateX() );
+								card.setOldY( card.getTranslateY() );
+								card.setOldRotate( card.getRotate() );
+							}
+						} catch( ArrayIndexOutOfBoundsException ex ) {
+							// this may trigger when checking if the card is over one of the 
+							// collections. It often triggers when playing the card.
+							// Hopefulle this makes the error non fatal
+							System.out.println( "ArrayIndexOutOfBoundsException when comparing the card to the deck" );
 						}
 					}
 

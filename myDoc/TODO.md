@@ -2,9 +2,11 @@
 - Allow for cards getting turned upside down
 
 # Graphical
-- Chat in lower right
 - Add markers to card
 - Make cards look presentable
+
+# Input
+- keyboard input is currently disabled, maybe do something about this
 
 # Network
 
@@ -16,4 +18,3 @@
 # Card creation
 
 # Chat
-- typing capital 'H', 'J', 'K' or 'L' moves the active card, it shouldn't
