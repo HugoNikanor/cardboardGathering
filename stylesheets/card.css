@@ -4,10 +4,13 @@
 }
 .stat-text {
 	-fx-font-family: 'Serif';
-
+}
+#manaCostBlank {
+	-fx-font-family: 'Serif';
+	-fx-font-size: 8px;
 }
 #name {
-	-fx-font-size: 9px;
+	-fx-font-size: 7px;
 }
 #flavour {
 	-fx-font-style: italic;

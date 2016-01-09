@@ -6,15 +6,20 @@ import java.util.ResourceBundle;
 import gamePieces.Card;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 public class CardController implements Initializable {
 
 	@FXML 
 	private Text name;
-	@FXML HBox manaCont;
+	@FXML 
+	private FlowPane manaCont;
+	@FXML
+	private Text manaCostBlank;
 
 	@FXML 
 	private Text ability;
@@ -42,6 +47,26 @@ public class CardController implements Initializable {
 		name.setText( card.getCardName() );
 		ability.setText( card.getAbility() );
 		flavour.setText( card.getFlavour() );
+
+		
+		manaCostBlank.setText( Integer.toString(card.getManaCostBlank()) );
+		for( int i = 0; i < card.getManaCostBlack(); i++ ) {
+			manaCont.getChildren().add( new Circle(5, Paint.valueOf("Black")) );
+		}
+		for( int i = 0; i < card.getManaCostBlue(); i++ ) {
+			manaCont.getChildren().add( new Circle(5, Paint.valueOf("Blue")) );
+		}
+		for( int i = 0; i < card.getManaCostRed(); i++ ) {
+			manaCont.getChildren().add( new Circle(5, Paint.valueOf("Red")) );
+		}
+		for( int i = 0; i < card.getManaCostGreen(); i++ ) {
+			manaCont.getChildren().add( new Circle(5, Paint.valueOf("Green")) );
+		}
+		for( int i = 0; i < card.getManaCostWhite(); i++ ) {
+			manaCont.getChildren().add( new Circle(5, Paint.valueOf("White")) );
+		}
+		// TODO X mana
+
 
 		type.setText( card.getType() );
 		if( !card.getSubtype().equals( "" ) ) {

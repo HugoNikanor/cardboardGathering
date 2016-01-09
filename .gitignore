@@ -8,4 +8,5 @@ classVisualizer.xml
 *x.json
 !jars/*jar
 
+publishBinZip.sh
 /bin/

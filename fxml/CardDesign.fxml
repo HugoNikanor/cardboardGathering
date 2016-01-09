@@ -4,6 +4,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
 
 <VBox fx:id="cardData" stylesheets="@../stylesheets/card.css" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.CardController" fillWidth="true" >
 	<padding>
@@ -14,7 +15,12 @@
 			<Insets top="2" right="2" bottom="2" left="2" />
 		</padding>
 		<Text fx:id="name" text="NOOOOOOOOOOO" styleClass="text" />
-		<HBox fx:id="manaCont" />
+		<FlowPane fx:id="manaCont" alignment="CENTER_RIGHT" >
+			<StackPane>
+				<Circle radius="5" fill="Grey" />
+				<Text fx:id="manaCostBlank" />
+			</StackPane>
+		</FlowPane >
 	</HBox>
 
 	<StackPane fx:id="imagePane" minHeight="20.0" minWidth="20.0" styleClass="stack-pane" />

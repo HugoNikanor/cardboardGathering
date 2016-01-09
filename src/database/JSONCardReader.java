@@ -189,14 +189,19 @@ public class JSONCardReader {
 				manaX     = StringUtils.countMatches(mana, "{X}");
 				String possibleManaCost;
 				try {
-					possibleManaCost = mana.substring(mana.indexOf('{') + 1, mana.indexOf('}') - 1);
+					possibleManaCost = mana.substring(mana.indexOf('{') + 1, mana.indexOf('}'));
 				} catch (StringIndexOutOfBoundsException e) {
-					possibleManaCost = "0";
+					possibleManaCost = "-1";
 				}
+				//System.out.println( mana );
+				//System.out.println( possibleManaCost );
+				//System.out.println( "---" );
 				if( StringUtils.isNumeric(possibleManaCost) ) {
 					manaBlank = Integer.parseInt(possibleManaCost);
 				} else {
-					manaBlank = 0;
+					// TODO -2 and -1 are error values,
+					// but they are currently not used
+					manaBlank = -2;
 				}
 
 				cards.add(new Card(
