@@ -1,6 +1,10 @@
 .text {
 	-fx-font-size: 6.5px;
-	/*-fx-font: Helvetica;*/
+	-fx-font-family: 'Serif';
+}
+.stat-text {
+	-fx-font-family: 'Serif';
+
 }
 #name {
 	-fx-font-size: 9px;

@@ -23,7 +23,7 @@ public class CardController implements Initializable {
 
 	@FXML
 	private Pane imagePane;	
-	
+
 	@FXML
 	private Text type;
 	@FXML
