@@ -10,6 +10,7 @@
 	<padding>
 		<Insets top="5" right="5" bottom="5" left="5" />
 	</padding>
+
 	<HBox fx:id="nameBar" >
 		<padding>
 			<Insets top="2" right="2" bottom="2" left="2" />
@@ -23,7 +24,29 @@
 		</FlowPane >
 	</HBox>
 
-	<StackPane fx:id="imagePane" minHeight="20.0" minWidth="20.0" styleClass="stack-pane" />
+	<GridPane fx:id="imagePane" minHeight="20.0" minWidth="20.0" styleClass="grid-pane" gridLinesVisible="true" >
+		<columnConstraints>
+			<ColumnConstraints percentWidth="33" />
+			<ColumnConstraints percentWidth="33" />
+			<ColumnConstraints percentWidth="33" />
+		</columnConstraints>
+		<rowConstraints>
+			<RowConstraints percentHeight="50" />
+			<RowConstraints percentHeight="50" />
+		</rowConstraints>
+		<StackPane fx:id="redTokenPane"
+				GridPane.columnIndex="0" GridPane.rowIndex="0" />
+		<StackPane fx:id="greenTokenPane" maxWidth="Infinity"
+				GridPane.columnIndex="1" GridPane.rowIndex="0" />
+		<StackPane fx:id="blueTokenPane" maxWidth="Infinity"
+				GridPane.columnIndex="2" GridPane.rowIndex="0" />
+		<StackPane fx:id="blackTokenPane" maxWidth="Infinity"
+				GridPane.columnIndex="0" GridPane.rowIndex="1" />
+		<StackPane fx:id="whiteTokenPane" maxWidth="Infinity"
+				GridPane.columnIndex="1" GridPane.rowIndex="1" />
+		<StackPane fx:id="greyTokenPane" maxWidth="Infinity"
+				GridPane.columnIndex="2" GridPane.rowIndex="1" />
+	</GridPane>
 
 	<TextFlow fx:id="typeBar" textAlignment="LEFT" maxWidth="Infinity" >
 		<padding>

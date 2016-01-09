@@ -3,8 +3,6 @@ package gamePieces;
 import java.util.ArrayList;
 
 import chat.ChatContainer;
-import chat.ChatStream;
-import chat.MessageInfo;
 
 import database.JSONCardReader;
 
@@ -188,12 +186,12 @@ public class Player extends Pane {
 					// TODO I have had this throw ConcurrentModifiactionException when the other player is playing cards...
 					// this crashes this thread, but not anything else, I think
 					for( Card card : battlefieldCards ) {
-						try {
-							if( card.isShouldSend() ) {
-								double newX = card.getTranslateX();
-								double newY = card.getTranslateY();
-								double newRotate = card.getRotate();
+						if( card.isShouldSend() ) {
+							double newX = card.getTranslateX();
+							double newY = card.getTranslateY();
+							double newRotate = card.getRotate();
 
+							try {
 								// TODO try to have smaller hitboxes for the cardcollections
 								// card to deck
 								if( !card.isBeingUsed() &&
@@ -202,34 +200,35 @@ public class Player extends Pane {
 									// this is now catchedv but may crash in other ways
 									deckCards.getGraphics(true).localToScene(deckCards.getGraphics(true).getBoundsInLocal())
 										.intersects(card.localToScene( card.getBoundsInLocal())) ) {
-									ChatStream.print( "moving to deck", MessageInfo.SYSTEM, connection );
+									//ChatStream.print( "moving to deck", MessageInfo.SYSTEM, connection );
 									cardsToDeck.add( card );
 								}
+							} catch( ArrayIndexOutOfBoundsException ex ) {
+								System.out.println( "AIOOBE deck" );
+							}
+							try {
 								// card to graveyard
 								if( !card.isBeingUsed() &&
 									//graveCont.localToScene(graveCont.getBoundsInLocal())
 									graveyardCards.getGraphics(true).localToScene(graveyardCards.getGraphics(true).getBoundsInLocal())
 										.intersects(card.localToScene( card.getBoundsInLocal())) ) {
 									// TODO I have had this throw a NoClassDefFoundError. I believe that it has to do with my singleton not being thread safe
-									ChatStream.print( "moving to grave", MessageInfo.SYSTEM, connection );
+									//ChatStream.print( "moving to grave", MessageInfo.SYSTEM, connection );
 									cardsToGrave.add( card );
 								}
-
-								if( newX != card.getOldX() ||
-									newY != card.getOldY() ||
-									newRotate != card.getOldRotate() ) {
-									connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
-								}
-
-								card.setOldX( card.getTranslateX() );
-								card.setOldY( card.getTranslateY() );
-								card.setOldRotate( card.getRotate() );
+							} catch( ArrayIndexOutOfBoundsException ex ) {
+								System.out.println( "AIOOBE grave" );
 							}
-						} catch( ArrayIndexOutOfBoundsException ex ) {
-							// this may trigger when checking if the card is over one of the 
-							// collections. It often triggers when playing the card.
-							// Hopefulle this makes the error non fatal
-							System.out.println( "ArrayIndexOutOfBoundsException when comparing the card to the deck" );
+
+							if( newX != card.getOldX() ||
+								newY != card.getOldY() ||
+								newRotate != card.getOldRotate() ) {
+								connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
+							}
+
+							card.setOldX( card.getTranslateX() );
+							card.setOldY( card.getTranslateY() );
+							card.setOldRotate( card.getRotate() );
 						}
 					}
 

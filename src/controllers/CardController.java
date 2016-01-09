@@ -4,10 +4,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import gamePieces.Card;
+
+import graphicsObjects.Token;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -27,7 +31,19 @@ public class CardController implements Initializable {
 	private Text flavour;
 
 	@FXML
-	private Pane imagePane;	
+	private GridPane imagePane;
+	@FXML
+	private StackPane redTokenPane;
+	@FXML
+	private StackPane greenTokenPane;
+	@FXML
+	private StackPane blueTokenPane;
+	@FXML
+	private StackPane blackTokenPane;
+	@FXML
+	private StackPane whiteTokenPane;
+	@FXML
+	private StackPane greyTokenPane;
 
 	@FXML
 	private Text type;
@@ -97,6 +113,31 @@ public class CardController implements Initializable {
 		else
 			toughness.setText( Integer.toString(tough) );
 
+
+		greyTokenPane.setOnMouseClicked( e -> {
+			greyTokenPane.getChildren().add( new Token( Paint.valueOf("Grey") ) );
+			e.consume();
+		});
+		redTokenPane.setOnMouseClicked( e -> {
+			redTokenPane.getChildren().add( new Token( Paint.valueOf("Red") ) );
+			e.consume();
+		});
+		blueTokenPane.setOnMouseClicked( e -> {
+			blueTokenPane.getChildren().add( new Token( Paint.valueOf("Blue") ) );
+			e.consume();
+		});
+		greenTokenPane.setOnMouseClicked( e -> {
+			greenTokenPane.getChildren().add( new Token( Paint.valueOf("Green") ) );
+			e.consume();
+		});
+		whiteTokenPane.setOnMouseClicked( e -> {
+			whiteTokenPane.getChildren().add( new Token( Paint.valueOf("White") ) );
+			e.consume();
+		});
+		blackTokenPane.setOnMouseClicked( e -> {
+			blackTokenPane.getChildren().add( new Token( Paint.valueOf("DimGrey") ) );
+			e.consume();
+		});
 
 	}
 

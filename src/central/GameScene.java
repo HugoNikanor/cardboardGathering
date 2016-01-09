@@ -188,9 +188,17 @@ public class GameScene {
 
 		//new Thread(new KeyHandleThread()).start();
 
+		// TODO fix this
+		/*
 		WindowSizeListener windowSizeListener = new WindowSizeListener( gameScene );
 		stage.widthProperty().addListener(windowSizeListener);
 		stage.heightProperty().addListener(windowSizeListener);
+		*/
+
+		scale.setX(0.75);
+		scale.setY(0.75);
+		
+		ownBattlefield.updateScaleFactor(0.75);
 
 		stage.setScene(gameScene);
 		stage.show();
