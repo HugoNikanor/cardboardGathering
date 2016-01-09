@@ -7,23 +7,49 @@
 
 <VBox stylesheets="@../stylesheets/card.css" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.CardController" fillWidth="true" >
 	<padding>
-		<Insets top="10" right="10" bottom="10" left="10" />
+		<Insets top="5" right="5" bottom="5" left="5" />
 	</padding>
-	<HBox>
+	<HBox fx:id="nameBar" >
+		<padding>
+			<Insets top="2" right="2" bottom="2" left="2" />
+		</padding>
 		<Text fx:id="name" text="NOOOOOOOOOOO" styleClass="text" />
+		<HBox fx:id="manaCont" />
 	</HBox>
-	<Pane fx:id="imagePane" minHeight="20.0" minWidth="20.0" styleClass="pane" />
-	<TextFlow fx:id="typeBar" textAlignment="JUSTIFY" maxWidth="Infinity" >
+
+	<StackPane fx:id="imagePane" minHeight="20.0" minWidth="20.0" styleClass="stack-pane" />
+
+	<TextFlow fx:id="typeBar" textAlignment="LEFT" maxWidth="Infinity" >
+		<padding>
+			<Insets top="2" right="2" bottom="2" left="2" />
+		</padding>
 		<Text fx:id="type" text="defType" styleClass="text" />
-		<Text fx:id="typeDivider" text=" — " styleClass="text" />
-		<Text fx:id="subType" text="defSub" styleClass="text" />
+		<Text fx:id="typeDash" text=" — " styleClass="text" />
+		<Text fx:id="subType" text="" styleClass="text" />
 	</TextFlow>
-	<VBox fx:id="textBox" >
+
+	<VBox fx:id="textBox" spacing="5" >
+		<padding>
+			<Insets top="2" right="2" bottom="2" left="2" />
+		</padding>
+
 		<TextFlow>
-		<Text fx:id="ability" text="It kills everything" styleClass="text" />
-	</TextFlow>
-	<TextFlow>
-		<Text fx:id="flavour" text="flavour goes here" styleClass="text" />
-	</TextFlow>
+			<Text fx:id="ability" text="It kills everything" styleClass="text" />
+		</TextFlow>
+		<TextFlow>
+			<Text fx:id="flavour" text="flavour goes here" styleClass="text" />
+		</TextFlow>
 	</VBox>
+
+	<HBox alignment="CENTER_RIGHT" >
+		<TextFlow fx:id="statBox" >
+			<padding>
+				<Insets top="2" right="10" bottom="2" left="10" />
+			</padding>
+
+			<Text fx:id="power" text="1" styleClass="stat-text" />
+			<Text fx:id="statSlash" text=" / " styleClass="stat-text" />
+			<Text fx:id="toughness" text="1" styleClass="stat-text" />
+		</TextFlow>
+	</HBox>
 </VBox>

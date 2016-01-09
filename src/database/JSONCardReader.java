@@ -142,7 +142,7 @@ public class JSONCardReader {
 				}
 				try {
 					String indata = tempObject.getString("power");
-					if( indata == "*" ) {
+					if( indata.equals("*") ) {
 						power = -200;
 					}
 					else { 
@@ -157,7 +157,7 @@ public class JSONCardReader {
 				}
 				try {
 					String indata = tempObject.getString("toughness");
-					if( indata == "*" ) {
+					if( indata.equals("*") ) {
 						toughness = -200;
 					}
 					else { 

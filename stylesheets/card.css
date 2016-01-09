@@ -8,7 +8,9 @@
 #flavour {
 	-fx-font-style: italic;
 }
-
+#nameBar {
+	-fx-background-color: Pink;
+}
 #typeBar {
 	-fx-background-color: Green;
 }
@@ -17,4 +19,7 @@
 }
 .pane {
 	-fx-background-color: red;
+}
+#statBox {
+	-fx-background-color: Pink;
 }

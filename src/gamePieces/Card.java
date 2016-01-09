@@ -367,10 +367,6 @@ public class Card extends StackPane {
 						smoothSetRotate( 0d, 500 );
 					}
 				}
-				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-					// TODO this is debug, remove this
-					updateGraphics();
-				}
 
 				// Moves the card when it's draged by the mouse
 				if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
