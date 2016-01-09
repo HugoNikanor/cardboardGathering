@@ -17,10 +17,12 @@ import gamePieces.Battlefield;
 import gamePieces.Card;
 import gamePieces.CardCollection;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -194,6 +196,14 @@ public class GameScene {
 		stage.show();
 
 		defaultSceneHeight = gameScene.getHeight();
+
+		gameScene.setOnKeyPressed(e -> {
+			if( e.getCode() == KeyCode.F11 ) {
+				Platform.runLater( new Thread(() -> {
+					stage.setFullScreen( true );
+				}) );
+			}
+		});
 	}
 
 	/**
