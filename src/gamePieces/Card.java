@@ -4,13 +4,16 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
-import graphicsObjects.CardData;
+import java.net.URL;
+import java.nio.file.Paths;
 
+import controllers.CardController;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
@@ -22,8 +25,6 @@ import serverPackets.CardFocusPacket;
 
 public class Card extends StackPane {
 	private long cardId;
-	// TODO, this should probably be removed
-	//private static long CARD_ID_COUNTER_NEW = 0;
 
 	private String cardName;
 	private String type;
@@ -224,7 +225,7 @@ public class Card extends StackPane {
 		this.setMinSize(this.getWidth(), this.getHeight());
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
-		this.getChildren().add( new CardData(this) );
+		this.updateGraphics();
 
 		this.setCursor(Cursor.HAND);
 
@@ -242,6 +243,20 @@ public class Card extends StackPane {
 
 
 		this.setFocusTraversable( true );
+	}
+
+	private void updateGraphics() {
+		//Pane buffer = new CardController().getGraphics(this);
+		try {
+			URL url = Paths.get("fxml/CardDesign.fxml").toUri().toURL();
+			//Pane buffer = FXMLLoader.load( url );
+			FXMLLoader loader = new FXMLLoader( url );
+			Pane buffer = loader.load();
+			((CardController)loader.getController()).updateFields( this );
+			this.getChildren().setAll( buffer );
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 
 	public void updateContainerSize() {
@@ -321,6 +336,8 @@ public class Card extends StackPane {
 
 		@Override
 		public void handle(MouseEvent event) {
+
+			
 			switch( currentLocation ) {
 			case BATTLEFIELD:
 
@@ -349,6 +366,10 @@ public class Card extends StackPane {
 					} else {
 						smoothSetRotate( 0d, 500 );
 					}
+				}
+				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+					// TODO this is debug, remove this
+					updateGraphics();
 				}
 
 				// Moves the card when it's draged by the mouse
