@@ -292,6 +292,7 @@ public class Player extends Pane {
 							0,
 							0,
 							0,
+							0,
 							0) );
 			}
 		}

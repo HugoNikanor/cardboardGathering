@@ -19,22 +19,24 @@ public class CardCreatedPacket extends NetworkPacket {
 	private int manaCostRed;
 	private int manaCostWhite;
 	private int manaCostBlank;
+	private int manaCostX;
 
 	public CardCreatedPacket( Card card ) {
-		cardName = card.getCardName();
-		type = card.getType();
-		subtype = card.getType();
-		ability = card.getAbility();
-		flavour = card.getFlavour();
-		power = card.getPower();
-		toughness = card.getToughness();
-		loyalty = card.getLoyalty();
+		cardName      = card.getCardName();
+		type          = card.getType();
+		subtype       = card.getType();
+		ability       = card.getAbility();
+		flavour       = card.getFlavour();
+		power         = card.getPower();
+		toughness     = card.getToughness();
+		loyalty       = card.getLoyalty();
 		manaCostBlack = card.getManaCostBlack();
-		manaCostBlue = card.getManaCostBlue();
+		manaCostBlue  = card.getManaCostBlue();
 		manaCostGreen = card.getManaCostGreen();
-		manaCostRed = card.getManaCostRed();
+		manaCostRed   = card.getManaCostRed();
 		manaCostWhite = card.getManaCostWhite();
 		manaCostBlank = card.getManaCostBlank();
+		manaCostX     = card.getManaCostX();
 
 		this.dataType = DataTypes.CARDCREATE;
 	}
@@ -135,5 +137,12 @@ public class CardCreatedPacket extends NetworkPacket {
 	 */
 	public int getManaCostBlank() {
 		return manaCostBlank;
+	}
+
+	/**
+	 * @return the manaCostX
+	 */
+	public int getManaCostX() {
+		return manaCostX;
 	}
 }

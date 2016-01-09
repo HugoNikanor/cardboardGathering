@@ -65,6 +65,7 @@ public class Card extends StackPane {
 	private int manaCostGreen;
 	private int manaCostRed;
 	private int manaCostWhite;
+	private int manaCostX;
 
 	private int convertedManaCost;
 
@@ -155,7 +156,8 @@ public class Card extends StackPane {
 		int manaCostGreen,
 		int manaCostRed,
 		int manaCostWhite,
-		int manaCostBlank
+		int manaCostBlank,
+		int manaCostX
 	) {
 		//cardId = CARD_ID_COUNTER_NEW++;
 
@@ -174,6 +176,7 @@ public class Card extends StackPane {
 		this.manaCostRed   = manaCostRed;
         this.manaCostWhite = manaCostWhite;
 		this.manaCostBlank = manaCostBlank;
+		this.manaCostX     = manaCostX;
 
 		this.calcConvMana();
 
@@ -207,6 +210,7 @@ public class Card extends StackPane {
 		this.manaCostRed   = cardToCopy.getManaCostRed();
         this.manaCostWhite = cardToCopy.getManaCostWhite();
 		this.manaCostBlank = cardToCopy.getManaCostBlank();
+		this.manaCostX     = cardToCopy.getManaCostX();
 
 		this.calcConvMana();
 
@@ -767,6 +771,13 @@ public class Card extends StackPane {
 
 	public int getManaCostBlank() {
 		return manaCostBlank;
+	}
+
+	/**
+	 * @return the manaCostX
+	 */
+	public int getManaCostX() {
+		return manaCostX;
 	}
 
 	public int getConvertedManaCost() {

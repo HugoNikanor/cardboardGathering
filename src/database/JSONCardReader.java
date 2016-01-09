@@ -100,6 +100,7 @@ public class JSONCardReader {
 			int manaRed;
 			int manaWhite;
 			int manaBlank;
+			int manaX;
 
 			int tempIndex = 0;
 			while( cards.size() < cardBufferList.size() ) {
@@ -185,6 +186,7 @@ public class JSONCardReader {
 				manaGreen = StringUtils.countMatches(mana, "{G}");
 				manaRed   = StringUtils.countMatches(mana, "{R}");
 				manaWhite = StringUtils.countMatches(mana, "{W}");
+				manaX     = StringUtils.countMatches(mana, "{X}");
 				String possibleManaCost;
 				try {
 					possibleManaCost = mana.substring(mana.indexOf('{') + 1, mana.indexOf('}') - 1);
@@ -211,7 +213,8 @@ public class JSONCardReader {
 					manaGreen,
 					manaRed,
 					manaWhite,
-					manaBlank 
+					manaBlank,
+					manaX
 				));
 			}
 		} catch (JSONException je) {

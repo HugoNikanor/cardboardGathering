@@ -3,6 +3,8 @@ package network;
 import java.util.ArrayList;
 
 import chat.ChatStream;
+import chat.MessageInfo;
+
 import database.JSONCardReader;
 
 import exceptions.BadDataException;
@@ -178,6 +180,7 @@ public class InputObjectHandler {
 		battlefield = new Battlefield( jCardReader, obj.getCardList() );
 	}
 	private void createCard( CardCreatedPacket obj ) {
+		ChatStream.print( "Other player created a card", MessageInfo.OTHER, null );
 		battlefield.getPlayer().createCard( new Card(
 			obj.getCardName(),
 			obj.getType(),
@@ -192,10 +195,12 @@ public class InputObjectHandler {
 			obj.getManaCostGreen(),
 			obj.getManaCostRed(),
 			obj.getManaCostWhite(),
-			obj.getManaCostBlank())
+			obj.getManaCostBlank(),
+			obj.getManaCostX())
 		);
 	}
 	private void createCardFromDatabase( CardFromDatabasePacket obj ) {
+		ChatStream.print( "other player querried a card from the database", MessageInfo.OTHER, null );
 		battlefield.getPlayer().createCardFromDatabase( obj.getCardName() );
 	}
 
