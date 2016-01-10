@@ -15,15 +15,12 @@ import exceptions.CardNotFoundException;
 
 import gamePieces.Battlefield;
 import gamePieces.Card;
-import gamePieces.CardCollection;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Scale;
@@ -74,7 +71,7 @@ public class GameScene {
 		//keyEventHandler = new KeyEventHandler();
 		//pressedKeys = new ArrayList<KeyCode>();
 
-		CardPlayHandler cardPlayHandler = new CardPlayHandler();
+		//CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
 		jCardReader = new JSONCardReader();
 		inputObjectHandler = new InputObjectHandler( jCardReader );
@@ -125,7 +122,7 @@ public class GameScene {
 			e2.printStackTrace();
 		}
 
-		ownBattlefield = new Battlefield( cardPlayHandler, /*connection,*/ jCardReader, cardList );
+		ownBattlefield = new Battlefield( jCardReader, cardList, true );
 
 
 		// Waits for the other battlefield to get ready
@@ -262,35 +259,4 @@ public class GameScene {
 		}
 	}
 
-	/**
-	 * EventHandler for cards being played, <br>
-	 *
-	 * This Handler is applied to the cards and is used when they are pressed
-	 * and in a players hand. <br>
-	 *
-	 * TODO check if this can be placed further down the project
-	 */
-	private class CardPlayHandler implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent event) {
-			try {
-				Card tempCard = ownBattlefield
-					.getPlayer()
-					.getHandCards()
-					.getCard(
-						(Card)event.getSource());
-
-				if( tempCard.getCurrentLocation() == CardCollection.Collections.HAND ) {
-
-					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-						ownBattlefield.getPlayer().playCard(tempCard, ownBattlefield);
-					}
-
-				}
-			} catch (CardNotFoundException e) {
-				// This will fail when using a card on the battlefield.
-				// Be aware that it's the reason for not doing anything here
-			}
-		}
-	}
 }

@@ -2,6 +2,8 @@ package gamePieces;
 
 import database.JSONCardReader;
 
+import exceptions.CardNotFoundException;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -60,12 +62,15 @@ public class Battlefield extends Pane {
 	 * @param cardList
 	 *            String[] with all card names to use in it
 	 */
-	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, /*Connection connection,*/ JSONCardReader jCardReader, String[] cardList ) {
+	public Battlefield( JSONCardReader jCardReader, String[] cardList, boolean local ) {
+		if( local )
+			player = new Player( WIDTH, jCardReader, new CardPlayHandler(), cardList );
+		else
+			player = new Player( jCardReader, cardList );
 
-		player = new Player( WIDTH, jCardReader, cardPlayHandler, /*connection,*/ cardList );
 		cards = player.getBattlefieldCards();
 
-		this.initialSetup( true );
+		this.initialSetup( local );
 	}
 
 	/**
@@ -177,6 +182,37 @@ public class Battlefield extends Pane {
 	 */
 	public boolean isReady() {
 		return isReady;
+	}
+
+	/**
+	 * EventHandler for cards being played, <br>
+	 *
+	 * This Handler is applied to the cards and is used when they are pressed
+	 * and in a players hand. <br>
+	 *
+	 * TODO check if this can be placed further down the project
+	 */
+	private class CardPlayHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			try {
+				Card tempCard = player
+					.getHandCards()
+					.getCard(
+						(Card)event.getSource());
+
+				if( tempCard.getCurrentLocation() == CardCollection.Collections.HAND ) {
+
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						player.playCard(tempCard, Battlefield.this);
+					}
+
+				}
+			} catch (CardNotFoundException e) {
+				// This will fail when using a card on the battlefield.
+				// Be aware that it's the reason for not doing anything here
+			}
+		}
 	}
 
 
