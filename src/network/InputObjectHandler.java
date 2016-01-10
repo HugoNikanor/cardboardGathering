@@ -150,6 +150,7 @@ public class InputObjectHandler {
 		case GRAVEYARD:
 			switch( obj.getNewCollection() ) {
 			case HAND:
+				battlefield.getPlayer().graveToHand( obj.getId() );
 				break;
 			default:
 				throw new BadDataException( obj.toString() );

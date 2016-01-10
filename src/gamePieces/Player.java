@@ -529,7 +529,7 @@ public class Player extends Pane {
 	 * @param card  what card that should be drawn
 	 * @throws CardNotFoundException probably non fatal
 	 */
-	public void drawCard( Card card ) throws CardNotFoundException {
+	private void drawCard( Card card ) throws CardNotFoundException {
 		moveCardBetweenCollections( deckCards, handCards, card );
 
 		card.setTranslateY(card.getHandPopupValue());
@@ -538,6 +538,10 @@ public class Player extends Pane {
 			this.getChildren().add(card);
 			this.rearangeCards();
 		}));
+	}
+
+	public void graveToHand( long cardId ) throws CardNotFoundException {
+		graveToHand( graveyardCards.getCard( cardId ) );
 	}
 
 	private void graveToHand( Card card ) throws CardNotFoundException {
@@ -584,6 +588,7 @@ public class Player extends Pane {
 
 			// Changes the hower action from "jump up" in hand
 			// to "set focus" on the battlefield
+			// TODO set this in a prettier way
 			card.setOnMouseEntered( card.getMouseEventHandler() );
 
 			tt.play();
