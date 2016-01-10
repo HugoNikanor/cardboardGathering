@@ -5,11 +5,11 @@ import gamePieces.CardCollection;
 public class CardBetweenCollectionsPacket extends NetworkPacket {
 	private static final long serialVersionUID = 1L;
 
-	private CardCollection.Collections oldCollection;
-	private CardCollection.Collections newCollection;
+	private CardCollection.CollectionTypes oldCollection;
+	private CardCollection.CollectionTypes newCollection;
 	private long id;
 
-	public CardBetweenCollectionsPacket( CardCollection.Collections oldCollection, CardCollection.Collections newCollection, long cardId ) {
+	public CardBetweenCollectionsPacket( CardCollection.CollectionTypes oldCollection, CardCollection.CollectionTypes newCollection, long cardId ) {
 		this.oldCollection = oldCollection;
 		this.newCollection = newCollection;
 		this.id = cardId;
@@ -20,14 +20,14 @@ public class CardBetweenCollectionsPacket extends NetworkPacket {
 	/**
 	 * @return the oldCollection
 	 */
-	public CardCollection.Collections getOldCollection() {
+	public CardCollection.CollectionTypes getOldCollection() {
 		return oldCollection;
 	}
 
 	/**
 	 * @return the newCollection
 	 */
-	public CardCollection.Collections getNewCollection() {
+	public CardCollection.CollectionTypes getNewCollection() {
 		return newCollection;
 	}
 

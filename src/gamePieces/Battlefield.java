@@ -19,7 +19,7 @@ import javafx.scene.layout.VBox;
 public class Battlefield extends Pane {
 
 	private Player player;
-	private CardCollection cards;
+	//private CardCollection cards;
 
 	/**
 	 * Here so that all cards can have a set height in relation to everything else.
@@ -44,7 +44,7 @@ public class Battlefield extends Pane {
 	public Battlefield(JSONCardReader jCardReader, String[] cardList) {
 		// Both players MUST have all database files
 		player = new Player( jCardReader, cardList );
-		cards = player.getBattlefieldCards();
+		//cards = player.getBattlefieldCards();
 
 		this.initialSetup( false );
 	}
@@ -68,7 +68,7 @@ public class Battlefield extends Pane {
 		else
 			player = new Player( jCardReader, cardList );
 
-		cards = player.getBattlefieldCards();
+		//cards = player.getBattlefieldCards();
 
 		this.initialSetup( local );
 	}
@@ -174,7 +174,7 @@ public class Battlefield extends Pane {
 	 * @return the cards
 	 */
 	public CardCollection getCards() {
-		return cards;
+		return player.getBattlefieldCards();
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class Battlefield extends Pane {
 					.getCard(
 						(Card)event.getSource());
 
-				if( tempCard.getCurrentLocation() == CardCollection.Collections.HAND ) {
+				if( tempCard.getCurrentLocation() == CardCollection.CollectionTypes.HAND ) {
 
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
 						player.playCard(tempCard, Battlefield.this);

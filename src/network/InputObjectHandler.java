@@ -212,7 +212,7 @@ public class InputObjectHandler {
 	}
 
 	private void token( TokenPacket obj ) {
-		battlefield.getPlayer().getBattlefieldCards().getCard( obj.getParentId() ).
+		battlefield.getPlayer().getAllCards().getCard( obj.getParentId() ).
 			setToken( obj.getTokenField(), obj.getNewValue() );
 	}
 

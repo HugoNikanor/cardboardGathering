@@ -97,7 +97,7 @@ public class Card extends StackPane {
 	/**
 	 * The current location of the card
 	 */
-	private CardCollection.Collections currentLocation;
+	private CardCollection.CollectionTypes currentLocation;
 
 	/**
 	 * The cards margin while it is in hand <br>
@@ -186,7 +186,7 @@ public class Card extends StackPane {
 
 		this.calcConvMana();
 
-		currentLocation = CardCollection.Collections.DECK;
+		currentLocation = CardCollection.CollectionTypes.DECK;
 	}
 
 	/**
@@ -601,11 +601,11 @@ public class Card extends StackPane {
 		return currentCard;
 	}
 
-	public CardCollection.Collections getCurrentLocation() {
+	public CardCollection.CollectionTypes getCurrentLocation() {
 		return currentLocation;
 	}
 
-	public void setCurrentLocation(CardCollection.Collections currentLocation) {
+	public void setCurrentLocation(CardCollection.CollectionTypes currentLocation) {
 		this.currentLocation = currentLocation;
 	}
 

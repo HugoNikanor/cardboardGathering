@@ -29,3 +29,7 @@ print how many cards the other player has on hand
 
 When card in hand (in leftmost position) is zoomed then some cards on battlefield
 doesn't respend as well when pressing them to tap
+
+
+tokens added to cards in "Get Card" aren't remebered
+"Get Card" doesn't scroll

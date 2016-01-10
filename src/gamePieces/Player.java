@@ -144,10 +144,10 @@ public class Player extends Pane {
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
 		this.jCardReader = jCardReader;
 		counter = new CardIdCounter( 0 );
-		deckCards        = new CardCollection( CardCollection.Collections.DECK, jCardReader, counter, cardList );
-		handCards        = new CardCollection( CardCollection.Collections.HAND );
-		battlefieldCards = new CardCollection( CardCollection.Collections.BATTLEFIELD );
-		graveyardCards   = new CardCollection( CardCollection.Collections.GRAVEYARD );
+		deckCards        = new CardCollection( CardCollection.CollectionTypes.DECK, jCardReader, counter, cardList );
+		handCards        = new CardCollection( CardCollection.CollectionTypes.HAND );
+		battlefieldCards = new CardCollection( CardCollection.CollectionTypes.BATTLEFIELD );
+		graveyardCards   = new CardCollection( CardCollection.CollectionTypes.GRAVEYARD );
 
 		health = 20;
 		poisonCounters = 0;
@@ -302,7 +302,7 @@ public class Player extends Pane {
 
 	public void createCard( Card inCard, long id ) {
 		Card card = new Card( inCard, id );
-		card.setCurrentLocation( CardCollection.Collections.HAND );
+		card.setCurrentLocation( CardCollection.CollectionTypes.HAND );
 		handCards.add( card );
 		// maybe have this in the 'shouldSend' block
 		card.setOnMouseClicked( cardPlayHandler );
@@ -327,7 +327,7 @@ public class Player extends Pane {
 		try {
 			Card card = jCardReader.get( cardName, counter.getCounter() );
 			counter.incrament();
-			card.setCurrentLocation( CardCollection.Collections.HAND );
+			card.setCurrentLocation( CardCollection.CollectionTypes.HAND );
 
 			card.setTranslateY( card.getHandPopupValue() );
 
@@ -714,6 +714,21 @@ public class Player extends Pane {
 	 */
 	public CardCollection getGraveyardCards() {
 		return graveyardCards;
+	}
+
+	/**
+	 * This is probably slow,
+	 * Use only when there is no other way.
+	 */
+	public CardCollection getAllCards() {
+		CardCollection retCol = new CardCollection( CardCollection.CollectionTypes.OTHER );
+
+		retCol.addAll( handCards.getAllCards() );
+		retCol.addAll( deckCards.getAllCards() );
+		retCol.addAll( graveyardCards.getAllCards() );
+		retCol.addAll( battlefieldCards.getAllCards() );
+
+		return retCol;
 	}
 
 	/**

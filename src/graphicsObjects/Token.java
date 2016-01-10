@@ -32,7 +32,7 @@ public class Token extends StackPane {
 			if( numberProperty.get() > 0 ) {
 				this.setVisible( true );
 			}
-			System.out.println( numberProperty.get() );
+			//System.out.println( numberProperty.get() );
 		});
 
 		this.setMouseTransparent( true );

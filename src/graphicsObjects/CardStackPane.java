@@ -19,7 +19,7 @@ public class CardStackPane extends StackPane {
 	 */
 	private Text deckCardText;
 
-	private CardCollection.Collections type;
+	private CardCollection.CollectionTypes type;
 
 
 	/**
@@ -28,7 +28,7 @@ public class CardStackPane extends StackPane {
 	 * @param width how wide the pane should be
 	 * @param height how high the pane should be
 	 */
-	public CardStackPane( CardCollection.Collections type, double width, double height) {
+	public CardStackPane( CardCollection.CollectionTypes type, double width, double height) {
 
 		this.type = type;
 		this.setPrefSize(width, height);
@@ -67,7 +67,7 @@ public class CardStackPane extends StackPane {
 	/**
 	 * @return the type
 	 */
-	public CardCollection.Collections getType() {
+	public CardCollection.CollectionTypes getType() {
 		return type;
 	}
 

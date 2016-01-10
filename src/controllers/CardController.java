@@ -133,6 +133,7 @@ public class CardController implements Initializable {
 		whiteTokenPane.getChildren().add( tokens.get(4) );
 		greyTokenPane.getChildren().add( tokens.get(5) );
 
+		// TODO shorten this
 		greyTokenPane.setOnMouseClicked( e -> {
 			if( e.getButton() == MouseButton.PRIMARY)
 				tokens.get(5).incrament();

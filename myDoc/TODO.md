@@ -2,7 +2,6 @@
 - Allow for cards getting turned upside down
 
 # Graphical
-- Add markers to card
 - Make cards look presentable
 
 # Input

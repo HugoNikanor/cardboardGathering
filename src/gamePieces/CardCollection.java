@@ -1,12 +1,16 @@
 package gamePieces;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
 import chat.ChatStream;
 import chat.MessageInfo;
+
 import database.CardChooser;
 import database.JSONCardReader;
 
@@ -40,11 +44,12 @@ public class CardCollection implements Iterable<Card> {
 	/**
 	 * The different types of collections
 	 */
-	public static enum Collections {
+	public static enum CollectionTypes {
 		DECK,
 		GRAVEYARD,
 		HAND,
-		BATTLEFIELD, BATTLEFILED
+		BATTLEFIELD, BATTLEFILED,
+		OTHER
 	}
 
 	private Button getFromDeckBtn;
@@ -56,22 +61,22 @@ public class CardCollection implements Iterable<Card> {
 	private ObjectProperty<Card> observableCard;
 	private IntegerProperty observableCount;
 
-	private ArrayList<Card> cards;
+	private List<Card> cards;
 
 
 
 	/**
 	 * The type of collection this is
 	 */
-	private Collections collection;
+	private CollectionTypes collection;
 
 	/**
 	 * Create an empty collection
 	 * @param collection the type of collection this is
 	 */
-	public CardCollection( Collections collection ) {
+	public CardCollection( CollectionTypes collection ) {
 		this.collection = collection;
-		cards = new ArrayList<Card>();
+		cards = Collections.synchronizedList(new ArrayList<Card>());
 		observableCard = new SimpleObjectProperty<Card>();
    	}
 
@@ -82,9 +87,9 @@ public class CardCollection implements Iterable<Card> {
 	 * @param cardIdCounter what id the next created card should have, make sure to incarment every time it is used
 	 * @param cardList String[] sent to the cardChooser to allow it to be read as a bad iterrator
 	 */
-	public CardCollection( Collections collection, JSONCardReader jCardReader, CardIdCounter counter, String[] cardList ) {
+	public CardCollection( CollectionTypes collection, JSONCardReader jCardReader, CardIdCounter counter, String[] cardList ) {
 		this.collection = collection;
-		cards = new ArrayList<Card>();
+		cards = Collections.synchronizedList(new ArrayList<Card>());
 
 		try {
 			CardChooser cardChooser = new CardChooser( cardList );
@@ -98,9 +103,13 @@ public class CardCollection implements Iterable<Card> {
 		}
 
 		//TODO should this be done here?
-		//this.shuffleCards();
+		this.shuffleCards();
 
 		observableCard = new SimpleObjectProperty<Card>();
+	}
+
+	public void addAll( Collection<Card> collection ) {
+		cards.addAll( collection );
 	}
 
 	public Pane getGraphics( boolean isLocal ) {
@@ -372,8 +381,12 @@ public class CardCollection implements Iterable<Card> {
 	/**
 	 * @return the collection
 	 */
-	public Collections getCollection() {
+	public CollectionTypes getCollection() {
 		return collection;
+	}
+
+	public List<Card> getAllCards() {
+		return cards;
 	}
 
 }
