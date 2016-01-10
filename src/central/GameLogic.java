@@ -37,6 +37,7 @@ public class GameLogic extends Application {
 		else
 			showTitle = false;
 
+
    	}
 
 	@Override

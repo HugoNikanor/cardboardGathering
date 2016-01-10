@@ -188,15 +188,25 @@ public class GameScene {
 
 		//new Thread(new KeyHandleThread()).start();
 
-		// TODO fix this
-		/*
-		WindowSizeListener windowSizeListener = new WindowSizeListener( gameScene );
-		stage.widthProperty().addListener(windowSizeListener);
-		stage.heightProperty().addListener(windowSizeListener);
-		*/
+		Settings settings = new Settings( "settings/settings.properties" );
+		String autoRescaleStr = settings.getProperty( "autoRescale", "true" );
+		boolean autoRescale;
+		if( autoRescaleStr.equalsIgnoreCase( "true" ) )
+			autoRescale = true;
+		else
+			autoRescale = false;
 
-		scale.setX(0.75);
-		scale.setY(0.75);
+		double manualScale = Double.parseDouble(settings.getProperty( "manualScale", "1.0" ));
+
+
+		if( autoRescale ) {
+			WindowSizeListener windowSizeListener = new WindowSizeListener( gameScene );
+			stage.widthProperty().addListener(windowSizeListener);
+			stage.heightProperty().addListener(windowSizeListener);
+		} else {
+			scale.setX( manualScale );
+			scale.setY( manualScale );
+		}
 		
 		ownBattlefield.updateScaleFactor(0.75);
 
