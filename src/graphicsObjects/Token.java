@@ -18,7 +18,7 @@ public class Token extends StackPane {
 
 		numberProperty = new SimpleIntegerProperty();
 
-		numberProperty.set( 1 );
+		numberProperty.set( 0 );
 		numberText = new Text( Integer.toString(numberProperty.get()) );
 
 		this.getChildren().addAll( circle, numberText );
