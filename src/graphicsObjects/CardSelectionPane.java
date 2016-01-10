@@ -19,7 +19,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-//import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 /**
@@ -75,6 +74,7 @@ public class CardSelectionPane {
 
 		// It would be better if this went backwards,
 		// since the cards in the deck are accessed that way.
+		/*
 		for( Card temp : cards ) {
 			Card innerTemp = new Card(temp, temp.getCardId());
 			//innerTemp.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
@@ -82,6 +82,27 @@ public class CardSelectionPane {
 				@Override
 				public void handle( MouseEvent event ) {
 					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						returnCard = (Card) event.getSource();
+						try {
+							System.out.println( "Awaiting latch (button)..." );
+							latch.await();
+						} catch (InterruptedException | BrokenBarrierException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			});
+			innerPane.getChildren().add(innerTemp);
+		}
+		*/
+		for( Card temp : cards ) {
+			Card innerTemp = new Card(temp, temp.getCardId());
+			innerTemp.setShouldSend( true );
+			innerTemp.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle( MouseEvent event ) {
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						((Card) event.getSource()).removeEventHandler( MouseEvent.MOUSE_CLICKED, this );
 						returnCard = (Card) event.getSource();
 						try {
 							System.out.println( "Awaiting latch (button)..." );
@@ -141,6 +162,7 @@ public class CardSelectionPane {
 
 		// It would be better if this went backwards,
 		// since the cards in the deck are accessed that way.
+		/*
 		for( Card temp : cards ) {
 			Card innerTemp = new Card(temp, temp.getCardId());
 			innerTemp.setOnMouseClicked( new EventHandler<MouseEvent>() {
@@ -158,6 +180,26 @@ public class CardSelectionPane {
 				}
 			});
 			innerPane.getChildren().add(innerTemp);
+		}
+		*/
+		for( Card temp : cards ) {
+			//Card innerTemp = new Card(temp, temp.getCardId());
+			temp.addEventHandler( MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle( MouseEvent event ) {
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						returnCard = (Card) event.getSource();
+						try {
+							System.out.println( "Awaiting latch (button)..." );
+							latch.await();
+							temp.removeEventHandler( MouseEvent.MOUSE_CLICKED, this );
+						} catch (InterruptedException | BrokenBarrierException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			});
+			innerPane.getChildren().add(temp);
 		}
 
 		innerPane.getStyleClass().add("card-select-pane-inner");

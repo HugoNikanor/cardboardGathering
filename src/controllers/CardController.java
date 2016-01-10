@@ -70,11 +70,11 @@ public class CardController implements Initializable {
 		
 		if( card.getManaCostBlank() >= 0 ) {
 			StackPane blankManaPane = new StackPane();
+			blankManaPane.getStyleClass().add( "mana-text" );
 			blankManaPane.getChildren().addAll( 
 					new Circle(5, Paint.valueOf("Grey")),
 					new Text( Integer.toString(card.getManaCostBlank() ) )); 
 			manaCont.getChildren().add( blankManaPane );
-			//manaCostBlank.setText( Integer.toString(card.getManaCostBlank()) );
 		}
 		for( int i = 0; i < card.getManaCostBlack(); i++ ) {
 			manaCont.getChildren().add( new Circle(5, Paint.valueOf("Black")) );
@@ -93,6 +93,7 @@ public class CardController implements Initializable {
 		}
 		if( card.getManaCostX() == 1 ) {
 			StackPane xManaPane = new StackPane();
+			xManaPane.getStyleClass().add( "mana-text" );
 			xManaPane.getChildren().addAll( new Circle(5, Paint.valueOf("Grey")),
 			                                new Text( "X" ) ); 
 			manaCont.getChildren().add( xManaPane );

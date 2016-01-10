@@ -14,6 +14,11 @@
 
 }
 
+.mana-text {
+	-fx-font-family: 'Serif';
+	-fx-font-size: 8px;
+}
+
 /* Token container */
 .token-container {
 	-fx-border-color: Black;
