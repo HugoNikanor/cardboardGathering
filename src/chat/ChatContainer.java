@@ -21,7 +21,7 @@ public class ChatContainer extends VBox {
 	/**
 	 * The whole chat interface
 	 */
-	public ChatContainer( /*Connection connection,*/ Pane upperLeft ) {
+	public ChatContainer( Pane upperLeft ) {
 		chatBox = new TextBox( e -> {
 			ChatStream.print( chatBox.getTextAndClear(), MessageInfo.PLAYER );
 		} );

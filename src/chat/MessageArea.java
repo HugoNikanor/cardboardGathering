@@ -1,5 +1,7 @@
 package chat;
 
+import javafx.collections.ListChangeListener.Change;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 
 public class MessageArea extends ScrollPane {
@@ -10,6 +12,12 @@ public class MessageArea extends ScrollPane {
 	public MessageArea() {
 		this.setFitToWidth( true );
 		this.setContent( ChatStream.getGraphic() );
+
+		ChatStream.getGraphic().getChildrenUnmodifiable().addListener(
+		(Change<? extends Node> c) -> {
+			this.setVvalue( 1.0 );
+		} );
+
 
 		this.setPickOnBounds( false );
 
