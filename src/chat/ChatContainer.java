@@ -8,8 +8,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import network.Connection;
-
 public class ChatContainer extends VBox {
 
 	private MessageArea msgArea;
@@ -23,9 +21,9 @@ public class ChatContainer extends VBox {
 	/**
 	 * The whole chat interface
 	 */
-	public ChatContainer( Connection connection, Pane upperLeft ) {
+	public ChatContainer( /*Connection connection,*/ Pane upperLeft ) {
 		chatBox = new TextBox( e -> {
-			ChatStream.print( chatBox.getTextAndClear(), MessageInfo.PLAYER, connection );
+			ChatStream.print( chatBox.getTextAndClear(), MessageInfo.PLAYER );
 		} );
 
 		msgArea = new MessageArea();

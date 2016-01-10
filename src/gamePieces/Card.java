@@ -6,8 +6,12 @@ import javafx.scene.input.ScrollEvent;
 
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import controllers.CardController;
+
+import graphicsObjects.Token;
+
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -20,8 +24,10 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import network.Connection;
+import network.ConnectionPool;
 
 import serverPackets.CardFocusPacket;
+import serverPackets.TokenPacket;
 
 public class Card extends StackPane {
 	private long cardId;
@@ -107,6 +113,8 @@ public class Card extends StackPane {
 	private double oldX;
 	private double oldY;
 	private double oldRotate;
+
+	private ArrayList<Token> tokenAccess;
 
 	/**
 	 * used in playes SendCardDataThread to check if it's safe
@@ -247,6 +255,11 @@ public class Card extends StackPane {
 
 
 		this.setFocusTraversable( true );
+
+		this.connection = ConnectionPool.getConnection();
+
+
+
 	}
 
 	private void updateGraphics() {
@@ -433,6 +446,10 @@ public class Card extends StackPane {
 		}
 	}
 
+	public void setToken( int tokenField, int newValue ) {
+		tokenAccess.get( tokenField ).setNumber( newValue );
+	}
+
 	public void smoothSetScale( double scale ) {
 		smoothSetScale( scale, 50 );
 	}
@@ -601,17 +618,33 @@ public class Card extends StackPane {
 	/**
 	 * @param connection the connection to set
 	 */
+	/*
 	public void setConnection(Connection connection) {
 		//new Thread( new SendDataThread() ).start();
 		this.shouldSend = true;
 		this.connection = connection;
 	}
+	*/
 
 	/**
 	 * @return the shouldSend
 	 */
 	public boolean isShouldSend() {
 		return shouldSend;
+	}
+
+	/**
+	 * @param shouldSend the shouldSend to set
+	 */
+	public void setShouldSend(boolean shouldSend) {
+		this.shouldSend = shouldSend;
+
+		for( Token t : tokenAccess ) {
+			t.getNumberProperty().addListener( (ov, oVal, nVal) -> {
+				connection.sendPacket( new TokenPacket(
+							tokenAccess.indexOf(t), nVal.intValue(), getCardId() ));
+			});
+		}
 	}
 
 	/**
@@ -654,6 +687,20 @@ public class Card extends StackPane {
 	 */
 	public void setOldRotate(double oldRotate) {
 		this.oldRotate = oldRotate;
+	}
+
+	/**
+	 * @return the tokenAccess
+	 */
+	public ArrayList<Token> getTokenAccess() {
+		return tokenAccess;
+	}
+
+	/**
+	 * @param tokenAccess the tokenAccess to set
+	 */
+	public void setTokenAccess(ArrayList<Token> tokenAccess) {
+		this.tokenAccess = tokenAccess;
 	}
 
 	/**

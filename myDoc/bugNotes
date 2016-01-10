@@ -1,0 +1,31 @@
+chat scroll
+
+cards on bottom of cardChooser can't be scrolled to
+cardChooser back button
+
+notify button
+alarm notify button
+
+better zoom on oponents cards
+
+graveyard kills cards
+	more over network
+	but also a bit locally
+
+
+graphics doesn't start for player with smaller deck
+
+better way to check if a deck is correctly built
+
+card may be put back into collection when zooming (far from deck)
+
+part of program responsible for card desingn may crash
+
+
+the part of the code responsible for checking if the card is over a collection
+quite often crashes the javaFX application thread. This is very fatal.
+
+print how many cards the other player has on hand
+
+When card in hand (in leftmost position) is zoomed then some cards on battlefield
+doesn't respend as well when pressing them to tap

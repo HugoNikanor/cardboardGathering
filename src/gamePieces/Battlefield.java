@@ -11,8 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import network.Connection;
-
 /**
  * A battlefield in rule design Also the graphical representation of the same
  */
@@ -62,9 +60,9 @@ public class Battlefield extends Pane {
 	 * @param cardList
 	 *            String[] with all card names to use in it
 	 */
-	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
+	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, /*Connection connection,*/ JSONCardReader jCardReader, String[] cardList ) {
 
-		player = new Player( WIDTH, jCardReader, cardPlayHandler, connection, cardList );
+		player = new Player( WIDTH, jCardReader, cardPlayHandler, /*connection,*/ cardList );
 		cards = player.getBattlefieldCards();
 
 		this.initialSetup( true );

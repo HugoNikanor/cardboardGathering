@@ -21,6 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import network.Connection;
+import network.ConnectionPool;
 
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardCreatedPacket;
@@ -80,17 +81,19 @@ public class Player extends Pane {
 	 * @param cardList
 	 *            A string array of the names of the cards desired to be created
 	 */
-	public Player( double width, JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, Connection connection, String[] cardList ) {
+	public Player( double width, JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, /*Connection connection,*/ String[] cardList ) {
 		this( jCardReader, cardList );
 		this.cardPlayHandler = cardPlayHandler;
 
-		this.connection = connection;
+		//this.connection = connection;
+		this.connection = ConnectionPool.getConnection();
 		shouldSend = true;
 		new Thread( new SendCardDataThread() ).start();
 
 		for( Card temp : deckCards ) {
 			temp.setOnMouseClicked( cardPlayHandler );
-			temp.setConnection( connection );
+			//temp.setConnection( connection );
+			temp.setShouldSend( true );
 		}
 
 		deckCards.getObservableCardProperty().addListener( 
@@ -125,7 +128,7 @@ public class Player extends Pane {
 
 		lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
 
-		chatContainer = new ChatContainer( connection, lifeCounter );
+		chatContainer = new ChatContainer( lifeCounter );
 
 	}
 
@@ -307,7 +310,8 @@ public class Player extends Pane {
 		card.setTranslateY( card.getHandPopupValue() );
 
 		if( shouldSend ) {
-			card.setConnection( connection );
+			//card.setConnection( connection );
+			card.setShouldSend( true );
 			connection.sendPacket( new CardCreatedPacket( card ) );
 		}
 		Platform.runLater(new Thread(() -> {
@@ -330,7 +334,8 @@ public class Player extends Pane {
 			handCards.add( card );
 			card.setOnMouseClicked( cardPlayHandler );
 			if( shouldSend ) {
-				card.setConnection( connection );
+				//card.setConnection( connection );
+				card.setShouldSend( true );
 				connection.sendPacket( new CardFromDatabasePacket( cardName ) );
 			}
 			Platform.runLater(new Thread(() -> {

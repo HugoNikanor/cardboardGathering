@@ -24,6 +24,7 @@ import serverPackets.ChatMessagePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.NetworkPacket;
 import serverPackets.PoisonSetPacket;
+import serverPackets.TokenPacket;
 import serverPackets.CardCreatedPacket;
 
 /**
@@ -180,7 +181,7 @@ public class InputObjectHandler {
 		battlefield = new Battlefield( jCardReader, obj.getCardList() );
 	}
 	private void createCard( CardCreatedPacket obj ) {
-		ChatStream.print( "Other player created a card", MessageInfo.OTHER, null );
+		ChatStream.print( "Other player created a card", MessageInfo.OTHER );
 		battlefield.getPlayer().createCard( new Card(
 			obj.getCardName(),
 			obj.getType(),
@@ -200,14 +201,19 @@ public class InputObjectHandler {
 		);
 	}
 	private void createCardFromDatabase( CardFromDatabasePacket obj ) {
-		ChatStream.print( "other player querried a card from the database", MessageInfo.OTHER, null );
+		ChatStream.print( "other player querried a card from the database", MessageInfo.OTHER );
 		battlefield.getPlayer().createCardFromDatabase( obj.getCardName() );
 	}
 
 	private void chatMessage( ChatMessagePacket obj ) {
 		System.out.println( "message recieved" );
 		//battlefield.getPlayer().sendMessage( obj.getMessage(), obj.getMessageInfo() );
-		ChatStream.print( obj.getMessage(), obj.getMessageInfo(), null );
+		ChatStream.print( obj.getMessage(), obj.getMessageInfo() );
+	}
+
+	private void token( TokenPacket obj ) {
+		battlefield.getPlayer().getBattlefieldCards().getCard( obj.getParentId() ).
+			setToken( obj.getTokenField(), obj.getNewValue() );
 	}
 
 	/**
@@ -258,6 +264,9 @@ public class InputObjectHandler {
 					break;
 				case CHATMESSAGE:
 					chatMessage( (ChatMessagePacket) pendingPackets.get(0) );
+					break;
+				case TOKEN:
+					token( (TokenPacket) pendingPackets.get(0) );
 					break;
 				default:
 					throw new BadDataException( pendingPackets.get(0).toString() );

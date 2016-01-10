@@ -1,7 +1,7 @@
 package graphicsObjects;
 
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -9,33 +9,53 @@ import javafx.scene.text.Text;
 
 public class Token extends StackPane {
 	private Circle circle;
-	private Text tokenNumberText;
+	private Text numberText;
 
-	private int tokenNumber;
+	private IntegerProperty numberProperty;
 
 	public Token( Paint color ) {
 		circle = new Circle( 10, color );
 
-		tokenNumber = 1;
-		tokenNumberText = new Text( Integer.toString(tokenNumber) );
-		//tokenNumberText.setMouseTransparent( true );
+		numberProperty = new SimpleIntegerProperty();
 
-		this.getChildren().addAll( circle, tokenNumberText );
+		numberProperty.set( 1 );
+		numberText = new Text( Integer.toString(numberProperty.get()) );
 
-		//this.setPickOnBounds( false );
+		this.getChildren().addAll( circle, numberText );
 
-		this.setOnMouseClicked( e -> {
-			if( e.getButton() == MouseButton.PRIMARY) {
-				tokenNumberText.setText( Integer.toString(++tokenNumber) );
+		numberProperty.addListener( (ov, oVal, nVal) -> {
+			numberText.setText( Integer.toString(numberProperty.get()) );
+			if( numberProperty.get() <= 0 ) {
+				this.setVisible( false );
 			}
-			if( e.getButton() == MouseButton.SECONDARY) {
-				tokenNumberText.setText( Integer.toString(--tokenNumber) );
+			if( numberProperty.get() > 0 ) {
+				this.setVisible( true );
 			}
-			if( tokenNumber < 0 ) {
-				((Pane) Token.this.getParent()).getChildren().remove( this );
-			}
-			e.consume();
+			System.out.println( numberProperty.get() );
 		});
+
+		this.setMouseTransparent( true );
+	}
+
+	public void incrament() {
+		numberProperty.set( numberProperty.get() + 1 );
+	}
+
+	public void decrament() {
+		numberProperty.set( numberProperty.get() - 1 );
+		if( numberProperty.get() < 0 )
+			numberProperty.set( 0 );
+	}
+
+	public void setNumber( int number ) {
+		numberProperty.set( number );
+	}
+
+	/**
+	 * @return the numberProperty
+	 */
+	public IntegerProperty getNumberProperty() {
+		return numberProperty;
 	}
 
 }

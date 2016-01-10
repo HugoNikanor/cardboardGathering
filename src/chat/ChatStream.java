@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import network.Connection;
+import network.ConnectionPool;
 
 import serverPackets.ChatMessagePacket;
 
@@ -29,7 +29,7 @@ public class ChatStream {
 		return instance;
 	}
 
-	public static void print( String message, MessageInfo type, Connection connection ) {
+	public static void print( String message, MessageInfo type/*, Connection connection*/ ) {
 		instance = getInstance( instance );
 
 		boolean shouldSend = false;
@@ -73,9 +73,9 @@ public class ChatStream {
 
 		if( shouldSend ) {
 			try {
-				connection.sendPacket( new ChatMessagePacket( message, MessageInfo.OPONENT ) );
+				ConnectionPool.getConnection().sendPacket( new ChatMessagePacket( message, MessageInfo.OPONENT ) );
 			} catch( NullPointerException e ) {
-				ChatStream.print( "Connection missing", MessageInfo.ERROR, null );
+				ChatStream.print( "Connection missing", MessageInfo.ERROR );
 			}
 		}
 

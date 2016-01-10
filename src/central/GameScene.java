@@ -29,7 +29,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
-import network.Connection;
+import network.ConnectionPool;
 import network.InputObjectHandler;
 
 import serverPackets.CardListPacket;
@@ -57,7 +57,7 @@ public class GameScene {
 	//private boolean isFullscreen;
 
 	// Network
-	private Connection connection;
+	//private Connection connection;
 	private InputObjectHandler inputObjectHandler;
 
 	private JSONCardReader jCardReader;
@@ -104,7 +104,10 @@ public class GameScene {
 		               settings.getProperty( "defCardList", "defCardList" ));
 
 	    */
-		connection = new Connection( inputObjectHandler, ip, port );
+		//connection = new Connection( inputObjectHandler, ip, port );
+		ConnectionPool.setDefaultIp( ip );
+		ConnectionPool.setDefaultPort( port );
+		ConnectionPool.setDefaultHandler( inputObjectHandler );
 		//Path deckFilepath = Paths.get( deckFilepath );
 		String[] cardList = {};
 		try {
@@ -117,12 +120,12 @@ public class GameScene {
 				.toArray(String[]::new);           // Make it an array
 			cardStream.close();
 
-			connection.sendPacket( new CardListPacket( cardList ) );
+			ConnectionPool.getConnection().sendPacket( new CardListPacket( cardList ) );
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
 
-		ownBattlefield = new Battlefield( cardPlayHandler, connection, jCardReader, cardList );
+		ownBattlefield = new Battlefield( cardPlayHandler, /*connection,*/ jCardReader, cardList );
 
 
 		// Waits for the other battlefield to get ready

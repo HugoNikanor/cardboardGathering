@@ -125,7 +125,7 @@ public class CardCollection implements Iterable<Card> {
 
 				shuffleBtn = new Button( "Shuffle" );
 				shuffleBtn.setOnAction( e -> {
-					ChatStream.print( "Shuffling cards", MessageInfo.SYSTEM, null );
+					ChatStream.print( "Shuffling cards", MessageInfo.SYSTEM );
 					shuffleCards();
 				} );
 				shuffleBtn.setMaxSize( Double.MAX_VALUE, Double.MAX_VALUE );
@@ -176,7 +176,7 @@ public class CardCollection implements Iterable<Card> {
 				observableCard.set( getNextCard() );
 			} catch( CardNotFoundException ex ) {
 				//ex.printStackTrace();
-				ChatStream.print( "No cards in collection", MessageInfo.SYSTEM, null );
+				ChatStream.print( "No cards in collection", MessageInfo.SYSTEM );
 			}
 		}
 	}

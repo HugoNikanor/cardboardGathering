@@ -1,6 +1,7 @@
 package controllers;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import gamePieces.Card;
@@ -9,6 +10,7 @@ import graphicsObjects.Token;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -64,6 +66,7 @@ public class CardController implements Initializable {
 		ability.setText( card.getAbility() );
 		flavour.setText( card.getFlavour() );
 
+
 		
 		manaCostBlank.setText( Integer.toString(card.getManaCostBlank()) );
 		for( int i = 0; i < card.getManaCostBlack(); i++ ) {
@@ -113,29 +116,63 @@ public class CardController implements Initializable {
 		else
 			toughness.setText( Integer.toString(tough) );
 
+		ArrayList<Token> tokens = new ArrayList<Token>();
+		tokens.add( new Token( Paint.valueOf("Red") ) );
+		tokens.add( new Token( Paint.valueOf("Green") ) );
+		tokens.add( new Token( Paint.valueOf("Blue") ) );
+		tokens.add( new Token( Paint.valueOf("Black") ) );
+		tokens.add( new Token( Paint.valueOf("White") ) );
+		tokens.add( new Token( Paint.valueOf("Grey") ) );
+
+		card.setTokenAccess( tokens );
+
+		redTokenPane.getChildren().add( tokens.get(0) );
+		greenTokenPane.getChildren().add( tokens.get(1) );
+		blueTokenPane.getChildren().add( tokens.get(2) );
+		blackTokenPane.getChildren().add( tokens.get(3) );
+		whiteTokenPane.getChildren().add( tokens.get(4) );
+		greyTokenPane.getChildren().add( tokens.get(5) );
 
 		greyTokenPane.setOnMouseClicked( e -> {
-			greyTokenPane.getChildren().add( new Token( Paint.valueOf("Grey") ) );
+			if( e.getButton() == MouseButton.PRIMARY)
+				tokens.get(5).incrament();
+			if( e.getButton() == MouseButton.SECONDARY)
+				tokens.get(5).decrament();
 			e.consume();
 		});
 		redTokenPane.setOnMouseClicked( e -> {
-			redTokenPane.getChildren().add( new Token( Paint.valueOf("Red") ) );
+			if( e.getButton() == MouseButton.PRIMARY)
+				tokens.get(0).incrament();
+			if( e.getButton() == MouseButton.SECONDARY)
+				tokens.get(0).decrament();
 			e.consume();
 		});
 		blueTokenPane.setOnMouseClicked( e -> {
-			blueTokenPane.getChildren().add( new Token( Paint.valueOf("Blue") ) );
+			if( e.getButton() == MouseButton.PRIMARY)
+				tokens.get(2).incrament();
+			if( e.getButton() == MouseButton.SECONDARY)
+				tokens.get(2).decrament();
 			e.consume();
 		});
 		greenTokenPane.setOnMouseClicked( e -> {
-			greenTokenPane.getChildren().add( new Token( Paint.valueOf("Green") ) );
+			if( e.getButton() == MouseButton.PRIMARY)
+				tokens.get(1).incrament();
+			if( e.getButton() == MouseButton.SECONDARY)
+				tokens.get(1).decrament();
 			e.consume();
 		});
 		whiteTokenPane.setOnMouseClicked( e -> {
-			whiteTokenPane.getChildren().add( new Token( Paint.valueOf("White") ) );
+			if( e.getButton() == MouseButton.PRIMARY)
+				tokens.get(4).incrament();
+			if( e.getButton() == MouseButton.SECONDARY)
+				tokens.get(4).decrament();
 			e.consume();
 		});
 		blackTokenPane.setOnMouseClicked( e -> {
-			blackTokenPane.getChildren().add( new Token( Paint.valueOf("DimGrey") ) );
+			if( e.getButton() == MouseButton.PRIMARY)
+				tokens.get(3).incrament();
+			if( e.getButton() == MouseButton.SECONDARY)
+				tokens.get(3).decrament();
 			e.consume();
 		});
 

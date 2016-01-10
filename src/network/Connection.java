@@ -41,9 +41,11 @@ public class Connection {
 	 * @param inputObjectHandler the class that takes care of the inputs
 	 * @param ip the ip address of the server
 	 */
+	/*
 	public Connection( InputObjectHandler inputObjectHandler, String ip ) {
 		this( inputObjectHandler, ip, 23732 );
 	}
+	*/
 
 	/**
 	 * Initiates the connection
@@ -52,7 +54,7 @@ public class Connection {
 	 * @param ip the servers ip address
 	 * @param port the port that the server is on
 	 */
-	public Connection( InputObjectHandler inputObjectHandler, String ip, int port ) {
+	protected Connection( InputObjectHandler inputObjectHandler, String ip, int port ) {
 		this.inObjHandler = inputObjectHandler;
 
 		connected = false;

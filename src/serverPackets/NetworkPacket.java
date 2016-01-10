@@ -26,6 +26,7 @@ public class NetworkPacket implements Serializable {
 		CARDCREATE,
 		CARDFROMDATABASE,
 		CHATMESSAGE,
+		TOKEN,
 	}
 
 	/**
