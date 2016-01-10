@@ -14,11 +14,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.transform.Scale;
+//import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 /**
@@ -30,7 +31,8 @@ public class CardSelectionPane {
 
 	/**
 	 * replaces the current scene in the stage with a card selection scene <br>
-	 * It then returns the card you pressed in the new scene, and the scene is switched back.
+	 * It then returns the card you pressed in the new scene, and the scene is switched back <br>
+	 * This is rather slow since it manually adds all the cards when the button is pressed
 	 * @param cards from which collection the cards displayed should be taken
 	 * @param stage which stage the scene should be set on
 	 */
@@ -45,17 +47,20 @@ public class CardSelectionPane {
 		innerPane.setVgap( 15 );
 		innerPane.setHgap( 15 );
 		innerPane.setAlignment( Pos.CENTER );
-		innerPane.setPrefWrapLength( stage.getWidth() / 1.5 );
+		innerPane.setPrefWrapLength( stage.getWidth() );
 
 		outerPane.setContent( innerPane );
+		outerPane.setPrefViewportHeight( stage.getHeight() );
 		outerPane.getStyleClass().add("card-select-pane-outer");
+		outerPane.setHbarPolicy( ScrollBarPolicy.NEVER );
 
 		StackPane rootPane = new StackPane();
 		Scene defaultScene = stage.getScene();
 
 		rootPane.getChildren().add( outerPane );
 
-		rootPane.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
+		//rootPane.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
+		//innerPane.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
 
 		Scene chooseScene = new Scene( rootPane, stage.getWidth(), stage.getHeight() );
 
@@ -72,6 +77,7 @@ public class CardSelectionPane {
 		// since the cards in the deck are accessed that way.
 		for( Card temp : cards ) {
 			Card innerTemp = new Card(temp, temp.getCardId());
+			//innerTemp.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
 			innerTemp.setOnMouseClicked( new EventHandler<MouseEvent>() {
 				@Override
 				public void handle( MouseEvent event ) {

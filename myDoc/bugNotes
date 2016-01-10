@@ -1,5 +1,3 @@
-chat scroll
-
 cards on bottom of cardChooser can't be scrolled to
 cardChooser back button
 
@@ -14,6 +12,7 @@ graphics doesn't start for player with smaller deck
 better way to check if a deck is correctly built
 
 card may be put back into collection when zooming (far from deck)
+	this doesn't happen often
 
 part of program responsible for card desingn may crash,
 	But this doesn't happen often
