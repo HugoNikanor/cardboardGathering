@@ -17,10 +17,12 @@
 		</padding>
 		<Text fx:id="name" text="NOOOOOOOOOOO" styleClass="text" />
 		<FlowPane fx:id="manaCont" alignment="CENTER_RIGHT" >
+			<!--
 			<StackPane>
 				<Circle radius="5" fill="Grey" />
 				<Text fx:id="manaCostBlank" />
 			</StackPane>
+			-->
 		</FlowPane >
 	</HBox>
 

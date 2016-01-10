@@ -71,6 +71,7 @@ public class Card extends StackPane {
 	private int manaCostGreen;
 	private int manaCostRed;
 	private int manaCostWhite;
+	// shouldn't this be a boolean...?
 	private int manaCostX;
 
 	private int convertedManaCost;
@@ -123,7 +124,8 @@ public class Card extends StackPane {
 	 */
 	private boolean beingUsed;
 
-	private MouseEventHandler mouseEventHandler;
+	private LocalMouseHandler localMouseHandler;
+	private RemoteMouseHandler remoteMouseHandler;
 
 	/**
 	 * How far a card should pop up when you hoover over it
@@ -239,15 +241,18 @@ public class Card extends StackPane {
 
 		this.setCursor(Cursor.HAND);
 
-		mouseEventHandler = new MouseEventHandler();
+		localMouseHandler = new LocalMouseHandler();
+		remoteMouseHandler = new RemoteMouseHandler();
 
 		// TODO these are only applicable for the own cards
-		this.setOnMouseDragged ( mouseEventHandler );
-		this.setOnMousePressed ( mouseEventHandler );
-		this.setOnMouseReleased( mouseEventHandler );
-		this.setOnMouseEntered ( mouseEventHandler );
-		this.setOnMouseExited  ( mouseEventHandler );
-		this.addEventHandler( MouseEvent.MOUSE_CLICKED, mouseEventHandler );
+		this.setOnMouseDragged ( localMouseHandler );
+		this.setOnMousePressed ( localMouseHandler );
+		this.setOnMouseReleased( localMouseHandler );
+		//this.setOnMouseEntered ( localMouseHandler );
+		//this.setOnMouseExited  ( localMouseHandler );
+		this.setOnMouseEntered ( remoteMouseHandler );
+		this.setOnMouseExited  ( remoteMouseHandler );
+		this.addEventHandler( MouseEvent.MOUSE_CLICKED, localMouseHandler );
 		this.setOnScroll( new ScrollEventHandler() );
 
 		this.scaleFactor = 1;
@@ -341,12 +346,28 @@ public class Card extends StackPane {
 		}
 	}
 
+	private class RemoteMouseHandler implements EventHandler<MouseEvent> {
 
-	public class MouseEventHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			System.out.println( event.getEventType() );
+			if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+				smoothSetScale( scaleFactor * 2.5, 100 );
+				smoothSetRotate( 180, 200 );
+				toFront();
+			}
+			if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+				smoothSetScale( scaleFactor, 100 );
+				smoothSetRotate( 0, 200 );
+			}
+
+		}
+	}
+
+	public class LocalMouseHandler implements EventHandler<MouseEvent> {
 
 		private double mouseInSceneX;
 		private double mouseInSceneY;
-		//private EventType<? extends MouseEvent> lastEvent;
 
 		@Override
 		public void handle(MouseEvent event) {
@@ -614,17 +635,6 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * @param connection the connection to set
-	 */
-	/*
-	public void setConnection(Connection connection) {
-		//new Thread( new SendDataThread() ).start();
-		this.shouldSend = true;
-		this.connection = connection;
-	}
-	*/
-
-	/**
 	 * @return the shouldSend
 	 */
 	public boolean isShouldSend() {
@@ -637,11 +647,15 @@ public class Card extends StackPane {
 	public void setShouldSend(boolean shouldSend) {
 		this.shouldSend = shouldSend;
 
-		for( Token t : tokenAccess ) {
-			t.getNumberProperty().addListener( (ov, oVal, nVal) -> {
-				connection.sendPacket( new TokenPacket(
-							tokenAccess.indexOf(t), nVal.intValue(), getCardId() ));
-			});
+		if( shouldSend ) {
+			for( Token t : tokenAccess ) {
+				t.getNumberProperty().addListener( (ov, oVal, nVal) -> {
+					connection.sendPacket( new TokenPacket(
+								tokenAccess.indexOf(t), nVal.intValue(), getCardId() ));
+				});
+			}
+			this.setOnMouseEntered( localMouseHandler );
+			this.setOnMouseExited( localMouseHandler );
 		}
 	}
 
@@ -718,8 +732,17 @@ public class Card extends StackPane {
 	/**
 	 * @return the mouseEventHandler
 	 */
-	public MouseEventHandler getMouseEventHandler() {
-		return mouseEventHandler;
+	/*
+	public LocalMouseHandler getLocalMouseHandler() {
+		return localMouseHandler;
+	}
+	*/
+
+	/**
+	 * @return the localMouseHandler
+	 */
+	public LocalMouseHandler getLocalMouseHandler() {
+		return localMouseHandler;
 	}
 
 	/**

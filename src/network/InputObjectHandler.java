@@ -179,7 +179,7 @@ public class InputObjectHandler {
 		battlefield.getPlayer().setPoison( obj.getPoison() );
 	}
 	private void setCardList( CardListPacket obj ) {
-		battlefield = new Battlefield( jCardReader, obj.getCardList() );
+		battlefield = new Battlefield( jCardReader, obj.getCardList(), false );
 	}
 	private void createCard( CardCreatedPacket obj ) {
 		ChatStream.print( "Other player created a card", MessageInfo.OTHER );

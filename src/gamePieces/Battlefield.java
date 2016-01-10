@@ -41,6 +41,7 @@ public class Battlefield extends Pane {
 	 *            Get's the card data from there
 	 * @param cardList the name of the cards that should be created
 	 */
+	/*
 	public Battlefield(JSONCardReader jCardReader, String[] cardList) {
 		// Both players MUST have all database files
 		player = new Player( jCardReader, cardList );
@@ -48,6 +49,7 @@ public class Battlefield extends Pane {
 
 		this.initialSetup( false );
 	}
+	*/
 
 	/**
 	 * This is for creating the local battlefield

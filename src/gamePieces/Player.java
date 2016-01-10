@@ -81,7 +81,7 @@ public class Player extends Pane {
 	 * @param cardList
 	 *            A string array of the names of the cards desired to be created
 	 */
-	public Player( double width, JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, /*Connection connection,*/ String[] cardList ) {
+	public Player( double width, JSONCardReader jCardReader, EventHandler<MouseEvent> cardPlayHandler, String[] cardList ) {
 		this( jCardReader, cardList );
 		this.cardPlayHandler = cardPlayHandler;
 
@@ -98,7 +98,6 @@ public class Player extends Pane {
 
 		deckCards.getObservableCardProperty().addListener( 
 				(ov, oldValue, newValue ) -> {
-			//if( newValue == null ) return;
 			try {
 				drawCard( newValue );
 			} catch ( CardNotFoundException e ) {
@@ -589,7 +588,10 @@ public class Player extends Pane {
 			// Changes the hower action from "jump up" in hand
 			// to "set focus" on the battlefield
 			// TODO set this in a prettier way
-			card.setOnMouseEntered( card.getMouseEventHandler() );
+			// the if check is a horrible hack
+			if( shouldSend ) {
+				card.setOnMouseEntered( card.getLocalMouseHandler() );
+			}
 
 			tt.play();
 

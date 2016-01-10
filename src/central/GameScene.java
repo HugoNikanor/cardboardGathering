@@ -160,6 +160,7 @@ public class GameScene {
 		GridPane battlefieldContainer = new GridPane();
 		battlefieldContainer.add(otherBattlefield, 0, 0);
 		battlefieldContainer.add(ownBattlefield,   0, 1);
+		otherBattlefield.toFront();
 
 		// The pane everything ingame should be placed in
 		// Change this for "out of game" menus & simmilar
