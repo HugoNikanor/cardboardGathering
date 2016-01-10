@@ -16,7 +16,7 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
+//import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -167,8 +167,6 @@ public class Card extends StackPane {
 		int manaCostBlank,
 		int manaCostX
 	) {
-		//cardId = CARD_ID_COUNTER_NEW++;
-
 		this.cardName  = cardName;
 		this.type      = type;
 		this.subtype   = subtype;
@@ -249,6 +247,7 @@ public class Card extends StackPane {
 		this.setOnMouseReleased( mouseEventHandler );
 		this.setOnMouseEntered ( mouseEventHandler );
 		this.setOnMouseExited  ( mouseEventHandler );
+		this.addEventHandler( MouseEvent.MOUSE_CLICKED, mouseEventHandler );
 		this.setOnScroll( new ScrollEventHandler() );
 
 		this.scaleFactor = 1;
@@ -263,10 +262,8 @@ public class Card extends StackPane {
 	}
 
 	private void updateGraphics() {
-		//Pane buffer = new CardController().getGraphics(this);
 		try {
 			URL url = Paths.get("fxml/CardDesign.fxml").toUri().toURL();
-			//Pane buffer = FXMLLoader.load( url );
 			FXMLLoader loader = new FXMLLoader( url );
 			Pane buffer = loader.load();
 			((CardController)loader.getController()).updateFields( this );
@@ -349,7 +346,7 @@ public class Card extends StackPane {
 
 		private double mouseInSceneX;
 		private double mouseInSceneY;
-		private EventType<? extends MouseEvent> lastEvent;
+		//private EventType<? extends MouseEvent> lastEvent;
 
 		@Override
 		public void handle(MouseEvent event) {
@@ -375,13 +372,14 @@ public class Card extends StackPane {
 					Card.this.setCursor( Cursor.HAND );
 				}
 
-				// Rotates the card if it's clicked and not draged
-				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
-					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
-					if( getRotate() == 0 ) {
-						smoothSetRotate( 90d, 500 );
-					} else {
-						smoothSetRotate( 0d, 500 );
+				// rotate the card on click
+				if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+					if( event.isStillSincePress() ) {
+						if( getRotate() == 0 ) {
+							smoothSetRotate( 90d, 500 );
+						} else {
+							smoothSetRotate( 0d, 500 );
+						}
 					}
 				}
 
@@ -412,7 +410,7 @@ public class Card extends StackPane {
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
 				}
-				this.lastEvent = event.getEventType();
+				//this.lastEvent = event.getEventType();
 
 				break;
 			case HAND:
