@@ -8,10 +8,6 @@ alarm notify button
 
 better zoom on oponents cards
 
-graveyard kills cards
-	more over network
-	but also a bit locally
-
 
 graphics doesn't start for player with smaller deck
 
@@ -19,11 +15,13 @@ better way to check if a deck is correctly built
 
 card may be put back into collection when zooming (far from deck)
 
-part of program responsible for card desingn may crash
+part of program responsible for card desingn may crash,
+	But this doesn't happen often
 
 
 the part of the code responsible for checking if the card is over a collection
 quite often crashes the javaFX application thread. This is very fatal.
+	This may be fixed when I made the collections synchronized
 
 print how many cards the other player has on hand
 

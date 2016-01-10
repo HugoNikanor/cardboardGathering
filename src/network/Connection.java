@@ -8,6 +8,8 @@ import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
 
+import chat.ChatStream;
+import chat.MessageInfo;
 import serverPackets.NetworkPacket;
 
 /**
@@ -107,6 +109,7 @@ public class Connection {
 						inObjHandler.handleObject( inPacket );
 					} catch( EOFException e ) {
 						System.out.println("other client closed connection");
+						ChatStream.print( "Other client closed connection", MessageInfo.ERROR );
 						running = false;
 					} catch( StreamCorruptedException e ) { 
 						e.printStackTrace();

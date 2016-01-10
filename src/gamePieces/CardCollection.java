@@ -172,6 +172,7 @@ public class CardCollection implements Iterable<Card> {
 								CardCollection.this, (Stage)graphicPane.getScene().getWindow() ));
 				} catch( CardNotFoundException ex ) {
 					//ex.printStackTrace();
+					ChatStream.print( "No cards in collection", MessageInfo.SYSTEM );
 				}
 			}).start();
 		}

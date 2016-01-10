@@ -8,6 +8,7 @@
 - keyboard input is currently disabled, maybe do something about this
 
 # Network
+- Ping server, to prevent timeouts, or atleast detect them
 
 # Other
 - Make crashes and other program close actions work better
