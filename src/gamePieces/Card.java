@@ -4,25 +4,33 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
-import graphicsObjects.CardData;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import controllers.CardController;
+
+import graphicsObjects.Token;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
+//import javafx.event.EventType;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import network.Connection;
+import network.ConnectionPool;
 
 import serverPackets.CardFocusPacket;
+import serverPackets.TokenPacket;
 
 public class Card extends StackPane {
 	private long cardId;
-	// TODO, this should probably be removed
-	private static long CARD_ID_COUNTER_NEW = 0;
 
 	private String cardName;
 	private String type;
@@ -30,8 +38,19 @@ public class Card extends StackPane {
 	private String ability;
 	private String flavour;
 
+	/**
+	 * '*' is -200<br>
+	 * number format exception is -300 (weird things)<br>
+	 * -100 is missing data from database (a card without this value)
+	 */
 	private int power;
+	/**
+	 * '*' is -200<br>
+	 * number format exception is -300 (weird things)<br>
+	 * -100 is missing data from database (a card without this value)
+	 */
 	private int toughness;
+	/** This isn't even used... */
 	private int loyalty;
 
 	/**
@@ -52,6 +71,8 @@ public class Card extends StackPane {
 	private int manaCostGreen;
 	private int manaCostRed;
 	private int manaCostWhite;
+	// shouldn't this be a boolean...?
+	private int manaCostX;
 
 	private int convertedManaCost;
 
@@ -77,7 +98,7 @@ public class Card extends StackPane {
 	/**
 	 * The current location of the card
 	 */
-	private CardCollection.Collections currentLocation;
+	private CardCollection.CollectionTypes currentLocation;
 
 	/**
 	 * The cards margin while it is in hand <br>
@@ -94,6 +115,8 @@ public class Card extends StackPane {
 	private double oldY;
 	private double oldRotate;
 
+	private ArrayList<Token> tokenAccess;
+
 	/**
 	 * used in playes SendCardDataThread to check if it's safe
 	 * to let the card go into a collection, among other possible
@@ -101,7 +124,8 @@ public class Card extends StackPane {
 	 */
 	private boolean beingUsed;
 
-	private MouseEventHandler mouseEventHandler;
+	private LocalMouseHandler localMouseHandler;
+	private RemoteMouseHandler remoteMouseHandler;
 
 	/**
 	 * How far a card should pop up when you hoover over it
@@ -142,10 +166,9 @@ public class Card extends StackPane {
 		int manaCostGreen,
 		int manaCostRed,
 		int manaCostWhite,
-		int manaCostBlank
+		int manaCostBlank,
+		int manaCostX
 	) {
-		cardId = CARD_ID_COUNTER_NEW++;
-
 		this.cardName  = cardName;
 		this.type      = type;
 		this.subtype   = subtype;
@@ -161,14 +184,17 @@ public class Card extends StackPane {
 		this.manaCostRed   = manaCostRed;
         this.manaCostWhite = manaCostWhite;
 		this.manaCostBlank = manaCostBlank;
+		this.manaCostX     = manaCostX;
 
 		this.calcConvMana();
 
-		currentLocation = CardCollection.Collections.DECK;
+		currentLocation = CardCollection.CollectionTypes.DECK;
 	}
 
 	/**
-	 * Used to allow for copying a card
+	 * Used to allow for copying a card,<br>
+	 * also allow the above "idea of card" to become
+	 * a full fledged card, I'm sorry.
 	 * @param cardToCopy the card that you want a copy of
 	 * @param cardId the id the new card should have
 	 * you have to make sure yourself that no two cards share an id number
@@ -192,6 +218,7 @@ public class Card extends StackPane {
 		this.manaCostRed   = cardToCopy.getManaCostRed();
         this.manaCostWhite = cardToCopy.getManaCostWhite();
 		this.manaCostBlank = cardToCopy.getManaCostBlank();
+		this.manaCostX     = cardToCopy.getManaCostX();
 
 		this.calcConvMana();
 
@@ -210,27 +237,55 @@ public class Card extends StackPane {
 		this.setMinSize(this.getWidth(), this.getHeight());
 		this.setPrefSize(this.getWidth(), this.getHeight());
 
-		this.getChildren().add( new CardData(this) );
+		this.updateGraphics();
 
 		this.setCursor(Cursor.HAND);
 
-		mouseEventHandler = new MouseEventHandler();
+		localMouseHandler = new LocalMouseHandler();
+		remoteMouseHandler = new RemoteMouseHandler();
 
 		// TODO these are only applicable for the own cards
-		this.setOnMouseDragged ( mouseEventHandler );
-		this.setOnMousePressed ( mouseEventHandler );
-		this.setOnMouseReleased( mouseEventHandler );
-		this.setOnMouseEntered ( mouseEventHandler );
-		this.setOnMouseExited  ( mouseEventHandler );
+		this.setOnMouseDragged ( localMouseHandler );
+		this.setOnMousePressed ( localMouseHandler );
+		this.setOnMouseReleased( localMouseHandler );
+		//this.setOnMouseEntered ( localMouseHandler );
+		//this.setOnMouseExited  ( localMouseHandler );
+		this.setOnMouseEntered ( remoteMouseHandler );
+		this.setOnMouseExited  ( remoteMouseHandler );
+		this.addEventHandler( MouseEvent.MOUSE_CLICKED, localMouseHandler );
 		this.setOnScroll( new ScrollEventHandler() );
 
 		this.scaleFactor = 1;
 
-		// if there is a better way to do this, tell me
-		containerSizeX = Battlefield.WIDTH - this.getWidth();
-		containerSizeY = Battlefield.HEIGHT - this.getHeight();
 
 		this.setFocusTraversable( true );
+
+		this.connection = ConnectionPool.getConnection();
+
+
+
+	}
+
+	private void updateGraphics() {
+		try {
+			URL url = Paths.get("fxml/CardDesign.fxml").toUri().toURL();
+			FXMLLoader loader = new FXMLLoader( url );
+			Pane buffer = loader.load();
+			((CardController)loader.getController()).updateFields( this );
+			this.getChildren().setAll( buffer );
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateContainerSize() {
+		try {
+			containerSizeX = ((Pane) this.getParent()).getPrefWidth() - this.getWidth();
+			containerSizeY = ((Pane) this.getParent()).getPrefHeight() - this.getHeight();
+		} catch( NullPointerException e ) {
+			containerSizeX = 0;
+			containerSizeY = 0;
+		}
 	}
 
 	/**
@@ -291,15 +346,33 @@ public class Card extends StackPane {
 		}
 	}
 
-
-	public class MouseEventHandler implements EventHandler<MouseEvent> {
-
-		private double mouseInSceneX;
-		private double mouseInSceneY;
-		private EventType<? extends MouseEvent> lastEvent;
+	private class RemoteMouseHandler implements EventHandler<MouseEvent> {
 
 		@Override
 		public void handle(MouseEvent event) {
+			System.out.println( event.getEventType() );
+			if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
+				smoothSetScale( scaleFactor * 2.5, 100 );
+				smoothSetRotate( 180, 200 );
+				toFront();
+			}
+			if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
+				smoothSetScale( scaleFactor, 100 );
+				smoothSetRotate( 0, 200 );
+			}
+
+		}
+	}
+
+	public class LocalMouseHandler implements EventHandler<MouseEvent> {
+
+		private double mouseInSceneX;
+		private double mouseInSceneY;
+
+		@Override
+		public void handle(MouseEvent event) {
+
+			
 			switch( currentLocation ) {
 			case BATTLEFIELD:
 
@@ -320,13 +393,14 @@ public class Card extends StackPane {
 					Card.this.setCursor( Cursor.HAND );
 				}
 
-				// Rotates the card if it's clicked and not draged
-				if( event.getEventType() == MouseEvent.MOUSE_RELEASED &&
-					this.lastEvent == MouseEvent.MOUSE_PRESSED ) {
-					if( getRotate() == 0 ) {
-						smoothSetRotate( 90d, 500 );
-					} else {
-						smoothSetRotate( 0d, 500 );
+				// rotate the card on click
+				if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+					if( event.isStillSincePress() ) {
+						if( getRotate() == 0 ) {
+							smoothSetRotate( 90d, 500 );
+						} else {
+							smoothSetRotate( 0d, 500 );
+						}
 					}
 				}
 
@@ -340,6 +414,7 @@ public class Card extends StackPane {
 					Card.this.setTranslateX(getTranslateX() + xChange * ( 1/scaleFactor ));
 					Card.this.setTranslateY(getTranslateY() + yChange * ( 1/scaleFactor ));
 
+					// Check that the card doesn't leave the field
 					if( getTranslateX() < 0 ) {
 						setTranslateX(0);
 					}
@@ -356,16 +431,18 @@ public class Card extends StackPane {
 					this.mouseInSceneX = event.getSceneX();
 					this.mouseInSceneY = event.getSceneY();
 				}
-				this.lastEvent = event.getEventType();
+				//this.lastEvent = event.getEventType();
 
 				break;
 			case HAND:
 				if( event.getEventType() == MouseEvent.MOUSE_ENTERED ) {
-					smoothPlace( getTranslateX(), -3*handPopupValue, 200 );
+					//smoothPlace( getTranslateX(), -3*handPopupValue, 200 );
+					smoothPlaceY( -3 * handPopupValue, 200 );
 				}
 
 				if( event.getEventType() == MouseEvent.MOUSE_EXITED ) {
-					smoothPlace( getTranslateX(), handPopupValue, 200 );
+					//smoothPlace( getTranslateX(), handPopupValue, 200 );
+					smoothPlaceY( handPopupValue, 200 );
 				}
 				break;
 			default:
@@ -386,6 +463,10 @@ public class Card extends StackPane {
 			else
 				smoothSetScale( 1, 50 );
 		}
+	}
+
+	public void setToken( int tokenField, int newValue ) {
+		tokenAccess.get( tokenField ).setNumber( newValue );
 	}
 
 	public void smoothSetScale( double scale ) {
@@ -481,8 +562,7 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * Smoothly moves the card to the set coordinate <br>
-	 * If the coordinate is out of bounds then it's set to the bound
+	 * Smoothly moves the card to the set coordinate
 	 * @param posX the x coordinate the card should end up at
 	 * @param posY the Y coordinate the card should end up at
 	 * @param transitionSpeed how long the animation should take, in milliseconds
@@ -490,21 +570,20 @@ public class Card extends StackPane {
 	public void smoothPlace( double posX, double posY, int transitionSpeed ) {
 		TranslateTransition tt;
 		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
+		tt.setToX( posX );
+		tt.setToY( posY );
+		tt.play();
+	}
+	public void smoothPlaceY( double posY, int transitionSpeed ) {
+		TranslateTransition tt;
+		tt = new TranslateTransition( Duration.millis( transitionSpeed ), this );
 
-		if( posX > Battlefield.WIDTH - this.getWidth() ) {
-			tt.setToX( Battlefield.WIDTH - this.getWidth() );
-		} else {
-			tt.setToX( posX );
-		}
-
-		if( posY > Battlefield.HEIGHT - this.getHeight() ) {
-			tt.setToY( Battlefield.HEIGHT - this.getHeight() );
-		} else {
-			tt.setToY( posY );
-		}
+		tt.setToY( posY );
 
 		tt.play();
-
+	}
+	public void smoothPlaceY( double posY ) {
+		smoothPlaceY( posY, 200 );
 	}
 
 	public void modifyTranslateX(double change) {
@@ -543,11 +622,11 @@ public class Card extends StackPane {
 		return currentCard;
 	}
 
-	public CardCollection.Collections getCurrentLocation() {
+	public CardCollection.CollectionTypes getCurrentLocation() {
 		return currentLocation;
 	}
 
-	public void setCurrentLocation(CardCollection.Collections currentLocation) {
+	public void setCurrentLocation(CardCollection.CollectionTypes currentLocation) {
 		this.currentLocation = currentLocation;
 	}
 
@@ -556,19 +635,28 @@ public class Card extends StackPane {
 	}
 
 	/**
-	 * @param connection the connection to set
-	 */
-	public void setConnection(Connection connection) {
-		//new Thread( new SendDataThread() ).start();
-		this.shouldSend = true;
-		this.connection = connection;
-	}
-
-	/**
 	 * @return the shouldSend
 	 */
 	public boolean isShouldSend() {
 		return shouldSend;
+	}
+
+	/**
+	 * @param shouldSend the shouldSend to set
+	 */
+	public void setShouldSend(boolean shouldSend) {
+		this.shouldSend = shouldSend;
+
+		if( shouldSend ) {
+			for( Token t : tokenAccess ) {
+				t.getNumberProperty().addListener( (ov, oVal, nVal) -> {
+					connection.sendPacket( new TokenPacket(
+								tokenAccess.indexOf(t), nVal.intValue(), getCardId() ));
+				});
+			}
+			this.setOnMouseEntered( localMouseHandler );
+			this.setOnMouseExited( localMouseHandler );
+		}
 	}
 
 	/**
@@ -614,6 +702,20 @@ public class Card extends StackPane {
 	}
 
 	/**
+	 * @return the tokenAccess
+	 */
+	public ArrayList<Token> getTokenAccess() {
+		return tokenAccess;
+	}
+
+	/**
+	 * @param tokenAccess the tokenAccess to set
+	 */
+	public void setTokenAccess(ArrayList<Token> tokenAccess) {
+		this.tokenAccess = tokenAccess;
+	}
+
+	/**
 	 * @return the beingUsed
 	 */
 	public boolean isBeingUsed() {
@@ -630,8 +732,17 @@ public class Card extends StackPane {
 	/**
 	 * @return the mouseEventHandler
 	 */
-	public MouseEventHandler getMouseEventHandler() {
-		return mouseEventHandler;
+	/*
+	public LocalMouseHandler getLocalMouseHandler() {
+		return localMouseHandler;
+	}
+	*/
+
+	/**
+	 * @return the localMouseHandler
+	 */
+	public LocalMouseHandler getLocalMouseHandler() {
+		return localMouseHandler;
 	}
 
 	/**
@@ -657,7 +768,8 @@ public class Card extends StackPane {
 			"manaCostWhite: " + manaCostWhite + "\n" +
 			"manaCostBlack: " + manaCostBlack + "\n" +
 			"manaCostGreen: " + manaCostGreen + "\n" +
-			"manaCostBlank: " + manaCostBlank + "\n";
+			"manaCostBlank: " + manaCostBlank + "\n" +
+			"id           : " + cardId;
 		return returnString;
 	}
 	
@@ -727,6 +839,13 @@ public class Card extends StackPane {
 
 	public int getManaCostBlank() {
 		return manaCostBlank;
+	}
+
+	/**
+	 * @return the manaCostX
+	 */
+	public int getManaCostX() {
+		return manaCostX;
 	}
 
 	public int getConvertedManaCost() {

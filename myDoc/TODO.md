@@ -1,15 +1,20 @@
 # Gameplay
 - Allow for cards getting turned upside down
-- Put card back into deck
-- Put card in graveyard
-- retrive card from graveyard
 
 # Graphical
-- Have a marker layer, that allow you to drag markers from a marker collection in your hand out to the battlefield. (any side)
-- Chat in lower right
+- Make cards look presentable
+
+# Input
+- keyboard input is currently disabled, maybe do something about this
 
 # Network
+- Ping server, to prevent timeouts, or atleast detect them
 
 # Other
 - Make crashes and other program close actions work better
-- Tokens should follow the same rules as cards
+- Sort cards in hand?
+- move the collection enum to its own file (from cardCollection)
+
+# Card creation
+
+# Chat

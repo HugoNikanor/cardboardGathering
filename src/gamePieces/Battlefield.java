@@ -2,15 +2,16 @@ package gamePieces;
 
 import database.JSONCardReader;
 
-import graphicsObjects.TokenContainer;
+import exceptions.CardNotFoundException;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-
-import network.Connection;
+import javafx.scene.layout.VBox;
 
 /**
  * A battlefield in rule design Also the graphical representation of the same
@@ -18,10 +19,18 @@ import network.Connection;
 public class Battlefield extends Pane {
 
 	private Player player;
-	private CardCollection cards;
+	//private CardCollection cards;
 
-	public static final double WIDTH = 1920;// 1600;
-	public static final double HEIGHT = 474;// 395;
+	/**
+	 * Here so that all cards can have a set height in relation to everything else.
+	 */
+	private Pane cardLayer;
+
+	private BorderPane upperPane;
+	private BorderPane lowerPane;
+
+	private static final double WIDTH = 1920;// 1600;
+	private static final double HEIGHT = 474;// 395;
 
 	private boolean isReady;
 
@@ -32,14 +41,15 @@ public class Battlefield extends Pane {
 	 *            Get's the card data from there
 	 * @param cardList the name of the cards that should be created
 	 */
+	/*
 	public Battlefield(JSONCardReader jCardReader, String[] cardList) {
 		// Both players MUST have all database files
-		player = new Player(jCardReader, cardList);
-		cards = player.getBattlefieldCards();
+		player = new Player( jCardReader, cardList );
+		//cards = player.getBattlefieldCards();
 
-		this.initialSetup();
-		this.setRotate(180d);
+		this.initialSetup( false );
 	}
+	*/
 
 	/**
 	 * This is for creating the local battlefield
@@ -54,19 +64,22 @@ public class Battlefield extends Pane {
 	 * @param cardList
 	 *            String[] with all card names to use in it
 	 */
-	public Battlefield( EventHandler<MouseEvent> cardPlayHandler, Connection connection, JSONCardReader jCardReader, String[] cardList ) {
+	public Battlefield( JSONCardReader jCardReader, String[] cardList, boolean local ) {
+		if( local )
+			player = new Player( WIDTH, jCardReader, new CardPlayHandler(), cardList );
+		else
+			player = new Player( jCardReader, cardList );
 
-		player = new Player( jCardReader, cardPlayHandler, connection, cardList );
-		cards = player.getBattlefieldCards();
+		//cards = player.getBattlefieldCards();
 
-		this.initialSetup();
+		this.initialSetup( local );
 	}
 
 	/**
 	 * The parts of the constructor that are the same between the local and
 	 * remote instance of the class
 	 */
-	private void initialSetup() {
+	private void initialSetup( boolean isLocal ) {
 		// JavaFX
 		this.getStyleClass().add("battlefield");
 		this.setWidth(WIDTH);
@@ -76,23 +89,70 @@ public class Battlefield extends Pane {
 		this.setPrefSize(this.getWidth(), this.getHeight());
 		this.setMinSize(this.getWidth(), this.getHeight());
 
-		// token container
-		TokenContainer tc = new TokenContainer( new CardCreateHandler() );
-		this.getChildren().add( tc );
-		
+		cardLayer = new Pane();
+		cardLayer.setPickOnBounds( false );
+		cardLayer.setPrefSize(this.getWidth(), this.getHeight());
+		//cardLayer.setMinSize(this.getWidth(), this.getHeight());
 
-		// Deck
-		this.getChildren().add( player.getDeckCont() );
+		upperPane = new BorderPane();
+		upperPane.setPickOnBounds( false );
+		upperPane.setPrefSize( this.getWidth(), this.getHeight() );
 
-		// Graveyard
-		this.getChildren().add( player.getGraveCont() );
+		lowerPane = new BorderPane();
+		lowerPane.setPickOnBounds( false );
+		lowerPane.setPrefSize( this.getWidth(), this.getHeight() );
 
-		// Life counter
-		this.getChildren().add( player.getLifeCounter() );
 
+		VBox cardStackContainerContainer = new VBox( 30 );
+		cardStackContainerContainer.setFillWidth( false );
+		cardStackContainerContainer.setAlignment( Pos.CENTER );
+		cardStackContainerContainer.setPadding( new Insets(20) );
+		lowerPane.setRight( cardStackContainerContainer );
+
+
+		HBox lifeAndChatContainerContainer = new HBox();
+		lifeAndChatContainerContainer.setPickOnBounds( false );
+		Pane lifeAndChatContainer = new Pane();
+		lifeAndChatContainer.setPickOnBounds( false );
+
+		lifeAndChatContainerContainer.getChildren().add( lifeAndChatContainer );
+		lifeAndChatContainerContainer.setAlignment( Pos.CENTER_LEFT );
+		upperPane.setBottom( lifeAndChatContainerContainer );
+
+		this.getChildren().addAll( cardLayer, upperPane, lowerPane );
+		upperPane.toFront();
+		lowerPane.toBack();
+
+		// token container 
+		if( isLocal ) {
+			this.getChildren().addAll( 
+					player.getTokenContainer() );
+		}
+
+		// Deck & Graveyard
+		cardStackContainerContainer.getChildren().addAll( 
+				//player.getGraveCont(), player.getDeckCont() );
+				player.getGraveGraphic(isLocal), player.getDeckGraphic(isLocal) );
+
+		// Life counter || chat box
+		if( isLocal )
+			lifeAndChatContainer.getChildren().add( player.getChatContainer() );
+		else
+			lifeAndChatContainer.getChildren().add( player.getLifeCounter() );
 
 		// used when sending the battlefield to the other player
-		this.isReady = true;
+		if( isLocal )
+			this.isReady = true;
+
+		if( !isLocal )
+			this.setRotate( 180d );
+	}
+
+	/**
+	 * Place a card on the graphical battlefield
+	 */
+	public void playCard( Card card ) {
+		this.cardLayer.getChildren().add( card );
 	}
 
 	/**
@@ -116,7 +176,7 @@ public class Battlefield extends Pane {
 	 * @return the cards
 	 */
 	public CardCollection getCards() {
-		return cards;
+		return player.getBattlefieldCards();
 	}
 
 	/**
@@ -126,15 +186,37 @@ public class Battlefield extends Pane {
 		return isReady;
 	}
 
-	private class CardCreateHandler implements EventHandler<ActionEvent> {
-		// TODO remove focus when drawer is closed
+	/**
+	 * EventHandler for cards being played, <br>
+	 *
+	 * This Handler is applied to the cards and is used when they are pressed
+	 * and in a players hand. <br>
+	 *
+	 * TODO check if this can be placed further down the project
+	 */
+	private class CardPlayHandler implements EventHandler<MouseEvent> {
 		@Override
-		public void handle(ActionEvent event) {
-			String str = ((TextField)(event.getSource())).getText();
-			System.out.println( str );
-			player.createCard( str );
+		public void handle(MouseEvent event) {
+			try {
+				Card tempCard = player
+					.getHandCards()
+					.getCard(
+						(Card)event.getSource());
+
+				if( tempCard.getCurrentLocation() == CardCollection.CollectionTypes.HAND ) {
+
+					if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+						player.playCard(tempCard, Battlefield.this);
+					}
+
+				}
+			} catch (CardNotFoundException e) {
+				// This will fail when using a card on the battlefield.
+				// Be aware that it's the reason for not doing anything here
+			}
 		}
 	}
+
 
 
 }

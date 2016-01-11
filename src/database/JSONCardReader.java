@@ -100,6 +100,7 @@ public class JSONCardReader {
 			int manaRed;
 			int manaWhite;
 			int manaBlank;
+			int manaX;
 
 			int tempIndex = 0;
 			while( cards.size() < cardBufferList.size() ) {
@@ -142,7 +143,7 @@ public class JSONCardReader {
 				}
 				try {
 					String indata = tempObject.getString("power");
-					if( indata == "*" ) {
+					if( indata.equals("*") ) {
 						power = -200;
 					}
 					else { 
@@ -157,7 +158,7 @@ public class JSONCardReader {
 				}
 				try {
 					String indata = tempObject.getString("toughness");
-					if( indata == "*" ) {
+					if( indata.equals("*") ) {
 						toughness = -200;
 					}
 					else { 
@@ -185,16 +186,22 @@ public class JSONCardReader {
 				manaGreen = StringUtils.countMatches(mana, "{G}");
 				manaRed   = StringUtils.countMatches(mana, "{R}");
 				manaWhite = StringUtils.countMatches(mana, "{W}");
+				manaX     = StringUtils.countMatches(mana, "{X}");
 				String possibleManaCost;
 				try {
-					possibleManaCost = mana.substring(mana.indexOf('{') + 1, mana.indexOf('}') - 1);
+					possibleManaCost = mana.substring(mana.indexOf('{') + 1, mana.indexOf('}'));
 				} catch (StringIndexOutOfBoundsException e) {
-					possibleManaCost = "0";
+					possibleManaCost = "-1";
 				}
+				//System.out.println( mana );
+				//System.out.println( possibleManaCost );
+				//System.out.println( "---" );
 				if( StringUtils.isNumeric(possibleManaCost) ) {
 					manaBlank = Integer.parseInt(possibleManaCost);
 				} else {
-					manaBlank = 0;
+					// TODO -2 and -1 are error values,
+					// but they are currently not used
+					manaBlank = -2;
 				}
 
 				cards.add(new Card(
@@ -211,7 +218,8 @@ public class JSONCardReader {
 					manaGreen,
 					manaRed,
 					manaWhite,
-					manaBlank 
+					manaBlank,
+					manaX
 				));
 			}
 		} catch (JSONException je) {

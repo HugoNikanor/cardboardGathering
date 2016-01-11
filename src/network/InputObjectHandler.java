@@ -2,6 +2,9 @@ package network;
 
 import java.util.ArrayList;
 
+import chat.ChatStream;
+import chat.MessageInfo;
+
 import database.JSONCardReader;
 
 import exceptions.BadDataException;
@@ -14,11 +17,14 @@ import javafx.application.Platform;
 
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardFocusPacket;
+import serverPackets.CardFromDatabasePacket;
 import serverPackets.CardListPacket;
 import serverPackets.CardMovePacket;
+import serverPackets.ChatMessagePacket;
 import serverPackets.HealthSetPacket;
 import serverPackets.NetworkPacket;
 import serverPackets.PoisonSetPacket;
+import serverPackets.TokenPacket;
 import serverPackets.CardCreatedPacket;
 
 /**
@@ -65,7 +71,6 @@ public class InputObjectHandler {
 				public void run() {
 					temp.smoothPlace( obj.getPosX(), obj.getPosY(), Connection.UPDATE_TIME );
 					temp.smoothSetRotate( obj.getRotate(), Connection.UPDATE_TIME );
-					//temp.giveFocus();
 				}
 			});
 		} catch( CardNotFoundException e ) {
@@ -145,6 +150,7 @@ public class InputObjectHandler {
 		case GRAVEYARD:
 			switch( obj.getNewCollection() ) {
 			case HAND:
+				battlefield.getPlayer().graveToHand( obj.getId() );
 				break;
 			default:
 				throw new BadDataException( obj.toString() );
@@ -173,9 +179,10 @@ public class InputObjectHandler {
 		battlefield.getPlayer().setPoison( obj.getPoison() );
 	}
 	private void setCardList( CardListPacket obj ) {
-		battlefield = new Battlefield( jCardReader, obj.getCardList() );
+		battlefield = new Battlefield( jCardReader, obj.getCardList(), false );
 	}
 	private void createCard( CardCreatedPacket obj ) {
+		ChatStream.print( "Other player created a card", MessageInfo.OTHER );
 		battlefield.getPlayer().createCard( new Card(
 			obj.getCardName(),
 			obj.getType(),
@@ -190,8 +197,24 @@ public class InputObjectHandler {
 			obj.getManaCostGreen(),
 			obj.getManaCostRed(),
 			obj.getManaCostWhite(),
-			obj.getManaCostBlank())
+			obj.getManaCostBlank(),
+			obj.getManaCostX())
 		);
+	}
+	private void createCardFromDatabase( CardFromDatabasePacket obj ) {
+		ChatStream.print( "other player querried a card from the database", MessageInfo.OTHER );
+		battlefield.getPlayer().createCardFromDatabase( obj.getCardName() );
+	}
+
+	private void chatMessage( ChatMessagePacket obj ) {
+		System.out.println( "message recieved" );
+		//battlefield.getPlayer().sendMessage( obj.getMessage(), obj.getMessageInfo() );
+		ChatStream.print( obj.getMessage(), obj.getMessageInfo() );
+	}
+
+	private void token( TokenPacket obj ) {
+		battlefield.getPlayer().getAllCards().getCard( obj.getParentId() ).
+			setToken( obj.getTokenField(), obj.getNewValue() );
 	}
 
 	/**
@@ -236,6 +259,15 @@ public class InputObjectHandler {
 					break;
 				case CARDCREATE:
 					createCard( (CardCreatedPacket) pendingPackets.get(0) );
+					break;
+				case CARDFROMDATABASE:
+					createCardFromDatabase( (CardFromDatabasePacket) pendingPackets.get(0) );
+					break;
+				case CHATMESSAGE:
+					chatMessage( (ChatMessagePacket) pendingPackets.get(0) );
+					break;
+				case TOKEN:
+					token( (TokenPacket) pendingPackets.get(0) );
 					break;
 				default:
 					throw new BadDataException( pendingPackets.get(0).toString() );
