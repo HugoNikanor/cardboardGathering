@@ -1,4 +1,5 @@
 #!/bin/bash
 #rm -r bin
 #mkdir bin
-javac -cp jars/commons-lang3-3.4.jar:jars/org.json-20120521.jar -sourcepath src -d bin src/**/*java
+javac -encoding ISO-8859-1 -cp jars/commons-lang3-3.4.jar:jars/org.json-20120521.jar -sourcepath src -d bin src/**/*java
+#javac -cp jars/commons-lang3-3.4.jar:jars/org.json-20120521.jar -sourcepath src -d bin src/**/*java
