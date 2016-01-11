@@ -61,6 +61,8 @@ public class CardSelectionPane {
 		//rootPane.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
 		//innerPane.getTransforms().add( new Scale( 1.5, 1.5, 0d, 0d ) );
 
+		// this doesn't work on windows...
+		// java.lang.IllegalStateException: Not on FX application thread
 		Scene chooseScene = new Scene( rootPane, stage.getWidth(), stage.getHeight() );
 
 		// Css is aparently set per scene...
