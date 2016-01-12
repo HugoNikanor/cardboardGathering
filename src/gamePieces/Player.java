@@ -1,8 +1,12 @@
 package gamePieces;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import chat.ChatContainer;
+import chat.ChatStream;
+import chat.MessageInfo;
 
 import database.JSONCardReader;
 
@@ -85,14 +89,12 @@ public class Player extends Pane {
 		this( jCardReader, cardList );
 		this.cardPlayHandler = cardPlayHandler;
 
-		//this.connection = connection;
 		this.connection = ConnectionPool.getConnection();
 		shouldSend = true;
 		new Thread( new SendCardDataThread() ).start();
 
 		for( Card temp : deckCards ) {
 			temp.setOnMouseClicked( cardPlayHandler );
-			//temp.setConnection( connection );
 			temp.setShouldSend( true );
 		}
 
@@ -102,6 +104,8 @@ public class Player extends Pane {
 				drawCard( newValue );
 			} catch ( CardNotFoundException e ) {
 				e.printStackTrace();
+			} catch( NullPointerException e ) {
+				ChatStream.print( "null card", MessageInfo.ERROR );
 			}
 		});
 		graveyardCards.getObservableCardProperty().addListener(
@@ -110,6 +114,8 @@ public class Player extends Pane {
 				graveToHand( newValue );
 			} catch( CardNotFoundException e ) {
 				e.printStackTrace();
+			} catch( NullPointerException e ) {
+				ChatStream.print( "null card", MessageInfo.ERROR );
 			}
 		});
 
@@ -173,12 +179,12 @@ public class Player extends Pane {
 	 * It also does some things localy
 	 */
 	private class SendCardDataThread implements Runnable {
-		private ArrayList<Card> cardsToDeck;
-		private ArrayList<Card> cardsToGrave;
+		private List<Card> cardsToDeck;
+		private List<Card> cardsToGrave;
 
 		public SendCardDataThread() {
-			cardsToDeck = new ArrayList<Card>();
-			cardsToGrave = new ArrayList<Card>();
+			cardsToDeck  = Collections.synchronizedList(new ArrayList<Card>());
+			cardsToGrave = Collections.synchronizedList(new ArrayList<Card>());
 		}
 		@Override
 		public void run() {
@@ -612,13 +618,15 @@ public class Player extends Pane {
 	public void moveCardBetweenCollections(
 		CardCollection oldCollection, CardCollection newCollection, Card whatCard)
 		throws CardNotFoundException {
-			whatCard.setCurrentLocation( newCollection.getCollection() );
-			newCollection.add( oldCollection.takeCard(whatCard) );
-			if( shouldSend ) {
-				System.out.println( "Sending " + whatCard.getCardId() );
+		System.out.println( oldCollection.getCollection().toString() );
+		System.out.println( newCollection.getCollection().toString() );
+		whatCard.setCurrentLocation( newCollection.getCollection() );
+		newCollection.add( oldCollection.takeCard(whatCard) );
+		if( shouldSend ) {
+			System.out.println( "Sending " + whatCard.getCardId() );
 
-				connection.sendPacket( new CardBetweenCollectionsPacket(
-							oldCollection.getCollection(), newCollection.getCollection(), whatCard.getCardId()) );
+			connection.sendPacket( new CardBetweenCollectionsPacket(
+						oldCollection.getCollection(), newCollection.getCollection(), whatCard.getCardId()) );
 
 		}
 	}

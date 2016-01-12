@@ -163,11 +163,18 @@ public class CardCollection implements Iterable<Card> {
 		return graphicPane;
 	}
 
+	/**
+	 * This sets a null card to make sure that the value changed
+	 * catch a null pointer exception in it's listener
+	 */
 	private class BtnHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle( ActionEvent e ) {
+			// thread started because the cardSelectionPane locks up the thread it's
+			// run on. And this is the main JavaFX thread
 			new Thread(() -> {
 				try {
+					observableCard.set( null );
 					observableCard.set( CardSelectionPane.getCard( 
 								CardCollection.this, (Stage)graphicPane.getScene().getWindow() ));
 				} catch( CardNotFoundException ex ) {
@@ -178,11 +185,17 @@ public class CardCollection implements Iterable<Card> {
 		}
 	}
 
+	/**
+	 * This sets a null card to make sure that the value changed
+	 * catch a null pointer exception in it's listener
+	 */
 	private class DeckAreaHandler implements EventHandler<MouseEvent> {
 		@Override
 		public void handle( MouseEvent e ) {
+			System.out.println( "deck area pressed" );
 			try {
 				// The card should be removed from the collection when it's taken from here
+				observableCard.set( null );
 				observableCard.set( getNextCard() );
 			} catch( CardNotFoundException ex ) {
 				//ex.printStackTrace();
@@ -250,6 +263,12 @@ public class CardCollection implements Iterable<Card> {
 		}
 	}
 
+	/**
+	 * Observable card may be null, since it flashes past null to
+	 * make sure that the card is updated, <br>
+	 * This is a problem when trying to draw the same card twice
+	 * in a row.
+	 */
 	public ObjectProperty<Card> getObservableCardProperty() {
 		return observableCard;
 	}

@@ -26,3 +26,5 @@ When card in hand (in leftmost position) is zoomed then some cards on battlefiel
 doesn't respend as well when pressing them to tap
 
 tokens added to cards in "Get Card" aren't remebered
+
+the getCard menu is really slow
