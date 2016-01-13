@@ -13,7 +13,7 @@
 			GridPane.columnIndex="0" GridPane.rowIndex="0" />
 	<StackPane minWidth="30" minHeight="30" mouseTransparent="true"
 			GridPane.columnIndex="1" GridPane.rowIndex="0" >
-		<Text fx:id="lifeText" text="0" styleClass="text" />
+		<Text fx:id="healthText" text="0" styleClass="text" />
 	</StackPane >
 
 	<!-- poison value -->

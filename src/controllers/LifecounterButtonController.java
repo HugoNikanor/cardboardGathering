@@ -24,35 +24,48 @@ public class LifecounterButtonController implements Initializable {
 		observablePoison = new SimpleIntegerProperty();
 	}
 
+	public LifecounterButtonController setDefaultValues( int health, int poison ) {
+		defaultHealth = health;
+		defaultPoison = poison;
+
+		return this;
+	}
+
+	public LifecounterButtonController 
+		bindNumbers( Property<Number> playerHealth, Property<Number> playerPoison ) {
+		observableHealth.bindBidirectional( playerHealth );
+		observablePoison.bindBidirectional( playerPoison );
+
+		return this;
+	}
+
 	@FXML
 	private void healthUp( Event e ) {
 		observableHealth.set( observableHealth.get() + 1 );
+
+		System.out.println( "btn: " + observableHealth.get() );
 	}
 	@FXML
 	private void healthDown( Event e ) {
 		observableHealth.set( observableHealth.get() - 1 );
+
+		System.out.println( "btn: " + observableHealth.get() );
 	}
 	@FXML
 	private void poisonUp( Event e ) {
 		observablePoison.set( observablePoison.get() + 1 );
+
+		System.out.println( "btn: " + observableHealth.get() );
 	}
 	@FXML
 	private void poisonDown( Event e ) {
 		observablePoison.set( observablePoison.get() - 1 );
+
+		System.out.println( "btn: " + observablePoison.get() );
 	}
 	@FXML
 	private void resetValues( Event e ) {
 		observableHealth.set( defaultHealth );
 		observablePoison.set( defaultPoison );
-	}
-
-	public static void setDefaultValues( int health, int poison ) {
-		defaultHealth = health;
-		defaultPoison = poison;
-	}
-
-	public void bindNumbers( Property<Number> playerHealth, Property<Number> playerPoison ) {
-		observableHealth.bindBidirectional( playerHealth );
-		observablePoison.bindBidirectional( playerPoison );
 	}
 }

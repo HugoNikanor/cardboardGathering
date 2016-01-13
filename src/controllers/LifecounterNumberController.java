@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.Property;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.text.Text;
@@ -16,29 +16,29 @@ public class LifecounterNumberController implements Initializable {
 	private IntegerProperty observablePoison;
 
 	@FXML
-	private Text lifeText;
+	private Text healthText;
 
 	@FXML
 	private Text poisonText;
 
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public void initialize(URL location, ResourceBundle resources) { 
+		observableHealth = new SimpleIntegerProperty();
+		observablePoison = new SimpleIntegerProperty();
+
+		observableHealth.addListener( (ov, oVal, nVal) -> {
+			healthText.setText( nVal.toString() );
+		});
+		observablePoison.addListener( (ov, oVal, nVal) -> {
+			poisonText.setText( nVal.toString() );
+		});
 	}
 
-	@FXML
-	private void healthChange( ObservableValue<Number> ov, Number oVal, Number nVal ) {
-		lifeText.setText( Integer.toString( nVal.intValue() ) );
-	}
-
-	@FXML
-	private void poisonChange( ObservableValue<Number> ov, Number oVal, Number nVal ) {
-		poisonText.setText( Integer.toString( nVal.intValue() ) );
-	}
-
-	public void bindNumbers( Property<Number> playerHealth, Property<Number> playerPoison ) {
+	public LifecounterNumberController 
+		bindNumbers( Property<Number> playerHealth, Property<Number> playerPoison ) {
 		observableHealth.bindBidirectional( playerHealth );
 		observablePoison.bindBidirectional( playerPoison );
+
+		return this;
 	}
-
-
 }

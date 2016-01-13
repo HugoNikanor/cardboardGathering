@@ -6,13 +6,10 @@ import java.util.ArrayList;
 
 import chat.ChatContainer;
 
-import controllers.LifecounterButtonController;
-
 import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
-//import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
 import graphicsObjects.TokenContainer;
 
@@ -31,10 +28,14 @@ import javafx.util.Duration;
 import network.Connection;
 import network.ConnectionPool;
 
+import controllers.*;
+
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardCreatedPacket;
 import serverPackets.CardFromDatabasePacket;
 import serverPackets.CardMovePacket;
+import serverPackets.HealthSetPacket;
+import serverPackets.PoisonSetPacket;
 
 public class Player extends Pane {
 	private CardCollection deckCards;
@@ -46,6 +47,9 @@ public class Player extends Pane {
 	private IntegerProperty observablePoison;;
 
 	private static final int HEIGHT = 132;//110;
+
+	private static final int defaultHealth = 20;
+	private static final int defaultPoison = 0;
 
 	private Connection connection;
 	private boolean shouldSend;
@@ -64,13 +68,15 @@ public class Player extends Pane {
 	 */
 	private CardIdCounter counter;
 
-	/**
-	 * the card reader, stored here to allow access to it from within
-	 * this class
-	 */
+	/** the card reader, stored here to allow access to it from within this class */
 	private JSONCardReader jCardReader;
 
 	private EventHandler<MouseEvent> cardPlayHandler;
+
+	// this is needed to stop the GC
+	private LifecounterNumberController lifeNumController;
+	// this is here for symmetry
+	private LifecounterButtonController lifeBtnController;
 
 	/**
 	 * Use this for the local player
@@ -131,17 +137,28 @@ public class Player extends Pane {
 
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
-		//lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
 		try {
 			URL url = Paths.get( "fxml/LifecounterFull.fxml" ).toUri().toURL();
-			FXMLLoader loader = new FXMLLoader( url );
+			FXMLLoader fullLoader = new FXMLLoader( url );
+			lifeCounter = fullLoader.load();
+			lifeBtnController = (LifecounterButtonController) fullLoader.getController();
+				lifeBtnController
+					.bindNumbers( observableHealth, observablePoison )
+					.setDefaultValues( defaultHealth, defaultPoison );
 		} catch( Exception e ) {
 			e.printStackTrace();
 		}
 
-
 		chatContainer = new ChatContainer( lifeCounter );
 
+		observableHealth.addListener( (ov, oVal, nVal ) -> {
+			ConnectionPool.getConnection().sendPacket(
+					new HealthSetPacket( nVal.intValue() ));
+		});
+		observablePoison.addListener( (ov, oVal, nVal ) -> {
+			ConnectionPool.getConnection().sendPacket(
+					new PoisonSetPacket( nVal.intValue() ));
+		});
 	}
 
 	/**
@@ -159,8 +176,8 @@ public class Player extends Pane {
 		observableHealth = new SimpleIntegerProperty();
 		observablePoison = new SimpleIntegerProperty();
 
-		observableHealth.set( 20 );
-		observablePoison.set( 0 );
+		observableHealth.set( defaultHealth );
+		observablePoison.set( defaultPoison );
 
 		counter = new CardIdCounter( 0 );
 		deckCards        = new CardCollection( CardCollection.CollectionTypes.DECK, jCardReader, counter, cardList );
@@ -172,12 +189,12 @@ public class Player extends Pane {
 
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
-		//lifeCounter = new LifeCounter( new LifeCounterHandler(), false );
 		try {
-			URL url = Paths.get("fxml/LifecounterControl.fxml").toUri().toURL();
-			FXMLLoader loader = new FXMLLoader( url );
-			lifeCounter = loader.load();
-			((LifecounterButtonController) loader.getController()).bindNumbers( observableHealth, observablePoison );
+			URL url = Paths.get("fxml/LifecounterNumbers.fxml").toUri().toURL();
+			FXMLLoader numberLoader = new FXMLLoader( url );
+			lifeCounter = numberLoader.load();
+			lifeNumController = (LifecounterNumberController) numberLoader.getController();
+			lifeNumController.bindNumbers( observableHealth, observablePoison );
 		} catch( Exception e ) {
 			e.printStackTrace();
 		}
