@@ -337,7 +337,7 @@ public class Player extends Pane {
 							0,
 							0,
 							0,
-							0,
+							-2,
 							0) );
 			}
 		}
