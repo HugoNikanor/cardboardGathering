@@ -13,7 +13,7 @@
 			"power": "2",
 			"toughness": "2",
 			"loyalty": 0,
-			"manaCost": "{1}{B}{U}{G}{R}{W}",
+			"manaCost": "{1}{B}{U}{G}{R}{W}{X}",
 			"text": "Sample ability one\nSample ability two",
 			"flavor": "flavor text"
 		}

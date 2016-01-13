@@ -8,6 +8,21 @@
             "manaCost": "{3}{U}",
             "text": "Kill everything",
             "flavor": "This card has everything, but in reality, it's rather shitty"
-        }
+        },
+		{
+			"name": "Card of Testing",
+			"types": [
+				"Creature"
+			],
+			"subtypes": [
+				"Legendary",
+				"Test"
+			],
+			"power": "8",
+			"toughness": "7",
+			"manaCost": "{X}{B}{B}",
+			"text": "The player controlling 'Card of Testing' is allowed to override any rules to help with testing",
+			"flavor": "A young man once thought that debugging was easy, unfortunately, he was wrong."
+		}
     ]
 }
