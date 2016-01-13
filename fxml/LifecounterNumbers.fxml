@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.event.ActionEvent?>
+<?import javafx.event.EventHandler?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
+
+<GridPane fx:id="test" xmlns:fx="http://javafx.com/fxml" stylesheets="@../stylesheets/lifecounter.css" fx:controller="controllers.LifecounterNumberController" >
+	<!-- life value -->
+	<Text text="Health: " mouseTransparent="true" styleClass="text"
+			GridPane.columnIndex="0" GridPane.rowIndex="0" />
+	<StackPane minWidth="30" minHeight="30" mouseTransparent="true"
+			GridPane.columnIndex="1" GridPane.rowIndex="0" >
+		<Text fx:id="healthText" text="0" styleClass="text" />
+	</StackPane >
+
+	<!-- poison value -->
+	<Text text="Poison: " mouseTransparent="true" styleClass="text"
+			GridPane.columnIndex="0" GridPane.rowIndex="1" />
+	<StackPane minWidth="30" minHeight="30" mouseTransparent="true"
+			GridPane.columnIndex="1" GridPane.rowIndex="1" >
+		<Text fx:id="poisonText" text="0" styleClass="text" />
+	</StackPane >
+</GridPane>

@@ -1,5 +1,7 @@
 package gamePieces;
 
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,20 +14,26 @@ import database.JSONCardReader;
 
 import exceptions.CardNotFoundException;
 
-import graphicsObjects.LifeCounter;
 import graphicsObjects.PlayerBtnPane;
 import graphicsObjects.TokenContainer;
 
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import network.Connection;
 import network.ConnectionPool;
+
+import controllers.LifecounterButtonController;
+import controllers.LifecounterNumberController;
 
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardCreatedPacket;
@@ -40,18 +48,20 @@ public class Player extends Pane {
 	private CardCollection battlefieldCards;
 	private CardCollection graveyardCards;
 
-	private int health;
-	private int poisonCounters;
+	private IntegerProperty observableHealth;
+	private IntegerProperty observablePoison;;
 
 	private static final int HEIGHT = 132;//110;
+
+	private static final int defaultHealth = 20;
+	private static final int defaultPoison = 0;
 
 	private Connection connection;
 	private boolean shouldSend;
 
 	private PlayerBtnPane playerBtnPane;
-	private LifeCounter lifeCounter;
 	private TokenContainer tokenContainer;
-
+	private GridPane lifecounter;
 	private ChatContainer chatContainer;
 
 	private double scaleFactor;
@@ -62,13 +72,15 @@ public class Player extends Pane {
 	 */
 	private CardIdCounter counter;
 
-	/**
-	 * the card reader, stored here to allow access to it from within
-	 * this class
-	 */
+	/** the card reader, stored here to allow access to it from within this class */
 	private JSONCardReader jCardReader;
 
 	private EventHandler<MouseEvent> cardPlayHandler;
+
+	// this is needed to stop the GC — I think...
+	private LifecounterNumberController lifeNumController;
+	// this is here for symmetry
+	private LifecounterButtonController lifeBtnController;
 
 	/**
 	 * Use this for the local player
@@ -78,10 +90,6 @@ public class Player extends Pane {
 	 * @param cardPlayHandler
 	 *            event handler for when the cards are activated in the hand and
 	 *            should be played
-	 * @param connection
-	 *            Called with {@code connection.sendPacket()} to push data to the server
-	 *            @see network.Connection
-	 *            @see serverPackets.NetworkPacket
 	 * @param cardList
 	 *            A string array of the names of the cards desired to be created
 	 */
@@ -131,10 +139,28 @@ public class Player extends Pane {
 
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
-		lifeCounter = new LifeCounter( new LifeCounterHandler(), true );
+		try {
+			URL url = Paths.get( "fxml/LifecounterFull.fxml" ).toUri().toURL();
+			FXMLLoader fullLoader = new FXMLLoader( url );
+			lifecounter = fullLoader.load();
+			lifeBtnController = (LifecounterButtonController) fullLoader.getController();
+				lifeBtnController
+					.bindNumbers( observableHealth, observablePoison )
+					.setDefaultValues( defaultHealth, defaultPoison );
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
 
-		chatContainer = new ChatContainer( lifeCounter );
+		chatContainer = new ChatContainer( lifecounter );
 
+		observableHealth.addListener( (ov, oVal, nVal ) -> {
+			ConnectionPool.getConnection().sendPacket(
+					new HealthSetPacket( nVal.intValue() ));
+		});
+		observablePoison.addListener( (ov, oVal, nVal ) -> {
+			ConnectionPool.getConnection().sendPacket(
+					new PoisonSetPacket( nVal.intValue() ));
+		});
 	}
 
 	/**
@@ -148,20 +174,32 @@ public class Player extends Pane {
 	 */
 	public Player( JSONCardReader jCardReader, String[] cardList ) {
 		this.jCardReader = jCardReader;
+
+		observableHealth = new SimpleIntegerProperty();
+		observablePoison = new SimpleIntegerProperty();
+
+		observableHealth.set( defaultHealth );
+		observablePoison.set( defaultPoison );
+
 		counter = new CardIdCounter( 0 );
 		deckCards        = new CardCollection( CardCollection.CollectionTypes.DECK, jCardReader, counter, cardList );
 		handCards        = new CardCollection( CardCollection.CollectionTypes.HAND );
 		battlefieldCards = new CardCollection( CardCollection.CollectionTypes.BATTLEFIELD );
 		graveyardCards   = new CardCollection( CardCollection.CollectionTypes.GRAVEYARD );
 
-		health = 20;
-		poisonCounters = 0;
-
 		shouldSend = false;
 
 		tokenContainer = new TokenContainer( new CardCreateHandler() );
 
-		lifeCounter = new LifeCounter( new LifeCounterHandler(), false );
+		try {
+			URL url = Paths.get("fxml/LifecounterNumbers.fxml").toUri().toURL();
+			FXMLLoader numberLoader = new FXMLLoader( url );
+			lifecounter = numberLoader.load();
+			lifeNumController = (LifecounterNumberController) numberLoader.getController();
+			lifeNumController.bindNumbers( observableHealth, observablePoison );
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 
 	public Pane getDeckGraphic( boolean local ) {
@@ -392,34 +430,6 @@ public class Player extends Pane {
 		}
 	}
 
-
-	/**
-	 * Changes the players health and poison values when the buttons
-	 * on the lifecounter are clicked.
-	 * @see grahicsObjects.LifeCounter
-	 */
-	private class LifeCounterHandler implements EventHandler<ActionEvent> {
-		@Override
-		public void handle(ActionEvent event) {
-			if( event.getSource() == lifeCounter.getHpUpBtn() ) {
-				changeHealth(1);
-			}
-			if( event.getSource() == lifeCounter.getHpDownBtn() ) {
-				changeHealth(-1);
-			}
-			if( event.getSource() == lifeCounter.getPoisonUpBtn() ) {
-				changePoison(1);
-			}
-			if( event.getSource() == lifeCounter.getPoisonDownBtn() ) {
-				changePoison(-1);
-			}
-			if( event.getSource() == lifeCounter.getResetBtn() ) {
-				setHealth(20);
-				setPoison(0);
-			}
-		}
-	}
-
 	/**
 	 * Takes care of the inputs from the buttons in the players pane
 	 * @see graphicsObjects.PlayerBtnPane
@@ -637,11 +647,7 @@ public class Player extends Pane {
 	 * @see changeHealth
 	 */
 	public void setHealth(int health) {
-		if( shouldSend ) {
-			connection.sendPacket( new HealthSetPacket( health ) );
-		}
-		this.health = health;
-		lifeCounter.setHealthValue(getHealth());
+		observableHealth.set( health );
 	}
 
 	/**
@@ -650,7 +656,7 @@ public class Player extends Pane {
 	 * @see setHealth
 	 */
 	public void changeHealth(int change) {
-		setHealth( getHealth() + change );
+		observableHealth.set( observableHealth.get() + change );
 	}
 
 	/**
@@ -659,11 +665,7 @@ public class Player extends Pane {
 	 * @see changePoison
 	 */
 	public void setPoison(int poisonCounters) {
-		if( shouldSend ) {
-			connection.sendPacket( new PoisonSetPacket( poisonCounters ) );
-		}
-		this.poisonCounters = poisonCounters;
-		lifeCounter.setPoisonValue(getPoison());
+		observablePoison.set( poisonCounters );
 	}
 	
 	/**
@@ -672,14 +674,14 @@ public class Player extends Pane {
 	 * @see setPoison
 	 */
 	public void changePoison(int change) {
-		setPoison( getPoison() + change );
+		observablePoison.set( observablePoison.get() + change );
 	}
 
 	/**
 	 * @return the lifeCounter
 	 */
-	public LifeCounter getLifeCounter() {
-		return lifeCounter;
+	public GridPane getLifecounter() {
+		return lifecounter;
 	}
 
 	/**
@@ -745,19 +747,4 @@ public class Player extends Pane {
 
 		return retCol;
 	}
-
-	/**
-	 * @return the health
-	 */
-	public int getHealth() {
-		return health;
-	}
-
-	/**
-	 * @return the poisonCounters
-	 */
-	public int getPoison() {
-		return poisonCounters;
-	}
-
 }

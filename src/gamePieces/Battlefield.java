@@ -138,7 +138,7 @@ public class Battlefield extends Pane {
 		if( isLocal )
 			lifeAndChatContainer.getChildren().add( player.getChatContainer() );
 		else
-			lifeAndChatContainer.getChildren().add( player.getLifeCounter() );
+			lifeAndChatContainer.getChildren().add( player.getLifecounter() );
 
 		// used when sending the battlefield to the other player
 		if( isLocal )
