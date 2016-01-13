@@ -36,11 +36,10 @@ import javafx.stage.Stage;
 /**
  * A collection of cards
  * Can hold about any number of cards
- * extends ArrayList
+ *
+ * TODO replace much if it's graphics with fxml files
  */
 public class CardCollection implements Iterable<Card> {
-	//private static final long serialVersionUID = 1L;
-
 	/**
 	 * The different types of collections
 	 */
@@ -65,9 +64,7 @@ public class CardCollection implements Iterable<Card> {
 
 
 
-	/**
-	 * The type of collection this is
-	 */
+	/** The type of collection this is */
 	private CollectionTypes collection;
 
 	/**
@@ -198,7 +195,6 @@ public class CardCollection implements Iterable<Card> {
 				observableCard.set( null );
 				observableCard.set( getNextCard() );
 			} catch( CardNotFoundException ex ) {
-				//ex.printStackTrace();
 				ChatStream.print( "No cards in collection", MessageInfo.SYSTEM );
 			}
 		}

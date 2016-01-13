@@ -16,14 +16,12 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
-//import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-import network.Connection;
 import network.ConnectionPool;
 
 import serverPackets.CardFocusPacket;
@@ -50,6 +48,7 @@ public class Card extends StackPane {
 	 * -100 is missing data from database (a card without this value)
 	 */
 	private int toughness;
+
 	/** This isn't even used... */
 	private int loyalty;
 
@@ -107,7 +106,7 @@ public class Card extends StackPane {
 	 */
 	private int preferdMargin;
 
-	private Connection connection;
+	//private Connection connection;
 	private boolean shouldSend;
 
 	// These three are used by the SendCardDataThread in player
@@ -245,11 +244,11 @@ public class Card extends StackPane {
 		remoteMouseHandler = new RemoteMouseHandler();
 
 		// TODO these are only applicable for the own cards
+		// there are some listener loaded for the oponent,
+		// but these listener should be disabled
 		this.setOnMouseDragged ( localMouseHandler );
 		this.setOnMousePressed ( localMouseHandler );
 		this.setOnMouseReleased( localMouseHandler );
-		//this.setOnMouseEntered ( localMouseHandler );
-		//this.setOnMouseExited  ( localMouseHandler );
 		this.setOnMouseEntered ( remoteMouseHandler );
 		this.setOnMouseExited  ( remoteMouseHandler );
 		this.addEventHandler( MouseEvent.MOUSE_CLICKED, localMouseHandler );
@@ -257,13 +256,9 @@ public class Card extends StackPane {
 
 		this.scaleFactor = 1;
 
-
 		this.setFocusTraversable( true );
 
-		this.connection = ConnectionPool.getConnection();
-
-
-
+		//this.connection = ConnectionPool.getConnection();
 	}
 
 	private void updateGraphics() {
@@ -371,7 +366,6 @@ public class Card extends StackPane {
 
 		@Override
 		public void handle(MouseEvent event) {
-
 			
 			switch( currentLocation ) {
 			case BATTLEFIELD:
@@ -524,7 +518,7 @@ public class Card extends StackPane {
 			}
 			currentCard = this;
 
-			connection.sendPacket( new CardFocusPacket(this.getCardId()) );
+			ConnectionPool.getConnection().sendPacket( new CardFocusPacket(this.getCardId()) );
 			this.requestFocus();
 			this.setId( "has-focus" );
 		}
@@ -650,7 +644,7 @@ public class Card extends StackPane {
 		if( shouldSend ) {
 			for( Token t : tokenAccess ) {
 				t.getNumberProperty().addListener( (ov, oVal, nVal) -> {
-					connection.sendPacket( new TokenPacket(
+					ConnectionPool.getConnection().sendPacket( new TokenPacket(
 								tokenAccess.indexOf(t), nVal.intValue(), getCardId() ));
 				});
 			}

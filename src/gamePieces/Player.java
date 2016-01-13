@@ -56,7 +56,7 @@ public class Player extends Pane {
 	private static final int defaultHealth = 20;
 	private static final int defaultPoison = 0;
 
-	private Connection connection;
+	//private Connection connection;
 	private boolean shouldSend;
 
 	private PlayerBtnPane playerBtnPane;
@@ -97,7 +97,7 @@ public class Player extends Pane {
 		this( jCardReader, cardList );
 		this.cardPlayHandler = cardPlayHandler;
 
-		this.connection = ConnectionPool.getConnection();
+		//this.connection = ConnectionPool.getConnection();
 		shouldSend = true;
 		new Thread( new SendCardDataThread() ).start();
 
@@ -195,6 +195,7 @@ public class Player extends Pane {
 			URL url = Paths.get("fxml/LifecounterNumbers.fxml").toUri().toURL();
 			FXMLLoader numberLoader = new FXMLLoader( url );
 			lifecounter = numberLoader.load();
+			lifecounter.setRotate( 180d );
 			lifeNumController = (LifecounterNumberController) numberLoader.getController();
 			lifeNumController.bindNumbers( observableHealth, observablePoison );
 		} catch( Exception e ) {
@@ -269,7 +270,7 @@ public class Player extends Pane {
 							if( newX != card.getOldX() ||
 								newY != card.getOldY() ||
 								newRotate != card.getOldRotate() ) {
-								connection.sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
+								ConnectionPool.getConnection().sendPacket( new CardMovePacket( card.getCardId(), newX, newY, newRotate ) );
 							}
 
 							card.setOldX( card.getTranslateX() );
@@ -355,7 +356,7 @@ public class Player extends Pane {
 		if( shouldSend ) {
 			//card.setConnection( connection );
 			card.setShouldSend( true );
-			connection.sendPacket( new CardCreatedPacket( card ) );
+			ConnectionPool.getConnection().sendPacket( new CardCreatedPacket( card ) );
 		}
 		Platform.runLater(new Thread(() -> {
 			this.getChildren().add( card );
@@ -377,9 +378,8 @@ public class Player extends Pane {
 			handCards.add( card );
 			card.setOnMouseClicked( cardPlayHandler );
 			if( shouldSend ) {
-				//card.setConnection( connection );
 				card.setShouldSend( true );
-				connection.sendPacket( new CardFromDatabasePacket( cardName ) );
+				ConnectionPool.getConnection().sendPacket( new CardFromDatabasePacket( cardName ) );
 			}
 			Platform.runLater(new Thread(() -> {
 				this.getChildren().add( card );
@@ -635,7 +635,7 @@ public class Player extends Pane {
 		if( shouldSend ) {
 			System.out.println( "Sending " + whatCard.getCardId() );
 
-			connection.sendPacket( new CardBetweenCollectionsPacket(
+			ConnectionPool.getConnection().sendPacket( new CardBetweenCollectionsPacket(
 						oldCollection.getCollection(), newCollection.getCollection(), whatCard.getCardId()) );
 
 		}

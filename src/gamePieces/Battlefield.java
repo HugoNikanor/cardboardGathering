@@ -19,7 +19,6 @@ import javafx.scene.layout.VBox;
 public class Battlefield extends Pane {
 
 	private Player player;
-	//private CardCollection cards;
 
 	/**
 	 * Here so that all cards can have a set height in relation to everything else.
@@ -35,34 +34,15 @@ public class Battlefield extends Pane {
 	private boolean isReady;
 
 	/**
-	 * This is for seting up the oponenets battlefield over the network
-	 *
-	 * @param jCardReader
-	 *            Get's the card data from there
-	 * @param cardList the name of the cards that should be created
-	 */
-	/*
-	public Battlefield(JSONCardReader jCardReader, String[] cardList) {
-		// Both players MUST have all database files
-		player = new Player( jCardReader, cardList );
-		//cards = player.getBattlefieldCards();
-
-		this.initialSetup( false );
-	}
-	*/
-
-	/**
 	 * This is for creating the local battlefield
 	 *
-	 * @param cardPlayHandler
-	 *            sholud handle the card being played upon pressing it in the
-	 *            hand
-	 * @param connection
-	 *            the connection to the server, used to send data
 	 * @param jCardReader
 	 *            Get's the card data from there
 	 * @param cardList
 	 *            String[] with all card names to use in it
+     * @param local
+	 *            if the battlefield is the local battlefield, or the oponenents
+	 *            battlefield, which is gotten over the network.
 	 */
 	public Battlefield( JSONCardReader jCardReader, String[] cardList, boolean local ) {
 		if( local )
@@ -70,17 +50,15 @@ public class Battlefield extends Pane {
 		else
 			player = new Player( jCardReader, cardList );
 
-		//cards = player.getBattlefieldCards();
-
 		this.initialSetup( local );
 	}
 
 	/**
 	 * The parts of the constructor that are the same between the local and
-	 * remote instance of the class
+	 * remote instance of the class <br>
+	 * TODO replace as much of this as possible with fxml files
 	 */
 	private void initialSetup( boolean isLocal ) {
-		// JavaFX
 		this.getStyleClass().add("battlefield");
 		this.setWidth(WIDTH);
 		this.setHeight(HEIGHT);
@@ -92,7 +70,6 @@ public class Battlefield extends Pane {
 		cardLayer = new Pane();
 		cardLayer.setPickOnBounds( false );
 		cardLayer.setPrefSize(this.getWidth(), this.getHeight());
-		//cardLayer.setMinSize(this.getWidth(), this.getHeight());
 
 		upperPane = new BorderPane();
 		upperPane.setPickOnBounds( false );
@@ -102,13 +79,11 @@ public class Battlefield extends Pane {
 		lowerPane.setPickOnBounds( false );
 		lowerPane.setPrefSize( this.getWidth(), this.getHeight() );
 
-
 		VBox cardStackContainerContainer = new VBox( 30 );
 		cardStackContainerContainer.setFillWidth( false );
 		cardStackContainerContainer.setAlignment( Pos.CENTER );
 		cardStackContainerContainer.setPadding( new Insets(20) );
 		lowerPane.setRight( cardStackContainerContainer );
-
 
 		HBox lifeAndChatContainerContainer = new HBox();
 		lifeAndChatContainerContainer.setPickOnBounds( false );
@@ -131,7 +106,6 @@ public class Battlefield extends Pane {
 
 		// Deck & Graveyard
 		cardStackContainerContainer.getChildren().addAll( 
-				//player.getGraveCont(), player.getDeckCont() );
 				player.getGraveGraphic(isLocal), player.getDeckGraphic(isLocal) );
 
 		// Life counter || chat box
