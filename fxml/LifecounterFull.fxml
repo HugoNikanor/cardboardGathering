@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Text?>
 
 <GridPane fx:id="cardData" stylesheets="@../stylesheets/lifecounter.css" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.LifecounterButtonController" >
-	<!-- the buttons should only be here if the pane is local -->
+
 	<Button fx:id="healthDownBtn" minWidth="30" minHeight="30"
 			styleClass="button" text="-"
 			onAction="#healthDown"
@@ -28,9 +28,9 @@
 	<Button fx:id="resetBtn" maxWidth="Infinity" minHeight="30"
 			styleClass="button" GridPane.columnSpan="4"
 			GridPane.columnIndex="0" GridPane.rowIndex="2"
-			onAction="#resetValues" text="reset Values" />
+			onAction="#resetValues" text="Reset Values" />
 
-	<fx:include source="LifecounterNumbers.fxml"
+	<fx:include source="LifecounterNumbers.fxml" fx:id="innerNumber"
 			GridPane.columnIndex="0" GridPane.rowIndex="0"
 			GridPane.columnSpan="2" GridPane.rowSpan="2" />
 

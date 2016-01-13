@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.GridPane;
 
 public class LifecounterButtonController implements Initializable {
 
@@ -18,10 +19,18 @@ public class LifecounterButtonController implements Initializable {
 	private static int defaultHealth;
 	private static int defaultPoison;
 
+	@FXML
+	private GridPane innerNumber;
+
+	@FXML
+	private LifecounterNumberController innerNumberController;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		observableHealth = new SimpleIntegerProperty();
 		observablePoison = new SimpleIntegerProperty();
+
+		innerNumberController.  bindNumbers( observableHealth, observablePoison );
 	}
 
 	public LifecounterButtonController setDefaultValues( int health, int poison ) {
@@ -42,26 +51,18 @@ public class LifecounterButtonController implements Initializable {
 	@FXML
 	private void healthUp( Event e ) {
 		observableHealth.set( observableHealth.get() + 1 );
-
-		System.out.println( "btn: " + observableHealth.get() );
 	}
 	@FXML
 	private void healthDown( Event e ) {
 		observableHealth.set( observableHealth.get() - 1 );
-
-		System.out.println( "btn: " + observableHealth.get() );
 	}
 	@FXML
 	private void poisonUp( Event e ) {
 		observablePoison.set( observablePoison.get() + 1 );
-
-		System.out.println( "btn: " + observableHealth.get() );
 	}
 	@FXML
 	private void poisonDown( Event e ) {
 		observablePoison.set( observablePoison.get() - 1 );
-
-		System.out.println( "btn: " + observablePoison.get() );
 	}
 	@FXML
 	private void resetValues( Event e ) {

@@ -28,7 +28,8 @@ import javafx.util.Duration;
 import network.Connection;
 import network.ConnectionPool;
 
-import controllers.*;
+import controllers.LifecounterButtonController;
+import controllers.LifecounterNumberController;
 
 import serverPackets.CardBetweenCollectionsPacket;
 import serverPackets.CardCreatedPacket;
@@ -55,9 +56,8 @@ public class Player extends Pane {
 	private boolean shouldSend;
 
 	private PlayerBtnPane playerBtnPane;
-	private GridPane lifeCounter;
 	private TokenContainer tokenContainer;
-
+	private GridPane lifecounter;
 	private ChatContainer chatContainer;
 
 	private double scaleFactor;
@@ -73,7 +73,7 @@ public class Player extends Pane {
 
 	private EventHandler<MouseEvent> cardPlayHandler;
 
-	// this is needed to stop the GC
+	// this is needed to stop the GC — I think...
 	private LifecounterNumberController lifeNumController;
 	// this is here for symmetry
 	private LifecounterButtonController lifeBtnController;
@@ -86,10 +86,6 @@ public class Player extends Pane {
 	 * @param cardPlayHandler
 	 *            event handler for when the cards are activated in the hand and
 	 *            should be played
-	 * @param connection
-	 *            Called with {@code connection.sendPacket()} to push data to the server
-	 *            @see network.Connection
-	 *            @see serverPackets.NetworkPacket
 	 * @param cardList
 	 *            A string array of the names of the cards desired to be created
 	 */
@@ -97,14 +93,12 @@ public class Player extends Pane {
 		this( jCardReader, cardList );
 		this.cardPlayHandler = cardPlayHandler;
 
-		//this.connection = connection;
 		this.connection = ConnectionPool.getConnection();
 		shouldSend = true;
 		new Thread( new SendCardDataThread() ).start();
 
 		for( Card temp : deckCards ) {
 			temp.setOnMouseClicked( cardPlayHandler );
-			//temp.setConnection( connection );
 			temp.setShouldSend( true );
 		}
 
@@ -140,7 +134,7 @@ public class Player extends Pane {
 		try {
 			URL url = Paths.get( "fxml/LifecounterFull.fxml" ).toUri().toURL();
 			FXMLLoader fullLoader = new FXMLLoader( url );
-			lifeCounter = fullLoader.load();
+			lifecounter = fullLoader.load();
 			lifeBtnController = (LifecounterButtonController) fullLoader.getController();
 				lifeBtnController
 					.bindNumbers( observableHealth, observablePoison )
@@ -149,7 +143,7 @@ public class Player extends Pane {
 			e.printStackTrace();
 		}
 
-		chatContainer = new ChatContainer( lifeCounter );
+		chatContainer = new ChatContainer( lifecounter );
 
 		observableHealth.addListener( (ov, oVal, nVal ) -> {
 			ConnectionPool.getConnection().sendPacket(
@@ -192,7 +186,7 @@ public class Player extends Pane {
 		try {
 			URL url = Paths.get("fxml/LifecounterNumbers.fxml").toUri().toURL();
 			FXMLLoader numberLoader = new FXMLLoader( url );
-			lifeCounter = numberLoader.load();
+			lifecounter = numberLoader.load();
 			lifeNumController = (LifecounterNumberController) numberLoader.getController();
 			lifeNumController.bindNumbers( observableHealth, observablePoison );
 		} catch( Exception e ) {
@@ -427,36 +421,6 @@ public class Player extends Pane {
 			e.printStackTrace();
 		}
 	}
-
-
-	/**
-	 * Changes the players health and poison values when the buttons
-	 * on the lifecounter are clicked.
-	 * @see grahicsObjects.LifeCounter
-	 */
-	/*
-	private class LifeCounterHandler implements EventHandler<ActionEvent> {
-		@Override
-		public void handle(ActionEvent event) {
-			if( event.getSource() == lifeCounter.getHpUpBtn() ) {
-				changeHealth(1);
-			}
-			if( event.getSource() == lifeCounter.getHpDownBtn() ) {
-				changeHealth(-1);
-			}
-			if( event.getSource() == lifeCounter.getPoisonUpBtn() ) {
-				changePoison(1);
-			}
-			if( event.getSource() == lifeCounter.getPoisonDownBtn() ) {
-				changePoison(-1);
-			}
-			if( event.getSource() == lifeCounter.getResetBtn() ) {
-				setHealth(20);
-				setPoison(0);
-			}
-		}
-	}
-	*/
 
 	/**
 	 * Takes care of the inputs from the buttons in the players pane
@@ -706,8 +670,8 @@ public class Player extends Pane {
 	/**
 	 * @return the lifeCounter
 	 */
-	public GridPane getLifeCounter() {
-		return lifeCounter;
+	public GridPane getLifecounter() {
+		return lifecounter;
 	}
 
 	/**
