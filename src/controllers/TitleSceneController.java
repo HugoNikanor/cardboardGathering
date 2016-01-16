@@ -12,7 +12,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class TitleSceneController implements Initializable {
@@ -25,9 +24,6 @@ public class TitleSceneController implements Initializable {
 
 	@FXML
 	private TextField deckField;
-
-	@FXML
-	private Text infoText;
 
 	private String ip;
 	private int port;
@@ -77,8 +73,6 @@ public class TitleSceneController implements Initializable {
 		deckFilepath = Paths.get( fullPath );
 
 		System.out.println( fullPath + "\n" + deckFilepath.toString() + "\n----------\n" );
-
-		infoText.setText( "game started, please wait" );
 
 		// This locks up the FX thread.
 		// Windows take this as a program crash,

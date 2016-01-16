@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
 <StackPane stylesheets="@../stylesheets/titleScene.css" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.TitleSceneController" >
 	<VBox spacing="20" fillWidth="true" prefWidth="200" alignment="TOP_CENTER" >
@@ -25,6 +26,8 @@
 		</HBox>
 		<TextField fx:id="deckField" />
 		<Button fx:id="startGameBtn" text="Start Game" onAction="#startGame" />
-		<Text fx:id="infoText" text="no info" />
+		<TextFlow >
+			<Text fx:id="infoText" text="When start is pressed this window will freeze, this is not the program crashing. Watch the terminal log to see what happens" />
+		</TextFlow >
 	</VBox >
 </StackPane >

@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 
 import database.JSONCardReader;
 
-import exceptions.CardNotFoundException;
-
 import gamePieces.Battlefield;
 import gamePieces.Card;
 
@@ -32,22 +30,17 @@ import network.InputObjectHandler;
 import serverPackets.CardListPacket;
 
 public class GameScene {
-	// Battlefields
 	private Battlefield ownBattlefield;
-	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
 	private BorderPane rootGamePane;
 
-	// JavaFX variables
 	//private double defaultSceneWidth;
 	private double defaultSceneHeight;
 	private Scale scale;
 	private double scaleFactor;
 
-	// Network
 	private InputObjectHandler inputObjectHandler;
-
 	private JSONCardReader jCardReader;
 
 	public GameScene( Stage stage, String ip, int port, Path deckFilepath ) {
@@ -92,6 +85,7 @@ public class GameScene {
 		}
 
 		// Adds the initial cards to the graphical display
+		// removing this crashes the program...?
 		for( Card ownTemp : ownBattlefield.getCards() ) {
 			ownBattlefield.getChildren().add(ownTemp);
 		}
@@ -99,6 +93,7 @@ public class GameScene {
 			otherBattlefield.getChildren().add(otherTemp);
 		}
 
+		/*
 		// Give a proper card focus
 		// TODO this should probably just be removed
 		try {
@@ -106,6 +101,7 @@ public class GameScene {
 		} catch (CardNotFoundException e1) {
 			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
 		}
+		*/
 
 		// contain the ownBattlefield & and otherBattlefield
 		GridPane battlefieldContainer = new GridPane();
