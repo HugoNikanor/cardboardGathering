@@ -1,11 +1,16 @@
 package central;
 
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import controllers.TitleSceneController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -16,10 +21,9 @@ public class GameLogic extends Application {
 	private Path deckFilepath;
 	private boolean showTitle;
 
-	private Settings settings;
 
 	public GameLogic() {
-		settings = new Settings( "settings/settings.properties" );
+		Settings settings = new Settings( "settings/settings.properties" );
 
 		ipAddr = settings.getProperty("defIpAddress", "127.0.0.1" );
 		port = Integer.parseInt(settings.getProperty( "defPort", "23732" ));
@@ -49,7 +53,12 @@ public class GameLogic extends Application {
 
 		if( showTitle ) {
 			System.out.println( "showTitle is true" );
-			new TitleScene( primaryStage, settings );
+			URL titleURL = Paths.get( "fxml/TitleScene.fxml" ).toUri().toURL();
+			FXMLLoader titleLoader = new FXMLLoader( titleURL );
+			Pane titleRoot = titleLoader.load();
+			((TitleSceneController) titleLoader.getController()).addStage( primaryStage );
+			primaryStage.setScene( new Scene( titleRoot ));
+			primaryStage.show();
 		} else {
 			System.out.println( "showTitle is false" );
 			new GameScene( primaryStage, ipAddr, port, deckFilepath );
