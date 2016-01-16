@@ -37,13 +37,6 @@ public class GameScene {
 	// This is the battlefield aquired over the network
 	private Battlefield otherBattlefield;
 
-	// Keyboard
-	//private KeyEventHandler keyEventHandler;
-	//private ArrayList<KeyCode> pressedKeys;
-
-	// JavaFX Objects
-	//private Stage primaryStage;
-	//private Scene gameScene;
 	private BorderPane rootGamePane;
 
 	// JavaFX variables
@@ -51,62 +44,22 @@ public class GameScene {
 	private double defaultSceneHeight;
 	private Scale scale;
 	private double scaleFactor;
-	//private boolean isFullscreen;
 
 	// Network
-	//private Connection connection;
 	private InputObjectHandler inputObjectHandler;
 
 	private JSONCardReader jCardReader;
 
-	//private int port;
-	//private String ipAddr;
-	//private Path deckFilepath;
-	//private boolean showTitle;
-
-	//private Settings settings;
 	public GameScene( Stage stage, String ip, int port, Path deckFilepath ) {
-
-		// Initiates the eventHandlers
-		//keyEventHandler = new KeyEventHandler();
-		//pressedKeys = new ArrayList<KeyCode>();
-
-		//CardPlayHandler cardPlayHandler = new CardPlayHandler();
 
 		jCardReader = new JSONCardReader();
 		inputObjectHandler = new InputObjectHandler( jCardReader );
-
-		/*
-		Properties prop = new Properties();
-		try {
-			FileInputStream propInStream = new FileInputStream("settings/settings.properties");
-			prop.load(propInStream);
-		} catch( IOException ioe ) {
-			ioe.printStackTrace();
-		}
-		String cardListFile = prop.getProperty("cardlist", "defCardList");
-		*/
-
-		/*
-		settings = new Settings( "settings/settings.properties" );
-
-		// WARNING, this can maybe fail
-		ipAddr = settings.getProperty("defIpAddress", "127.0.0.1" );
-		port = Integer.parseInt(settings.getProperty( "defPort", "23732" ));
-
-		connection = new Connection( inputObjectHandler, ipAddr, port );
-
-		deckFilepath = Paths.get(
-		               settings.getProperty( "defCardDir", "decks/" ) +
-		               settings.getProperty( "defCardList", "defCardList" ));
-
-	    */
-		//connection = new Connection( inputObjectHandler, ip, port );
 		ConnectionPool.setDefaultIp( ip );
 		ConnectionPool.setDefaultPort( port );
 		ConnectionPool.setDefaultHandler( inputObjectHandler );
-		//Path deckFilepath = Paths.get( deckFilepath );
+
 		String[] cardList = {};
+
 		try {
 			System.out.println( deckFilepath );
 			// DO NOT HAVE LEADING WHITESPACE!
@@ -124,8 +77,6 @@ public class GameScene {
 
 		ownBattlefield = new Battlefield( jCardReader, cardList, true );
 
-
-		// Waits for the other battlefield to get ready
 		while( otherBattlefield == null ) {
 			try {
 				otherBattlefield = inputObjectHandler.getBattlefield();
