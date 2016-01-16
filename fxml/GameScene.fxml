@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<StackPane stylesheets="@../stylesheets/gameScene.css" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.GameSceneController" fx:id="rootGamePane" >
+	<BorderPane fx:id="gameBorderPane" >
+		<Transforms fx:id="transforms" />
+		<center>
+			<GridPane fx:id="battlefieldContainer" />
+		</center>
+	</BorderPane >
+	<Rectangle maxWidth="Infinity" maxHeight="Infinity" fx:id="controlDisabler" />
+</StackPane >

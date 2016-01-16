@@ -10,9 +10,7 @@
 }
 
 /* The pane representing the cards on the hand */
-.cards-in-hand-pane {
-
-}
+.cards-in-hand-pane { }
 
 .mana-text {
 	-fx-font-family: 'Serif';

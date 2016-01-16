@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
@@ -43,6 +44,8 @@ public class GameScene {
 	private InputObjectHandler inputObjectHandler;
 	private JSONCardReader jCardReader;
 
+	private String[] cardList = {};
+
 	public GameScene( Stage stage, String ip, int port, Path deckFilepath ) {
 
 		jCardReader = new JSONCardReader();
@@ -50,8 +53,6 @@ public class GameScene {
 		ConnectionPool.setDefaultIp( ip );
 		ConnectionPool.setDefaultPort( port );
 		ConnectionPool.setDefaultHandler( inputObjectHandler );
-
-		String[] cardList = {};
 
 		try {
 			System.out.println( deckFilepath );
@@ -63,57 +64,37 @@ public class GameScene {
 				.toArray(String[]::new);           // Make it an array
 			cardStream.close();
 
-			ConnectionPool.getConnection().sendPacket( new CardListPacket( cardList ) );
+			//ConnectionPool.getConnection().sendPacket( new CardListPacket( cardList ) );
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
 
 		ownBattlefield = new Battlefield( jCardReader, cardList, true );
 
-		while( otherBattlefield == null ) {
-			try {
-				otherBattlefield = inputObjectHandler.getBattlefield();
-			} catch( NullPointerException npe ) {
-				System.out.println( "Other battlefield not ready yet..." );
-				System.out.println( "Wainting for the other client..." );
-				try {
-					Thread.sleep( 2000 );
-				} catch( InterruptedException ie ) {
-					ie.printStackTrace();
-				}
-			} 
-		}
 
 		// Adds the initial cards to the graphical display
 		// removing this crashes the program...?
 		for( Card ownTemp : ownBattlefield.getCards() ) {
 			ownBattlefield.getChildren().add(ownTemp);
 		}
-		for( Card otherTemp : otherBattlefield.getCards() ) {
-			otherBattlefield.getChildren().add(otherTemp);
-		}
-
-		/*
-		// Give a proper card focus
-		// TODO this should probably just be removed
-		try {
-			ownBattlefield.getCards().getCard(0).giveFocus();
-		} catch (CardNotFoundException e1) {
-			System.out.println("Trying to give focus to card on the battlefild, but there are no cards there");
-		}
-		*/
 
 		// contain the ownBattlefield & and otherBattlefield
 		GridPane battlefieldContainer = new GridPane();
-		battlefieldContainer.add(otherBattlefield, 0, 0);
 		battlefieldContainer.add(ownBattlefield,   0, 1);
-		otherBattlefield.toFront();
+
+		// allows the program to correctly get the height for the auto resizing
+		Pane dummyPane = new Pane();
+		dummyPane.setPrefHeight( ownBattlefield.getHeight() );
+		battlefieldContainer.add(dummyPane, 0, 0);
 
 		// The pane everything ingame should be placed in
 		// Change this for "out of game" menus & simmilar
 		rootGamePane = new BorderPane();
 		rootGamePane.setCenter(battlefieldContainer);
 		rootGamePane.setBottom(ownBattlefield.getPlayer());
+		rootGamePane.getStyleClass().add( "root-game-pane" );
+
+		System.out.println( "battlefiledHeight = " + ownBattlefield.getHeight() );
 
 		// Set scale, for windown resize
 		scale = new Scale();
@@ -127,6 +108,7 @@ public class GameScene {
 		//gameScene.setOnKeyPressed(keyEventHandler);
 		//gameScene.setOnKeyReleased(keyEventHandler);
 
+		rootGamePane.setDisable( true );
 
 		// ALL THE GRAPHICS OBJECTS SHOULD NOW BE INITIATED
 		// Loads the stylesheet, in a not to pretty way
@@ -149,7 +131,7 @@ public class GameScene {
 
 		if( autoRescale ) {
 			WindowSizeListener windowSizeListener = new WindowSizeListener( gameScene );
-			stage.widthProperty().addListener(windowSizeListener);
+			//stage.widthProperty().addListener(windowSizeListener);
 			stage.heightProperty().addListener(windowSizeListener);
 		} else {
 			scale.setX( manualScale );
@@ -159,6 +141,37 @@ public class GameScene {
 		ownBattlefield.updateScaleFactor(0.75);
 
 		stage.setScene(gameScene);
+
+		new Thread(() -> {
+			System.out.println( "thread started" );
+			ConnectionPool.getConnection().sendPacket( new CardListPacket( cardList ) );
+			System.out.println( "data sent" );
+
+			while( otherBattlefield == null ) {
+				System.out.println( "Checking for other battlefield" );
+				try {
+					otherBattlefield = inputObjectHandler.getBattlefield();
+				} catch( NullPointerException npe ) {
+					System.out.println( "Other battlefield not ready yet..." );
+					System.out.println( "Wainting for the other client..." );
+					try {
+						Thread.sleep( 2000 );
+					} catch( InterruptedException ie ) {
+						ie.printStackTrace();
+					}
+				} 
+			}
+
+			System.out.println( "other battlefiled created" );
+
+			Platform.runLater( new Thread(() -> {
+				battlefieldContainer.add(otherBattlefield, 0, 0);
+				otherBattlefield.toFront();
+
+				rootGamePane.setDisable( false );
+			}));
+		}).start();
+
 		stage.show();
 
 		defaultSceneHeight = gameScene.getHeight();

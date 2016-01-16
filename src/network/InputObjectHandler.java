@@ -223,11 +223,10 @@ public class InputObjectHandler {
 	 * @see battlefield
 	 */
 	public Battlefield getBattlefield() throws NullPointerException {
-		try {
-			return battlefield;
-		} catch( NullPointerException e ) {
+		if( battlefield == null )
 			throw new NullPointerException("battlefield not initiated yet");
-		}
+		else
+			return battlefield;
 	}
 
 	private class inputThread implements Runnable {
