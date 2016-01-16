@@ -1,3 +1,9 @@
+.battlefield:disabled {
+	-fx-background-color: rgba( 10, 10, 10, 0.5 ) !important;
+}
+.cards-in-hand-pane:disabled {
+	-fx-background-color: rgba( 10, 10, 10, 0.5 ) !important;
+}
 .battlefield {
 	-fx-border-color: Black;
 	-fx-background-color: White;

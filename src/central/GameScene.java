@@ -64,7 +64,7 @@ public class GameScene {
 				.toArray(String[]::new);           // Make it an array
 			cardStream.close();
 
-			//ConnectionPool.getConnection().sendPacket( new CardListPacket( cardList ) );
+			// This is sent far further down
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
@@ -102,11 +102,7 @@ public class GameScene {
 		scale.setPivotY(0);
 		rootGamePane.getTransforms().add(scale);
 
-		// Scene
-		// Only one at a time, can change
 		Scene gameScene = new Scene(rootGamePane);
-		//gameScene.setOnKeyPressed(keyEventHandler);
-		//gameScene.setOnKeyReleased(keyEventHandler);
 
 		rootGamePane.setDisable( true );
 
@@ -115,8 +111,6 @@ public class GameScene {
 		File styleFile = new File("stylesheets/stylesheet.css");
 		String styleFilePath = "file:///" + styleFile.getAbsolutePath().replace("\\", "/");
 		gameScene.getStylesheets().add(styleFilePath);
-
-		//new Thread(new KeyHandleThread()).start();
 
 		Settings settings = new Settings( "settings/settings.properties" );
 		String autoRescaleStr = settings.getProperty( "autoRescale", "true" );
@@ -136,16 +130,14 @@ public class GameScene {
 		} else {
 			scale.setX( manualScale );
 			scale.setY( manualScale );
+			ownBattlefield.updateScaleFactor( manualScale );
 		}
 		
-		ownBattlefield.updateScaleFactor(0.75);
 
 		stage.setScene(gameScene);
 
 		new Thread(() -> {
-			System.out.println( "thread started" );
 			ConnectionPool.getConnection().sendPacket( new CardListPacket( cardList ) );
-			System.out.println( "data sent" );
 
 			while( otherBattlefield == null ) {
 				System.out.println( "Checking for other battlefield" );
