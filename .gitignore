@@ -3,7 +3,6 @@ workbench.xmi
 .project
 .settings/
 
-doc/
 classVisualizer.xml
 *x.json
 !jars/*jar
